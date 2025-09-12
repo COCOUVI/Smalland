@@ -13,8 +13,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     // variables pour les roles des users
-    CONST ROLE_ADMIN = 'admin';
-    CONST ROLE_CLIENT ='client';
+    
 
     /**
      * The attributes that are mass assignable.

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete("cascade");
             $table->foreignId('formation_id')->constrained()->onDelete("cascade");
-            $table->string('path_attestation');
+            $table->integer("progression")->default(0);
+            $table->string('path_attestation')->nullable();
             $table->timestamps();
         });
     }

@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('commentaires', function (Blueprint $table) {
             $table->id();
             $table->text("content");
-            $table->foreignId('publication_id')->constrained()->onDelete('cascade');
+            $table->foreignId('publication_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('formation_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('commentaires')->onDelete('cascade');
+            $table->enum("comment_type",['publication','formation']);
             $table->timestamps();
         });
     }
