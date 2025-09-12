@@ -39,7 +39,10 @@
                 <li><a class="nav-link" href="formations-index.html">Liste des Formations</a></li>
                 <li><a class="nav-link" href="formations-create.html">Ajouter Formation</a></li>
                 <li><a class="nav-link" href="modules.html">Modules</a></li>
+                <li><a class="nav-link" href="modules.html">Lecons</a></li>
+                <li><a class="nav-link" href="modules.html">Quizz</a></li>
                 <li><a class="nav-link" href="attestations.html">Attestations</a></li>
+                <li><a class="nav-link" href="modules.html">Paiments-formations</a></li>
             </ul>
         </li>
 

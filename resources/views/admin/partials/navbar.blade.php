@@ -17,7 +17,8 @@
             <li>
                 <form class="form-inline mr-auto">
                     <div class="search-element">
-                        <input class="form-control" type="search" placeholder="Search" aria-label="Search" data-width="200">
+                        <input class="form-control" type="search" placeholder="Search" aria-label="Search"
+                            data-width="200">
                         <button class="btn" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
@@ -32,15 +33,20 @@
         <li class="dropdown">
             <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <i class="fas fa-user-shield mr-1 text-success"></i>
-                <span class="d-sm-none d-lg-inline-block text-dark align-middle">Administrateur</span>  
+                <span class="d-sm-none d-lg-inline-block text-dark align-middle">Administrateur</span>
                 <i class="dropdown-toggle ml-1 text-dark d-lg-inline-block align-middle"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right pullDown">
                 <!-- Option Déconnexion -->
-                <a href="auth-login.html" class="dropdown-item has-icon text-danger">
-                    <i class="fas fa-sign-out-alt"></i> Déconnexion
-                </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item has-icon text-danger"
+                        style="border:none; background:none; padding:0;">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </button>
+                </form>
             </div>
+
         </li>
     </ul>
 </nav>

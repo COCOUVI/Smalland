@@ -13,6 +13,22 @@
             <div class="card-body">
                 <form action="{{ route('register') }}" method="POST">
                     @csrf
+                     <div class="form-group mb-3">
+                        <label for="nom" class="fw-bold">Nom</label>
+                        <input type="text" class="form-control" id="nom" name="nom"
+                            placeholder="Entrez votre email" required>
+                        @error('nom')
+                            <span class="text-danger"> {{ $message }}</span>
+                        @enderror
+                    </div>
+                     <div class="form-group mb-3">
+                        <label for="prenom" class="fw-bold">Nom</label>
+                        <input type="text" class="form-control" id="prenom" name="prenom"
+                            placeholder="Entrez votre email" required>
+                        @error('prenom')
+                            <span class="text-danger"> {{ $message }}</span>
+                        @enderror
+                    </div>
                     <div class="form-group mb-3">
                         <label for="email" class="fw-bold">Adresse Email</label>
                         <input type="email" class="form-control" id="email" name="email"

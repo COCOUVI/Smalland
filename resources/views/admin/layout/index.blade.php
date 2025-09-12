@@ -1,39 +1,6 @@
 @extends('admin.master')
 @section('content')
     <div class="row">
-        @php
-            $cards = [
-                [
-                    'title' => 'Produits',
-                    'value' => '120',
-                    'percent' => '+10%',
-                    'percentColor' => 'col-green',
-                    'img' =>'assets/img/banner/shop.png',
-                ],
-                [
-                    'title' => 'Formations',
-                    'value' => '45',
-                    'percent' => '-5%',
-                    'percentColor' => 'col-orange',
-                    'img' => 'assets/img/banner/formations.png',
-                ],
-                [
-                    'title' => 'Quiz',
-                    'value' => '18',
-                    'percent' => '+12%',
-                    'percentColor' => 'col-green',
-                    'img' => 'assets/img/banner/quizz.png',
-                ],
-                [
-                    'title' => 'Paiements',
-                    'value' => '1 250 000 CFA',
-                    'percent' => '+42%',
-                    'percentColor' => 'col-green',
-                    'img' => 'assets/img/banner/paiements.png',
-                ],
-            ];
-        @endphp
-
         @foreach ($cards as $card)
             <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-4">
                 <div class="card h-100">
