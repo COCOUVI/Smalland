@@ -18,7 +18,8 @@ class AdminSeeder extends Seeder
           User::updateOrCreate(
             ['email' => 'admin@gmail.com'], // évite les doublons
             [
-                'name' => 'Admin',
+                'nom' => 'Admin',
+                'prenom' => 'smalland',
                 'email' => 'admin@gmail.com',
                 'password' => Hash::make('admin123@'), // tu peux changer le mot de passe
                 'role' => 'admin',

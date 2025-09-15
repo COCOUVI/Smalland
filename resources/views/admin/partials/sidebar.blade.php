@@ -36,8 +36,8 @@
                 <i data-feather="book-open"></i><span>Formations</span>
             </a>
             <ul class="dropdown-menu">
-                <li><a class="nav-link" href="formations-index.html">Liste des Formations</a></li>
-                <li><a class="nav-link" href="formations-create.html">Ajouter Formation</a></li>
+                <li class="{{request()->routeIs('lists_formation') ? 'active':''}}"><a class="nav-link" href="{{route('lists_formation')}}">Liste des Formations</a></li>
+                <li class="{{request()->routeIs('add_formation_page') ? 'active':''}}"><a class="nav-link" href="{{route('add_formation_page')}}">Ajouter Formation</a></li>
                 <li><a class="nav-link" href="modules.html">Modules</a></li>
                 <li><a class="nav-link" href="modules.html">Lecons</a></li>
                 <li><a class="nav-link" href="modules.html">Quizz</a></li>

@@ -30,9 +30,7 @@
       </div>
       <!-- Main Content -->
       <div class="main-content">
-        <section class="section">
-            @yield('content')
-        </section> 
+        @yield('content')
         <div class="settingSidebar">
           <a href="javascript:void(0)" class="settingPanelToggle"> <i class="fa fa-spin fa-cog"></i>
           </a>
@@ -128,6 +126,7 @@
       @include('admin.partials.footer')
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   <!-- General JS Scripts -->
   <script src="/assets/js/app.min.js"></script>
   <!-- JS Libraies -->

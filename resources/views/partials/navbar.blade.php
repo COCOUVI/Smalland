@@ -27,9 +27,9 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="formations-catalog.html">Catalogue</a></li>
-                       @if(auth()->user() && auth()->user()->role ==="student")
+                       @auth
                         <li><a class="dropdown-item" href="student-dashboard.html">Espace étudiant</a></li>
-                       @endif
+                       @endauth
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -55,10 +55,10 @@
                 </a>
 
                 <!-- Espace client connecté -->
-                @if(auth()->user() && auth()->user()->role == 'client')
+                @auth
                 <div class="dropdown">
                     <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle me-2"></i> {{ auth()->user()->name }}
+                        <i class="bi bi-person-circle me-2"></i> {{ auth()->user()->nom  }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="student-dashboard.html">Mon espace</a></li>
@@ -76,11 +76,12 @@
                         </li>
                     </ul>
                 </div>
-                @else
+                @endauth
+                @guest
                 <!-- Connexion / Inscription -->
                 <a href="{{ route('login') }}" class="btn btn-outline-light ms-2">Connexion</a>
                 <a href="{{ route('register') }}" class="btn btn-light ms-2">Inscription</a>
-                @endif
+                @endguest
             </div>
         </div>
     </div>
