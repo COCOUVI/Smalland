@@ -16,14 +16,12 @@ class AdminController extends Controller
 
     public function AddFormationPage()
     {
-
         return view('admin.layout.add_formation');
     }
+
     // Stocke une nouvelle formation
     public function AddFormation(FormationRequest $request)
     {
-        // Validation;
-
         // Création d'une instance de Formation
         $formation = new Formation();
         $formation->titre = $request->input('title');
@@ -39,53 +37,77 @@ class AdminController extends Controller
         // Sauvegarde dans la base
         $formation->save();
 
-        // Redirection avec message de succès
+        // Retour JSON pour AJAX ou redirection classique
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Formation créée avec succès.',
+                'formation' => $formation
+            ]);
+        }
+
+        // Redirection avec message de succès (fallback)
         return redirect()->back()->with('success', 'Formation créée avec succès.');
     }
+
     public function ShowFormations()
     {
-
         $formations = Formation::paginate(5);
-
         return view('admin.layout.list_formations', compact('formations'));
     }
 
     public function GetOneFormation(Formation $formation)
     {
-
         return view('admin.layout.detail_formation', compact('formation'));
     }
 
     public function Put_Page_Formation(Formation $formation)
     {
-
         return view('admin.layout.modifier_formation', compact('formation'));
     }
 
     public function PutFormation(UpdateFormationRequest $request, Formation $formation)
     {
-
         $formation->titre = $request->titre;
         $formation->description = $request->description;
         $formation->price = $request->price;
 
         if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('formations/'), $imageName);
-            $formation->image_path = $imageName;
+            $imagePath = $request->file('image')->store('formations', 'public');
+            $formation->image_path = $imagePath;
         }
+
         $formation->save();
+
+        // Retour JSON pour AJAX ou redirection classique
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Formation mise à jour avec succès.',
+                'formation' => $formation
+            ]);
+        }
 
         return redirect()->back()
             ->with('success', 'Formation mise à jour avec succès.');
     }
-    public function DeleteFormation(Formation $formation)
+
+    public function DeleteFormation(Formation $formation, Request $request)
     {
         $formation->delete();
-        return redirect()->back()->with('success', 'formation supprimer avec succès');
+
+        // Retour JSON pour AJAX ou redirection classique
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Formation supprimée avec succès.'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Formation supprimée avec succès');
     }
 
-    public function  AddModule(StoreModuleRequest $request)
+    public function AddModule(StoreModuleRequest $request)
     {
         $module = new Module();
         $module->titre = $request->titre;

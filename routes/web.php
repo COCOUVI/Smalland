@@ -21,15 +21,6 @@ Route::get('/formation-list', function () {
 Route::get('/cart', function () {
     return view('layouts.boutique.cart');
 })->name('cart');
-Route::get('/cart', function () {
-    return view('layouts.boutique.cart');
-})->name('cart');
-Route::get('/cart', function () {
-    return view('layouts.boutique.cart');
-})->name('cart');
-Route::get('/cart', function () {
-    return view('layouts.boutique.cart');
-})->name('cart');
 
 Route::get('/test',function(){
     return view("admin.layout.index");
@@ -37,7 +28,7 @@ Route::get('/test',function(){
 
 Route::get('/dashboard', [UserController::class,'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-//admin route 
+//admin route
 Route::prefix('dashboard')->group(function(){
 
     Route::get('/add-formation',[AdminController::class,"AddFormationPage"])->name('add_formation_page');
@@ -47,7 +38,10 @@ Route::prefix('dashboard')->group(function(){
     Route::get('/page_modify_formation/{formation}',[AdminController::class,"Put_Page_Formation"])->name('put_page.formation');
     Route::put('/modify_formation/{formation}',[AdminController::class,'PutFormation'])->name('admin.formations.update');
     Route::delete('/delete_formation/{formation}', [AdminController::class,"DeleteFormation"])->name('delete.formation');
-    Route::post('/ajouter-module',[AdminController::class,"AddModule"])->name('modules.store');
+
+    // Route pour ajouter des modules via AJAX
+    Route::post('/formations/{formation}/modules',[AdminController::class,"AddModule"])->name('modules.store');
+
 })->middleware(["auth",'admin']);
 
 Route::middleware('auth')->group(function () {
