@@ -1,16 +1,20 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
 <script>
 $(document).ready(function() {
+    // ✅ Configuration CSRF pour toutes les requêtes AJAX
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
     // === AJOUTER FORMATION ===
     $('#addFormationForm').on('submit', function(e) {
         e.preventDefault();
-
-        // Nettoyer les erreurs précédentes
         $('.text-danger').text('');
         $('#addFormationAlert').html('');
-
         const formData = new FormData(this);
 
         $.ajax({
@@ -56,7 +60,6 @@ $(document).ready(function() {
         $('#editDescription').val(description);
         $('#editPrice').val(price);
 
-        // Afficher l'image actuelle si elle existe
         if(imagePath) {
             $('#currentImagePreview').html(`
                 <p>Image actuelle :</p>
@@ -66,18 +69,15 @@ $(document).ready(function() {
             $('#currentImagePreview').html('');
         }
 
-        // Nettoyer les erreurs
         $('.text-danger').text('');
         $('#editFormationAlert').html('');
     });
 
     $('#editFormationForm').on('submit', function(e) {
         e.preventDefault();
-
         const formationId = $('#editFormationId').val();
         const formData = new FormData(this);
 
-        // Nettoyer les erreurs précédentes
         $('.text-danger').text('');
         $('#editFormationAlert').html('');
 
@@ -123,68 +123,50 @@ $(document).ready(function() {
         const formationId = $(this).data('formation-id');
         const $confirmBtn = $(this);
 
-        // Désactiver le bouton pour éviter les clics multiples
         $confirmBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Suppression...');
 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
         $.ajax({
-            url: `{{ url('/dashboard/delete_formation') }}/${formationId}`,
+            url: `/dashboard/delete_formation/${formationId}`,
             type: 'POST',
             data: {
-                '_method': 'DELETE',
-                '_token': $('meta[name="csrf-token"]').attr('content')
+                '_method': 'DELETE' // méthode simulée
             },
             success: function(response) {
-                // Retirer le focus du bouton avant de fermer la modal
                 $confirmBtn.blur();
 
-                // Fermer la modal avec un petit délai
                 setTimeout(() => {
                     $('#deleteFormationModal').modal('hide');
                 }, 100);
 
-                // Supprimer la ligne du tableau ou la carte avec animation
                 $(`[data-formation-id="${formationId}"]`).addClass('fade-out').delay(300).fadeOut(500, function() {
                     $(this).remove();
-
-                    // Vérifier s'il reste des formations
-                    if($('[data-formation-id]').length === 0) {
+                    if ($('[data-formation-id]').length === 0) {
                         location.reload();
                     }
                 });
 
-                // Afficher un message de succès
                 $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
                   'Formation supprimée avec succès ✅' +
                   '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
                   '</div>').prependTo('.container').delay(3000).fadeOut();
             },
             error: function(xhr) {
-                // Retirer le focus et fermer la modal
                 $confirmBtn.blur();
                 setTimeout(() => {
                     $('#deleteFormationModal').modal('hide');
                 }, 100);
 
-                // Afficher l'erreur
                 $('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
                   'Erreur lors de la suppression ❌' +
                   '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
                   '</div>').prependTo('.container').delay(3000).fadeOut();
             },
             complete: function() {
-                // Réactiver le bouton dans tous les cas
                 $confirmBtn.prop('disabled', false).html('Supprimer');
             }
         });
     });
 
-    // Réinitialiser le bouton quand la modal se ferme
     $('#deleteFormationModal').on('hidden.bs.modal', function() {
         $('#confirmDeleteBtn').prop('disabled', false).html('Supprimer').blur();
     });
@@ -208,7 +190,6 @@ $(document).ready(function() {
         const form = $(this);
         const url = form.attr('action');
         const titre = $('#moduleTitle').val();
-        const token = $('input[name=_token]').val();
 
         $('#titreError').text('');
         $('#ajaxAlert').html('');
@@ -217,8 +198,7 @@ $(document).ready(function() {
             url: url,
             type: 'POST',
             data: {
-                titre: titre,
-                _token: token
+                titre: titre
             },
             success: function(response){
                 if(response.success){
