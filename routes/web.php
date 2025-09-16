@@ -23,7 +23,7 @@ Route::get('/cart', function () {
 })->name('cart');
 
 Route::get('/test',function(){
-    return view("admin.layout.index");
+    return view("admin.layout.formations.index");
 });
 
 Route::get('/dashboard', [UserController::class,'index'])->middleware(['auth', 'verified'])->name('dashboard');

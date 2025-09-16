@@ -53,12 +53,12 @@ class AdminController extends Controller
     public function ShowFormations()
     {
         $formations = Formation::paginate(5);
-        return view('admin.layout.list_formations', compact('formations'));
+        return view('admin.layout.formations.list_formations', compact('formations'));
     }
 
     public function GetOneFormation(Formation $formation)
     {
-        return view('admin.layout.detail_formation', compact('formation'));
+        return view('admin.layout.formations.detail_formation', compact('formation'));
     }
 
     public function Put_Page_Formation(Formation $formation)
