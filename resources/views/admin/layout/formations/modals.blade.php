@@ -1,5 +1,6 @@
 <!-- Modal Ajouter Formation -->
-<div class="modal fade" id="addFormationModal" tabindex="-1" aria-labelledby="addFormationModalLabel" aria-hidden="true">
+<div class="modal fade" id="addFormationModal" tabindex="-1" aria-labelledby="addFormationModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -19,7 +20,8 @@
 
                     <div class="mb-3">
                         <label for="addDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="addDescription" name="description" rows="5" required></textarea>
+                        <textarea class="form-control" id="addDescription" name="description" rows="5"
+                            required></textarea>
                         <span class="text-danger" id="addDescriptionError"></span>
                     </div>
 
@@ -45,7 +47,8 @@
 </div>
 
 <!-- Modal Modifier Formation -->
-<div class="modal fade" id="editFormationModal" tabindex="-1" aria-labelledby="editFormationModalLabel" aria-hidden="true">
+<div class="modal fade" id="editFormationModal" tabindex="-1" aria-labelledby="editFormationModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -67,7 +70,8 @@
 
                     <div class="mb-3">
                         <label for="editDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="editDescription" name="description" rows="5" required></textarea>
+                        <textarea class="form-control" id="editDescription" name="description" rows="5"
+                            required></textarea>
                         <span class="text-danger" id="editDescriptionError"></span>
                     </div>
 
@@ -94,7 +98,8 @@
 </div>
 
 <!-- Modal Supprimer Formation -->
-<div class="modal fade" id="deleteFormationModal" tabindex="-1" aria-labelledby="deleteFormationModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteFormationModal" tabindex="-1" aria-labelledby="deleteFormationModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -121,19 +126,27 @@
                 <h5 class="modal-title" id="addModuleModalLabel">Ajouter un module</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="addModuleForm" action="" method="POST">
+            <form id="addModuleForm" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div id="ajaxAlert"></div>
-                    <div class="mb-3">
-                        <label for="moduleTitle" class="form-label">Titre du module</label>
-                        <input type="text" class="form-control" id="moduleTitle" name="titre" required>
-                        <span class="text-danger" id="titreError"></span>
+
+                    <div id="modulesContainer">
+                        <!-- Un champ module -->
+                        <div class="module-item mb-2 d-flex align-items-center">
+                            <input type="text" name="titres[]" class="form-control me-2" placeholder="Titre du module"
+                                required>
+                            <button type="button" class="btn btn-danger btn-sm remove-module">❌</button>
+                        </div>
                     </div>
+
+                    <button type="button" id="addModuleField" class="btn btn-sm btn-secondary mt-2">Ajouter un module
+                        ➕</button>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer tous les modules</button>
                 </div>
             </form>
         </div>

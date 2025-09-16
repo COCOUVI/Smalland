@@ -108,14 +108,28 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Formation supprimée avec succès');
     }
 
-    public function AddModule(StoreModuleRequest $request, $formation)
+    public function AddModule(Request $request, $formationId)
     {
-        $module = new Module();
-        $module->titre = $request->input('titre');
-        $module->formation_id = $formation; // assignation de l’ID formation
+        $request->validate([
+            'titres' => 'required|array|min:1',
+            'titres.*' => 'required|string|max:255',
+        ]);
 
-        $module->save();
+        foreach ($request->titres as $titre) {
+            Module::create([
+                'titre' => $titre,
+                'formation_id' => $formationId
+            ]);
+        }
 
-        return response()->json(['success' => 'Module ajouté avec succès ✅']);
+        return response()->json(['success' => 'Modules ajoutés avec succès ✅']);
     }
+
+    public function getModules($formationId)
+{
+    $modules = Module::where('formation_id', $formationId)->get();
+
+    return response()->json($modules);
+}
+
 }
