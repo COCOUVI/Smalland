@@ -173,54 +173,52 @@ $(document).ready(function() {
 
     // === AJOUTER MODULE ===
     $('.addModuleBtn').on('click', function() {
-        const formationId = $(this).data('formation-id');
-        const formationTitle = $(this).data('formation-title');
+    const formationId = $(this).data('formation-id');
+    const formationTitle = $(this).data('formation-title');
 
-        const form = $('#addModuleForm');
-        form.attr('action', `/dashboard/formations/${formationId}/modules`);
+    $('#addModuleForm').attr('action', `/dashboard/formations/${formationId}/modules`);
 
-        $('#addModuleModalLabel').text("Ajouter un module à : " + formationTitle);
-        $('#moduleTitle').val('');
-        $('#titreError').text('');
-        $('#ajaxAlert').html('');
-    });
+    $('#addModuleModalLabel').text("Ajouter un module à : " + formationTitle);
+    $('#moduleTitle').val('');
+    $('#titreError').text('');
+    $('#ajaxAlert').html('');
+});
+
 
     $('#addModuleForm').on('submit', function(e){
-        e.preventDefault();
-        const form = $(this);
-        const url = form.attr('action');
-        const titre = $('#moduleTitle').val();
+    e.preventDefault();
+    const form = $(this);
+    const url = form.attr('action');  // URL = /dashboard/formations/3/modules
+    const titre = $('#moduleTitle').val();
 
-        $('#titreError').text('');
-        $('#ajaxAlert').html('');
+    $('#titreError').text('');
+    $('#ajaxAlert').html('');
 
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: {
-                titre: titre
-            },
-            success: function(response){
-                if(response.success){
-                    $('#ajaxAlert').html('<div class="alert alert-success">'+response.success+'</div>');
-                    $('#moduleTitle').val('');
-                    setTimeout(() => {
-                        $('#addModuleModal').modal('hide');
-                        $('#ajaxAlert').html('');
-                    }, 1500);
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { titre: titre }, // envoyer uniquement le titre
+        success: function(response){
+            $('#ajaxAlert').html('<div class="alert alert-success">'+response.success+'</div>');
+            $('#moduleTitle').val('');
+            setTimeout(() => {
+                $('#addModuleModal').modal('hide');
+                $('#ajaxAlert').html('');
+                location.reload();
+            }, 1500);
+        },
+        error: function(xhr){
+            if(xhr.status === 422){
+                const errors = xhr.responseJSON.errors;
+                if(errors.titre){
+                    $('#titreError').text(errors.titre[0]);
                 }
-            },
-            error: function(xhr){
-                if(xhr.status === 422){
-                    const errors = xhr.responseJSON.errors;
-                    if(errors.titre){
-                        $('#titreError').text(errors.titre[0]);
-                    }
-                } else {
-                    $('#ajaxAlert').html('<div class="alert alert-danger">Une erreur est survenue ❌</div>');
-                }
+            } else {
+                $('#ajaxAlert').html('<div class="alert alert-danger">Une erreur est survenue ❌</div>');
             }
-        });
+        }
     });
+});
+
 });
 </script>

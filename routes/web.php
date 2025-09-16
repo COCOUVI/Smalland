@@ -40,7 +40,9 @@ Route::prefix('dashboard')->group(function(){
     Route::delete('/delete_formation/{formation}', [AdminController::class,"DeleteFormation"])->name('delete.formation');
 
     // Route pour ajouter des modules via AJAX
-    Route::post('/formations/{formation}/modules',[AdminController::class,"AddModule"])->name('modules.store');
+
+    Route::post('/formations/{formation}/modules', [AdminController::class, 'AddModule'])->name('modules.store');
+
 
 })->middleware(["auth",'admin']);
 

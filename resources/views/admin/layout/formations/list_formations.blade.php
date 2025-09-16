@@ -45,13 +45,14 @@
 
                                         <!-- Bouton Ajouter module -->
                                         <button type="button" class="btn btn-sm btn-success addModuleBtn"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#addModuleModal"
-                                            data-formation-id="{{ $formation->id }}"
-                                            data-formation-title="{{ $formation->titre }}"
-                                            title="Ajouter module">
-                                            <i class="fas fa-plus-circle"></i>
-                                        </button>
+    data-bs-toggle="modal"
+    data-bs-target="#addModuleModal"
+    data-formation-id="{{ $formation->id }}"
+    data-formation-title="{{ $formation->titre }}"
+    title="Ajouter module">
+    <i class="fas fa-plus-circle"></i>
+</button>
+
 
                                         <!-- Bouton Modifier -->
                                         <button type="button" class="btn btn-sm btn-warning editFormationBtn"

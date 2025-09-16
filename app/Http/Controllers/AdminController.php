@@ -69,8 +69,8 @@ class AdminController extends Controller
     public function PutFormation(UpdateFormationRequest $request, Formation $formation)
     {
         $formation->titre = $request->input('titre');
-$formation->description = $request->input('description');
-$formation->price = $request->input('price');
+        $formation->description = $request->input('description');
+        $formation->price = $request->input('price');
 
 
         if ($request->hasFile('image')) {
@@ -108,11 +108,11 @@ $formation->price = $request->input('price');
         return redirect()->back()->with('success', 'Formation supprimée avec succès');
     }
 
-    public function AddModule(StoreModuleRequest $request)
+    public function AddModule(StoreModuleRequest $request, $formation)
     {
         $module = new Module();
         $module->titre = $request->input('titre');
-$module->formation_id = $request->input('formation_id');
+        $module->formation_id = $formation; // assignation de l’ID formation
 
         $module->save();
 
