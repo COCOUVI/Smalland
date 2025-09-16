@@ -68,9 +68,10 @@ class AdminController extends Controller
 
     public function PutFormation(UpdateFormationRequest $request, Formation $formation)
     {
-        $formation->titre = $request->titre;
-        $formation->description = $request->description;
-        $formation->price = $request->price;
+        $formation->titre = $request->input('titre');
+$formation->description = $request->input('description');
+$formation->price = $request->input('price');
+
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('formations', 'public');
@@ -110,8 +111,9 @@ class AdminController extends Controller
     public function AddModule(StoreModuleRequest $request)
     {
         $module = new Module();
-        $module->titre = $request->titre;
-        $module->formation_id = $request->formation_id;
+        $module->titre = $request->input('titre');
+$module->formation_id = $request->input('formation_id');
+
         $module->save();
 
         return response()->json(['success' => 'Module ajouté avec succès ✅']);
