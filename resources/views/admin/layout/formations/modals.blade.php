@@ -113,7 +113,7 @@
     </div>
 </div>
 
-<!-- Modal Ajouter Module (existant) -->
+<!-- Modal Ajouter Module -->
 <div class="modal fade" id="addModuleModal" tabindex="-1" aria-labelledby="addModuleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
