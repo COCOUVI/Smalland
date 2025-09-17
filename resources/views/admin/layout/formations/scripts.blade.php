@@ -172,133 +172,179 @@
         });
 
         // === GÉRER MODULES (AJOUT / ÉDITION / SUPPRESSION DIFFÉRÉE) ===
-$('.addModuleBtn').on('click', function () {
-    const formationId = $(this).data('formation-id');
-    const formationTitle = $(this).data('formation-title');
+        $('.addModuleBtn').on('click', function () {
+            const formationId = $(this).data('formation-id');
+            const formationTitle = $(this).data('formation-title');
 
-    const form = $('#addModuleForm');
-    form.attr('action', `/dashboard/formations/${formationId}/modules`);
-    $('#addModuleModalLabel').text("Gérer les modules de : " + formationTitle);
-    $('#modulesContainer').html('');
-    $('#ajaxAlert').html('');
+            const form = $('#addModuleForm');
+            form.attr('action', `/dashboard/formations/${formationId}/modules`);
+            $('#addModuleModalLabel').text("Gérer les modules de : " + formationTitle);
+            $('#modulesContainer').html('');
+            $('#ajaxAlert').html('');
 
-    // Charger les modules existants
-    $.get(`/dashboard/formations/${formationId}/modules`, function (modules) {
-        if (modules.length > 0) {
-            modules.forEach(module => {
-                $('#modulesContainer').append(`
+            // Charger les modules existants
+            $.get(`/dashboard/formations/${formationId}/modules`, function (modules) {
+                if (modules.length > 0) {
+                    modules.forEach(module => {
+                        $('#modulesContainer').append(`
                     <div class="module-item mb-2 d-flex align-items-center" data-module-id="${module.id}">
                         <input type="text" name="modules_existing[${module.id}]" value="${module.titre}" class="form-control me-2">
                         <button type="button" class="btn btn-danger btn-sm remove-existing-module" data-module-id="${module.id}">❌</button>
                     </div>
                 `);
-            });
-        }
+                    });
+                }
 
-        // Champ vide pour nouveaux modules
-        $('#modulesContainer').append(`
+                // Champ vide pour nouveaux modules
+                $('#modulesContainer').append(`
             <div class="module-item mb-2 d-flex align-items-center">
                 <input type="text" name="modules_new[]" class="form-control me-2" placeholder="Nouveau module">
                 <button type="button" class="btn btn-danger btn-sm remove-module">❌</button>
             </div>
         `);
-    });
-});
+            });
+        });
 
-// ➕ Ajouter un champ vide
-$('#addModuleField').on('click', function () {
-    $('#modulesContainer').append(`
+        // ➕ Ajouter un champ vide
+        $('#addModuleField').on('click', function () {
+            $('#modulesContainer').append(`
         <div class="module-item mb-2 d-flex align-items-center">
             <input type="text" name="modules_new[]" class="form-control me-2" placeholder="Nouveau module">
             <button type="button" class="btn btn-danger btn-sm remove-module">❌</button>
         </div>
     `);
-});
+        });
 
-// ❌ Supprimer un champ nouveau module (frontend uniquement)
-$(document).on('click', '.remove-module', function () {
-    $(this).closest('.module-item').remove();
-});
+        // ❌ Supprimer un champ nouveau module (frontend uniquement)
+        $(document).on('click', '.remove-module', function () {
+            $(this).closest('.module-item').remove();
+        });
 
-// ❌ Marquer un module existant pour suppression (pas de suppression directe en DB)
-$(document).on('click', '.remove-existing-module', function () {
-    const element = $(this).closest('.module-item');
-    element.addClass('marked-for-deletion');
-    element.hide(); // Visuellement supprimé
-});
+        // ❌ Marquer un module existant pour suppression (pas de suppression directe en DB)
+        $(document).on('click', '.remove-existing-module', function () {
+            const element = $(this).closest('.module-item');
+            const input = element.find('input');
 
-// ✅ Soumission du formulaire
-$('#addModuleForm').on('submit', function (e) {
-    e.preventDefault();
+            // On modifie le nom de l'input pour signaler au backend qu'il faut le supprimer
+            const name = input.attr('name'); // modules_existing[12]
+            const moduleId = name.match(/\d+/)[0]; // extrait l'ID du module
 
-    const form = $(this);
-    const url = form.attr('action');
+            // On ajoute un input caché pour signaler la suppression
+            $('#addModuleForm').append(`
+        <input type="hidden" name="modules_to_delete[]" value="${moduleId}">
+    `);
 
-    $('#ajaxAlert').html('');
-
-    // Collecte des modules à supprimer
-    const modulesToDelete = [];
-    $('#modulesContainer .marked-for-deletion').each(function () {
-        const moduleId = $(this).data('module-id');
-        modulesToDelete.push(moduleId);
-    });
-
-    // Modules existants (non supprimés)
-    const modulesExisting = {};
-    $('#modulesContainer .module-item').not('.marked-for-deletion').each(function () {
-        const input = $(this).find('input[name^="modules_existing"]');
-        if (input.length > 0) {
-            const id = input.attr('name').match(/\[(\d+)\]/)[1];
-            modulesExisting[id] = input.val();
-        }
-    });
-
-    // Modules nouveaux
-    const modulesNew = [];
-    $('input[name="modules_new[]"]').each(function () {
-        const val = $(this).val();
-        if (val.trim() !== '') {
-            modulesNew.push(val);
-        }
-    });
-
-    // Validation : au moins un module doit être rempli (sinon inutile de sauvegarder)
-    if (Object.values(modulesExisting).concat(modulesNew).length === 0) {
-        $('#ajaxAlert').html('<div class="alert alert-danger">Veuillez remplir au moins un module.</div>');
-        return;
-    }
-
-    // Vérifier qu’aucun champ n’est vide
-    const allModules = Object.values(modulesExisting).concat(modulesNew);
-    if (allModules.some(val => val.trim() === '')) {
-        $('#ajaxAlert').html('<div class="alert alert-danger">Veuillez remplir tous les champs de modules.</div>');
-        return;
-    }
-
-    // Requête AJAX
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: {
-            modules_existing: modulesExisting,
-            modules_new: modulesNew,
-            modules_to_delete: modulesToDelete,
-            _token: $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            $('#ajaxAlert').html('<div class="alert alert-success">' + response.success + '</div>');
-            setTimeout(() => {
-                $('#addModuleModal').modal('hide');
-                location.reload();
-            }, 1500);
-        },
-        error: function () {
-            $('#ajaxAlert').html('<div class="alert alert-danger">Erreur lors de l’enregistrement des modules ❌</div>');
-        }
-    });
-});
+            // On supprime visuellement le champ
+            element.remove();
+        });
 
 
+        // ✅ Soumission du formulaire
+        $('#addModuleForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const form = $(this);
+            const url = form.attr('action');
+
+            $('#ajaxAlert').html('');
+
+            // Collecte des modules à supprimer
+            const modulesToDelete = [];
+            $('#modulesContainer .marked-for-deletion').each(function () {
+                const moduleId = $(this).data('module-id');
+                modulesToDelete.push(moduleId);
+            });
+
+            // Modules existants (non supprimés)
+            const modulesExisting = {};
+            $('#modulesContainer .module-item').not('.marked-for-deletion').each(function () {
+                const input = $(this).find('input[name^="modules_existing"]');
+                if (input.length > 0) {
+                    const id = input.attr('name').match(/\[(\d+)\]/)[1];
+                    modulesExisting[id] = input.val();
+                }
+            });
+
+            // Modules nouveaux
+            const modulesNew = [];
+            $('input[name="modules_new[]"]').each(function () {
+                const val = $(this).val();
+                if (val.trim() !== '') {
+                    modulesNew.push(val);
+                }
+            });
+
+            // Validation : au moins un module doit être rempli (sinon inutile de sauvegarder)
+            if (Object.values(modulesExisting).concat(modulesNew).length === 0) {
+                $('#ajaxAlert').html('<div class="alert alert-danger">Veuillez remplir au moins un module.</div>');
+                return;
+            }
+
+            // Vérifier qu’aucun champ n’est vide
+            const allModules = Object.values(modulesExisting).concat(modulesNew);
+            if (allModules.some(val => val.trim() === '')) {
+                $('#ajaxAlert').html('<div class="alert alert-danger">Veuillez remplir tous les champs de modules.</div>');
+                return;
+            }
+
+            // Requête AJAX
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    modules_existing: modulesExisting,
+                    modules_new: modulesNew,
+                    modules_to_delete: modulesToDelete,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    $('#ajaxAlert').html('<div class="alert alert-success">' + response.success + '</div>');
+                    setTimeout(() => {
+                        $('#addModuleModal').modal('hide');
+                        location.reload();
+                    }, 1500);
+                },
+                error: function () {
+                    $('#ajaxAlert').html('<div class="alert alert-danger">Erreur lors de l’enregistrement des modules ❌</div>');
+                }
+            });
+        });
+
+        // Avant que le modal commence à se cacher
+        $('#addModuleModal').on('hide.bs.modal', function () {
+            if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+            }
+        });
+
+        // Après qu'il soit complètement fermé, nettoyage
+        $('#addModuleModal').on('hidden.bs.modal', function () {
+            // Reset du formulaire
+            $('#addModuleForm')[0].reset();
+
+            // Supprimer les inputs cachés modules_to_delete s'ils existent
+            $('#addModuleForm input[name="modules_to_delete[]"]').remove();
+        });
+
+        // Lorsqu'une modale se cache, enlever le focus sur l'élément actif (pour éviter le problème aria-hidden)
+        $('#editFormationModal, #deleteFormationModal, #addFormationModal').on('hide.bs.modal', function () {
+            if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+            }
+        });
+
+        // Bonus : remettre le focus sur le bouton qui ouvre la modale après fermeture, si tu veux
+        $('#editFormationModal').on('hidden.bs.modal', function () {
+            $('#btnOpenEditFormationModal').focus(); // Remplace par l'ID réel de ton bouton d'ouverture
+        });
+
+        $('#deleteFormationModal').on('hidden.bs.modal', function () {
+            $('#btnOpenDeleteFormationModal').focus(); // Remplace par l'ID réel de ton bouton d'ouverture
+        });
+
+        $('#addFormationModal').on('hidden.bs.modal', function () {
+            $('#btnOpenAddFormationModal').focus(); // Remplace par l'ID réel de ton bouton d'ouverture
+        });
 
     });
 </script>

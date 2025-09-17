@@ -20,6 +20,10 @@ class AdminController extends Controller
     }
 
     // Stocke une nouvelle formation
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     */
     public function AddFormation(FormationRequest $request)
     {
         // Création d'une instance de Formation
@@ -66,12 +70,15 @@ class AdminController extends Controller
         return view('admin.layout.modifier_formation', compact('formation'));
     }
 
+
+    /**
+     * @param \Illuminate\Http\Request|\App\Http\Requests\UpdateFormationRequest $request
+     */
     public function PutFormation(UpdateFormationRequest $request, Formation $formation)
     {
         $formation->titre = $request->input('titre');
         $formation->description = $request->input('description');
         $formation->price = $request->input('price');
-
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('formations', 'public');
@@ -80,7 +87,6 @@ class AdminController extends Controller
 
         $formation->save();
 
-        // Retour JSON pour AJAX ou redirection classique
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
@@ -92,6 +98,7 @@ class AdminController extends Controller
         return redirect()->back()
             ->with('success', 'Formation mise à jour avec succès.');
     }
+
 
     public function DeleteFormation(Formation $formation, Request $request)
     {
@@ -109,47 +116,45 @@ class AdminController extends Controller
     }
 
     public function AddModule(Request $request, $formationId)
-{
-    $request->validate([
-        'modules_existing' => 'array',
-        'modules_existing.*' => 'string|max:255',
-        'modules_new' => 'array',
-        'modules_new.*' => 'string|max:255',
-        'modules_to_delete' => 'array',
-        'modules_to_delete.*' => 'integer|exists:modules,id',
-    ]);
+    {
+        $request->validate([
+            'modules_existing' => 'array',
+            'modules_existing.*' => 'string|max:255',
+            'modules_new' => 'array',
+            'modules_new.*' => 'string|max:255',
+            'modules_to_delete' => 'array',
+            'modules_to_delete.*' => 'integer|exists:modules,id',
+        ]);
 
-    // Supprimer modules
-    if ($request->has('modules_to_delete')) {
-        Module::whereIn('id', $request->modules_to_delete)->delete();
-    }
+        // Supprimer modules
+        if ($request->has('modules_to_delete')) {
+            Module::whereIn('id', $request->modules_to_delete)->delete();
+        }
 
-    // Mettre à jour les modules existants
-    if ($request->has('modules_existing')) {
-        foreach ($request->modules_existing as $id => $titre) {
-            $module = Module::where('formation_id', $formationId)->find($id);
-            if ($module) {
-                $module->update(['titre' => $titre]);
+        // Mettre à jour les modules existants
+        if ($request->has('modules_existing')) {
+            foreach ($request->modules_existing as $id => $titre) {
+                $module = Module::where('formation_id', $formationId)->find($id);
+                if ($module) {
+                    $module->update(['titre' => $titre]);
+                }
             }
         }
-    }
 
-    // Ajouter les nouveaux modules
-    if ($request->has('modules_new')) {
-        foreach ($request->modules_new as $titre) {
-            if (trim($titre) !== '') {
-                Module::create([
-                    'titre' => $titre,
-                    'formation_id' => $formationId
-                ]);
+        // Ajouter les nouveaux modules
+        if ($request->has('modules_new')) {
+            foreach ($request->modules_new as $titre) {
+                if (trim($titre) !== '') {
+                    Module::create([
+                        'titre' => $titre,
+                        'formation_id' => $formationId
+                    ]);
+                }
             }
         }
+
+        return response()->json(['success' => 'Modules mis à jour avec succès ✅']);
     }
-
-    return response()->json(['success' => 'Modules mis à jour avec succès ✅']);
-}
-
-
 
     public function getModules($formationId)
     {
@@ -157,8 +162,6 @@ class AdminController extends Controller
 
         return response()->json($modules);
     }
-
-
 
     public function deleteModule($moduleId)
     {
