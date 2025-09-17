@@ -109,27 +109,62 @@ class AdminController extends Controller
     }
 
     public function AddModule(Request $request, $formationId)
-    {
-        $request->validate([
-            'titres' => 'required|array|min:1',
-            'titres.*' => 'required|string|max:255',
-        ]);
+{
+    $request->validate([
+        'modules_existing' => 'array',
+        'modules_existing.*' => 'string|max:255',
+        'modules_new' => 'array',
+        'modules_new.*' => 'string|max:255',
+        'modules_to_delete' => 'array',
+        'modules_to_delete.*' => 'integer|exists:modules,id',
+    ]);
 
-        foreach ($request->titres as $titre) {
-            Module::create([
-                'titre' => $titre,
-                'formation_id' => $formationId
-            ]);
-        }
-
-        return response()->json(['success' => 'Modules ajoutés avec succès ✅']);
+    // Supprimer modules
+    if ($request->has('modules_to_delete')) {
+        Module::whereIn('id', $request->modules_to_delete)->delete();
     }
 
-    public function getModules($formationId)
-{
-    $modules = Module::where('formation_id', $formationId)->get();
+    // Mettre à jour les modules existants
+    if ($request->has('modules_existing')) {
+        foreach ($request->modules_existing as $id => $titre) {
+            $module = Module::where('formation_id', $formationId)->find($id);
+            if ($module) {
+                $module->update(['titre' => $titre]);
+            }
+        }
+    }
 
-    return response()->json($modules);
+    // Ajouter les nouveaux modules
+    if ($request->has('modules_new')) {
+        foreach ($request->modules_new as $titre) {
+            if (trim($titre) !== '') {
+                Module::create([
+                    'titre' => $titre,
+                    'formation_id' => $formationId
+                ]);
+            }
+        }
+    }
+
+    return response()->json(['success' => 'Modules mis à jour avec succès ✅']);
 }
 
+
+
+    public function getModules($formationId)
+    {
+        $modules = Module::where('formation_id', $formationId)->get();
+
+        return response()->json($modules);
+    }
+
+
+
+    public function deleteModule($moduleId)
+    {
+        $module = Module::findOrFail($moduleId);
+        $module->delete();
+
+        return response()->json(['success' => true]);
+    }
 }

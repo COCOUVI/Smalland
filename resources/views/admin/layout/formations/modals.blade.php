@@ -142,6 +142,7 @@
 
                     <button type="button" id="addModuleField" class="btn btn-sm btn-secondary mt-2">Ajouter un module
                         ➕</button>
+
                 </div>
 
                 <div class="modal-footer">
