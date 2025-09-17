@@ -164,55 +164,46 @@
 .module-input-group {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: white;
-    padding: 4px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    border: 2px solid #e1e8ed;
-    transition: all 0.2s ease;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: border 0.2s ease;
 }
 
 .module-input-group:focus-within {
     border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
-
 .module-input {
     flex: 1;
     border: none;
     outline: none;
-    padding: 14px 16px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #2d3748;
+    font-size: 14px;
+    padding: 10px 8px;
     background: transparent;
-    border-radius: 8px;
+    color: #1f2937;
 }
-
 .module-input::placeholder {
     color: #a0aec0;
 }
 
 .remove-module-btn {
     background: none;
-    border: 1px solid #e1e8ed;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    border: none;
+    color: #9ca3af;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ef4444;
+    padding: 6px;
+    border-radius: 50%;
     cursor: pointer;
-    transition: all 0.2s ease;
-    margin-right: 8px;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .remove-module-btn:hover {
-    border-color: #ef4444;
+    background-color: #fee2e2;
     color: #dc2626;
-    transform: scale(1.05);
 }
 
 .add-module-btn {
@@ -313,4 +304,6 @@
 .modal.show .modal-dialog {
     transform: translate(0, 0);
 }
+
+
 </style>

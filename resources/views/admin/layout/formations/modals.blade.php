@@ -122,39 +122,45 @@
 <div class="modal fade" id="addModuleModal" tabindex="-1" aria-labelledby="addModuleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+
+            <!-- En-tête du modal -->
             <div class="modal-header">
                 <h5 class="modal-title" id="addModuleModalLabel">Ajouter un module</h5>
-                <button type="button" class="modal-close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="modal-close" data-bs-dismiss="modal" aria-label="Fermer">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
             </div>
+
+            <!-- Formulaire -->
             <form id="addModuleForm" method="POST">
                 @csrf
+
+                <!-- Corps du modal -->
                 <div class="modal-body">
                     <div id="ajaxAlert"></div>
+
+                    <!-- Conteneur des modules -->
                     <div id="modulesContainer">
-                        <!-- Un champ module -->
+                        <!-- Module unique -->
                         <div class="module-item">
                             <div class="module-input-group">
                                 <input type="text" name="titres[]" class="module-input" placeholder="Titre du module"
                                     required>
-                                <button type="button" class="remove-module-btn" title="Supprimer">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                <button type="button" class="remove-module-btn" title="Supprimer ce module">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2">
-                                        <polyline points="3,6 5,6 21,6"></polyline>
-                                        <path
-                                            d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2">
-                                        </path>
-                                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
                                 </button>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Bouton Ajouter -->
                     <button type="button" id="addModuleField" class="add-module-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -164,11 +170,31 @@
                         Ajouter un module
                     </button>
                 </div>
+
+                <!-- Pied du modal -->
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn-primary">Enregistrer tous les modules</button>
                 </div>
             </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Description -->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Description de la formation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 id="formationTitle" class="text-dark mb-3"></h6>
+                <div id="formationDescription"></div>
+            </div>
         </div>
     </div>
 </div>

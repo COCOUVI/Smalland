@@ -10,6 +10,15 @@
             }
         });
 
+        // === MODAL DESCRIPTION ===
+    $('.viewDescriptionBtn').on('click', function() {
+        const title = $(this).data('title');
+        const description = $(this).data('description');
+
+        $('#formationTitle').text(title);
+        $('#formationDescription').text(description);
+    });
+
         // === AJOUTER FORMATION ===
         $('#addFormationForm').on('submit', function (e) {
             e.preventDefault();
@@ -331,7 +340,7 @@
         });
 
         // Lorsqu'une modale se cache, enlever le focus sur l'élément actif
-        $('#editFormationModal, #deleteFormationModal, #addFormationModal').on('hide.bs.modal', function () {
+        $('#editFormationModal, #deleteFormationModal, #addFormationModal, #descriptionModal').on('hide.bs.modal', function () {
             if (document.activeElement instanceof HTMLElement) {
                 document.activeElement.blur();
             }
@@ -348,6 +357,10 @@
 
         $('#addFormationModal').on('hidden.bs.modal', function () {
             $('#btnOpenAddFormationModal').focus();
+        });
+
+        $('#descriptionModal').on('hidden.bs.modal', function () {
+            $('#btnOpenShowFormationModal').focus();
         });
 
     });

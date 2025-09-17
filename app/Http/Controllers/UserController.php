@@ -41,7 +41,7 @@ class UserController extends Controller
             ],
         ];
         if ($user->role === "admin") {
-            return view('admin.layout.index', compact('cards'));
+            return view('admin.layout.formations.index', compact('cards'));
         } else {
             return redirect()->route("accueil");
         }
