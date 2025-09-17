@@ -124,30 +124,49 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addModuleModalLabel">Ajouter un module</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="modal-close" data-bs-dismiss="modal" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             <form id="addModuleForm" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div id="ajaxAlert"></div>
-
                     <div id="modulesContainer">
                         <!-- Un champ module -->
-                        <div class="module-item mb-2 d-flex align-items-center">
-                            <input type="text" name="titres[]" class="form-control me-2" placeholder="Titre du module"
-                                required>
-                            <button type="button" class="btn btn-danger btn-sm remove-module">❌</button>
+                        <div class="module-item">
+                            <div class="module-input-group">
+                                <input type="text" name="titres[]" class="module-input" placeholder="Titre du module"
+                                    required>
+                                <button type="button" class="remove-module-btn" title="Supprimer">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <polyline points="3,6 5,6 21,6"></polyline>
+                                        <path
+                                            d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2">
+                                        </path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <button type="button" id="addModuleField" class="btn btn-sm btn-secondary mt-2">Ajouter un module
-                        ➕</button>
-
+                    <button type="button" id="addModuleField" class="add-module-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Ajouter un module
+                    </button>
                 </div>
-
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer tous les modules</button>
+                    <button type="button" class="btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn-primary">Enregistrer tous les modules</button>
                 </div>
             </form>
         </div>
