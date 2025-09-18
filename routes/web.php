@@ -34,6 +34,16 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/formations/{formation}/modules', [AdminController::class, 'AddModule'])->name('modules.store');
     Route::put('/modules/{module}', [AdminController::class, 'updateModule'])->name('modules.update'); // Nouvelle route pour modifier
     Route::delete('/modules/{module}', [AdminController::class, 'deleteModule'])->name('modules.delete');
+
+
+    // LESSONS (nouvelles routes)
+    // Route::post('/modules/{module}/lessons', [AdminController::class, 'addLesson'])->name('lessons.store');
+    // Route::get('/modules/{module}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
+    // Route::delete('/lessons/{lesson}', [AdminController::class, 'deleteLesson'])->name('lessons.delete');
+
+    Route::post('/modules/{moduleId}/lessons', [AdminController::class, 'addLesson'])->name('lessons.store');
+    Route::get('/modules/{moduleId}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
+    Route::delete('/lessons/{lessonId}', [AdminController::class, 'deleteLesson'])->name('lessons.delete');
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===

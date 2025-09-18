@@ -14,4 +14,18 @@ class Module extends Model
     {
         return $this->belongsTo(Formation::class);
     }
+
+
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    /**
+     * Obtenir le nombre de leçons du module
+     */
+    public function getLessonsCountAttribute()
+    {
+        return $this->lessons()->count();
+    }
 }

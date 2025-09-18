@@ -203,6 +203,161 @@
         </div>
     </div>
 
+    <!-- Modal pour ajouter une leçon -->
+    <div class="modal fade" id="addLessonModal" tabindex="-1" aria-labelledby="addLessonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addLessonModalLabel">Ajouter une leçon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addLessonForm" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" id="lessonModuleId" name="module_id" value="">
+
+                        <!-- Titre de la leçon -->
+                        <div class="mb-4">
+                            <label for="lessonTitle" class="form-label">
+                                Titre de la leçon <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="lessonTitle" name="titre" required>
+                            <div class="form-text">Donnez un titre descriptif à votre leçon</div>
+                        </div>
+
+                        <!-- Section Upload Vidéo -->
+                        {{-- <div class="mb-4">
+                            <label for="lessonVideo" class="form-label">
+                                <i class="fas fa-video me-2 text-primary"></i>
+                                Vidéo de la leçon <span class="text-danger">*</span>
+                            </label>
+                            <div class="upload-zone" id="videoUploadZone">
+                                <input type="file" class="form-control" id="lessonVideo" name="video"
+                                    accept="video/*" required style="display: none;">
+                                <div class="upload-placeholder" onclick="document.getElementById('lessonVideo').click()">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    </div>
+                                    <p class="mb-2"><strong>Cliquez pour sélectionner une vidéo</strong></p>
+                                    <p class="text-muted small">Formats acceptés: MP4, AVI, MOV, WMV (Max: 100MB)</p>
+                                </div>
+                                <div class="upload-preview" id="videoPreview" style="display: none;">
+                                    <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-video fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold" id="videoFileName"></div>
+                                                <div class="text-muted small" id="videoFileSize"></div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                            onclick="removeVideo()">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="progress mt-2" id="videoProgress" style="display: none;">
+                                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> --}}
+
+
+                        <!-- REMPLACEZ la section vidéo dans votre modal par ceci : -->
+                        <div class="mb-4">
+                            <label for="lessonVideo" class="form-label">
+                                <i class="fas fa-video me-2 text-primary"></i>
+                                Vidéo de la leçon <span class="text-danger">*</span>
+                            </label>
+                            <div class="upload-zone" id="videoUploadZone">
+                                <!-- SUPPRIMEZ l'attribut 'required' du champ input -->
+                                <input type="file" class="form-control" id="lessonVideo" name="video"
+                                    accept="video/*" style="display: none;">
+                                <div class="upload-placeholder" onclick="document.getElementById('lessonVideo').click()">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    </div>
+                                    <p class="mb-2"><strong>Cliquez pour sélectionner une vidéo</strong></p>
+                                    <p class="text-muted small">Formats acceptés: MP4, AVI, MOV, WMV (Max: 100MB)</p>
+                                </div>
+                                <div class="upload-preview" id="videoPreview" style="display: none;">
+                                    <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-video fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold" id="videoFileName"></div>
+                                                <div class="text-muted small" id="videoFileSize"></div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                            onclick="removeVideo()">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="progress mt-2" id="videoProgress" style="display: none;">
+                                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section Upload PDF -->
+                        <div class="mb-4">
+                            <label for="lessonPdf" class="form-label">
+                                <i class="fas fa-file-pdf me-2 text-danger"></i>
+                                Document PDF <span class="text-muted">(optionnel)</span>
+                            </label>
+                            <div class="upload-zone" id="pdfUploadZone">
+                                <input type="file" class="form-control" id="lessonPdf" name="pdf" accept=".pdf"
+                                    style="display: none;">
+                                <div class="upload-placeholder" onclick="document.getElementById('lessonPdf').click()">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-file-pdf fa-3x text-muted mb-3"></i>
+                                    </div>
+                                    <p class="mb-2"><strong>Cliquez pour sélectionner un PDF</strong></p>
+                                    <p class="text-muted small">Support de cours, exercices, etc. (Max: 10MB)</p>
+                                </div>
+                                <div class="upload-preview" id="pdfPreview" style="display: none;">
+                                    <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-pdf fa-2x text-danger me-3"></i>
+                                            <div>
+                                                <div class="fw-bold" id="pdfFileName"></div>
+                                                <div class="text-muted small" id="pdfFileSize"></div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                            onclick="removePdf()">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="progress mt-2" id="pdfProgress" style="display: none;">
+                                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aperçu du module -->
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Cette leçon sera ajoutée au module: <strong id="moduleNamePreview"></strong>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Annuler
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus me-1"></i>Ajouter la leçon
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <style>
         .card-module {
             transition: transform 0.2s, box-shadow 0.2s;
@@ -355,6 +510,58 @@
 
         .card-module .card-header {
             padding: 12px 15px 0;
+        }
+
+
+
+
+
+
+        .upload-zone {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: #0d6efd;
+            background-color: #f8f9ff;
+        }
+
+        .upload-placeholder {
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-placeholder:hover .upload-icon i {
+            color: #0d6efd !important;
+            transform: scale(1.1);
+            transition: all 0.3s ease;
+        }
+
+        .upload-preview {
+            display: none;
+        }
+
+        .modal-lg {
+            max-width: 600px;
+        }
+
+        @media (max-width: 768px) {
+            .upload-placeholder {
+                padding: 1.5rem;
+                min-height: 100px;
+            }
+
+            .upload-placeholder .fa-3x {
+                font-size: 2rem !important;
+            }
         }
     </style>
 
@@ -698,5 +905,264 @@
                 document.body.style.paddingRight = '';
             }, 150);
         });
+
+
+        // Gestion de l'ouverture du modal
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.btn-success[title="Ajouter une leçon"]')) {
+                const btn = e.target.closest('.btn-success');
+                const moduleCard = btn.closest('.module-card');
+                const moduleId = moduleCard.dataset.moduleId;
+                const moduleTitle = moduleCard.querySelector('.module-title').textContent;
+
+                // Remplir les informations du module
+                document.getElementById('lessonModuleId').value = moduleId;
+                document.getElementById('moduleNamePreview').textContent = moduleTitle;
+
+                // Réinitialiser le formulaire
+                resetLessonForm();
+
+                // Ouvrir le modal
+                const addLessonModal = new bootstrap.Modal(document.getElementById('addLessonModal'));
+                addLessonModal.show();
+            }
+        });
+
+        // Gestion des uploads de fichiers
+        document.getElementById('lessonVideo').addEventListener('change', function(e) {
+            handleFileSelection(e, 'video');
+        });
+
+        document.getElementById('lessonPdf').addEventListener('change', function(e) {
+            handleFileSelection(e, 'pdf');
+        });
+
+        function handleFileSelection(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Vérification de la taille
+            const maxSize = type === 'video' ? 100 * 1024 * 1024 : 10 * 1024 * 1024; // 100MB pour vidéo, 10MB pour PDF
+            if (file.size > maxSize) {
+                alert(`Le fichier est trop volumineux. Taille maximale: ${type === 'video' ? '100MB' : '10MB'}`);
+                event.target.value = '';
+                return;
+            }
+
+            // Afficher l'aperçu
+            showFilePreview(file, type);
+        }
+
+        function showFilePreview(file, type) {
+            const fileName = document.getElementById(`${type}FileName`);
+            const fileSize = document.getElementById(`${type}FileSize`);
+            const preview = document.getElementById(`${type}Preview`);
+            const placeholder = document.querySelector(`#${type}UploadZone .upload-placeholder`);
+
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+
+            placeholder.style.display = 'none';
+            preview.style.display = 'block';
+        }
+
+        function removeVideo() {
+            document.getElementById('lessonVideo').value = '';
+            document.getElementById('videoPreview').style.display = 'none';
+            document.querySelector('#videoUploadZone .upload-placeholder').style.display = 'flex';
+        }
+
+        function removePdf() {
+            document.getElementById('lessonPdf').value = '';
+            document.getElementById('pdfPreview').style.display = 'none';
+            document.querySelector('#pdfUploadZone .upload-placeholder').style.display = 'flex';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function resetLessonForm() {
+            document.getElementById('addLessonForm').reset();
+
+            // Réinitialiser les previews
+            document.getElementById('videoPreview').style.display = 'none';
+            document.getElementById('pdfPreview').style.display = 'none';
+            document.querySelector('#videoUploadZone .upload-placeholder').style.display = 'flex';
+            document.querySelector('#pdfUploadZone .upload-placeholder').style.display = 'flex';
+
+            // Réinitialiser les progress bars
+            document.getElementById('videoProgress').style.display = 'none';
+            document.getElementById('pdfProgress').style.display = 'none';
+        }
+
+        document.getElementById('addLessonForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // VALIDATION PERSONNALISÉE AVANT SOUMISSION
+            const videoFile = document.getElementById('lessonVideo').files[0];
+            const titleValue = document.getElementById('lessonTitle').value.trim();
+
+            // Vérifications personnalisées
+            if (!titleValue) {
+                showAlert('danger', 'Veuillez saisir un titre pour la leçon.');
+                document.getElementById('lessonTitle').focus();
+                return;
+            }
+
+            if (!videoFile) {
+                showAlert('danger', 'Veuillez sélectionner une vidéo pour la leçon.');
+                // Déclencher le clic sur la zone d'upload pour attirer l'attention
+                document.querySelector('#videoUploadZone .upload-placeholder').click();
+                return;
+            }
+
+            // Vérification de la taille des fichiers
+            if (videoFile && videoFile.size > 100 * 1024 * 1024) {
+                showAlert('danger', 'La vidéo ne doit pas dépasser 100MB.');
+                return;
+            }
+
+            const pdfFile = document.getElementById('lessonPdf').files[0];
+            if (pdfFile && pdfFile.size > 10 * 1024 * 1024) {
+                showAlert('danger', 'Le fichier PDF ne doit pas dépasser 10MB.');
+                return;
+            }
+
+            // Si on arrive ici, tout est validé, on peut procéder
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            const moduleId = document.getElementById('lessonModuleId').value;
+
+            // Désactiver le bouton et afficher le loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Création en cours...';
+
+            // Afficher les progress bars
+            document.getElementById('videoProgress').style.display = 'block';
+            if (pdfFile) {
+                document.getElementById('pdfProgress').style.display = 'block';
+            }
+
+            // Simuler la progression
+            simulateProgress('video');
+            if (pdfFile) {
+                simulateProgress('pdf');
+            }
+
+            // Envoyer la requête
+            fetch(`/dashboard/modules/${moduleId}/lessons`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+
+
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        // 1. Fermer le modal d'abord
+                        const modalElement = document.getElementById('addLessonModal');
+                        const closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+                        if (closeButton) {
+                            closeButton.click();
+                        }
+
+                        // 2. Afficher le message de succès
+                        showAlert('success', data.message || 'Leçon ajoutée avec succès !');
+
+                        // 3. Attendre un peu que le modal se ferme, puis actualiser la page
+                        setTimeout(() => {
+                            // Option A : Actualiser toute la page
+                            window.location.reload();
+
+                            // Option B : Rediriger vers la même page (alternative)
+                            // window.location.href = window.location.href;
+                        }, 1000); // Attendre 1 seconde pour voir le message de succès
+
+                    } else {
+                        showAlert('danger', data.message || 'Erreur lors de l\'ajout de la leçon.');
+                    }
+                })
+
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showAlert('danger', 'Une erreur est survenue lors de l\'ajout de la leçon.');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+
+                    // Masquer les progress bars
+                    document.getElementById('videoProgress').style.display = 'none';
+                    document.getElementById('pdfProgress').style.display = 'none';
+                });
+        });
+
+
+        function simulateProgress(type) {
+            const progressBar = document.querySelector(`#${type}Progress .progress-bar`);
+            let progress = 0;
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 95) progress = 95;
+
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = Math.round(progress) + '%';
+
+                if (progress >= 95) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progressBar.style.width = '100%';
+                        progressBar.textContent = '100%';
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        // Nettoyage lors de la fermeture du modal
+        document.getElementById('addLessonModal').addEventListener('hidden.bs.modal', function() {
+            resetLessonForm();
+        });
+
+        function updateLessonCount(moduleId, count) {
+            // Si vous voulez afficher le nombre de leçons sur les cartes modules
+            const moduleCards = document.querySelectorAll(`[data-module-id="${moduleId}"]`);
+
+            moduleCards.forEach(card => {
+                let countBadge = card.querySelector('.lessons-count');
+                const titleElement = card.querySelector('.module-title');
+
+                // Vérifier que titleElement existe avant d'essayer d'y ajouter quelque chose
+                if (!titleElement) {
+                    console.warn('Élément .module-title non trouvé dans la carte module');
+                    return;
+                }
+
+                if (!countBadge) {
+                    // Créer le badge s'il n'existe pas
+                    countBadge = document.createElement('span');
+                    countBadge.className = 'badge bg-success lessons-count ms-2';
+                    titleElement.appendChild(countBadge);
+                }
+
+                // Mettre à jour le texte du badge
+                countBadge.textContent = `${count} leçon${count > 1 ? 's' : ''}`;
+            });
+        }
     </script>
 @endsection
