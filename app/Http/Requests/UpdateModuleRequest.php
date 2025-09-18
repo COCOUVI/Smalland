@@ -23,7 +23,7 @@ class UpdateModuleRequest extends FormRequest
     {
         return [
             'titre' => 'required|string|max:255',
-            'ordre' => 'nullable|integer|min:1',
+            // 'ordre' => 'nullable|integer|min:1',
         ];
     }
 
@@ -35,8 +35,8 @@ class UpdateModuleRequest extends FormRequest
         return [
             'titre.required' => 'Le titre du module est requis.',
             'titre.max' => 'Le titre ne doit pas dépasser 255 caractères.',
-            'ordre.integer' => 'L\'ordre doit être un nombre entier.',
-            'ordre.min' => 'L\'ordre doit être au moins 1.',
+            // 'ordre.integer' => 'L\'ordre doit être un nombre entier.',
+            // 'ordre.min' => 'L\'ordre doit être au moins 1.',
         ];
     }
 }
