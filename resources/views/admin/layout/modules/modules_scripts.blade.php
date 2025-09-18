@@ -173,89 +173,57 @@
     /* ========================================
        GESTION DES LEÇONS
     ======================================== */
-    // Gestion de l'ouverture du modal d'ajout de leçon
-    // document.addEventListener('click', function (e) {
-    //     if (e.target.closest('.btn-success[title="Ajouter une leçon"]')) {
-    //         const btn = e.target.closest('.btn-success');
-    //         const moduleCard = btn.closest('.module-card');
-    //         const moduleId = moduleCard.dataset.moduleId;
-    //         const moduleTitle = moduleCard.querySelector('.module-title').textContent;
+    document.addEventListener('DOMContentLoaded', function () {
+        const addLessonModalEl = document.getElementById('addLessonModal');
+        if (!addLessonModalEl) return;
 
-    //         document.getElementById('lessonModuleId').value = moduleId;
-    //         document.getElementById('moduleNamePreview').textContent = moduleTitle;
+        // Instancier UNE SEULE FOIS
+        const addLessonModalInstance = new bootstrap.Modal(addLessonModalEl);
 
-    //         resetLessonForm();
+        // ✅ GESTION DE L'OUVERTURE
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.btn-success[title="Ajouter une leçon"]');
+            if (!btn) return;
 
-    //         // const addLessonModal = new bootstrap.Modal(document.getElementById('addLessonModal'));
-    //         // addLessonModal.show();
-    //         const addLessonModal = addLessonModalInstance.show();
+            const moduleCard = btn.closest('.module-card');
+            const moduleId = moduleCard.dataset.moduleId;
+            const moduleTitle = moduleCard.querySelector('.module-title').textContent;
 
-    //     }
-    // });
+            document.getElementById('lessonModuleId').value = moduleId;
+            document.getElementById('moduleNamePreview').textContent = moduleTitle;
 
+            resetLessonForm();
 
+            addLessonModalInstance.show();
+        });
 
+        // ✅ AVANT LA FERMETURE : Retirer le focus pour éviter aria-hidden error
+        addLessonModalEl.addEventListener('hide.bs.modal', function () {
+            if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+            }
+        });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const addLessonModalEl = document.getElementById('addLessonModal');
-    if (!addLessonModalEl) return;
+        // ✅ APRÈS FERMETURE : Réinitialiser le formulaire
+        addLessonModalEl.addEventListener('hidden.bs.modal', function () {
+            resetLessonForm();
+        });
 
-    // Instancier UNE SEULE FOIS
-    const addLessonModalInstance = new bootstrap.Modal(addLessonModalEl);
+        // ✅ GESTION DES BOUTONS "Annuler" / "X"
+        addLessonModalEl.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btnClose => {
+            btnClose.addEventListener('click', () => {
+                addLessonModalInstance.hide();
+            });
+        });
 
-    // ✅ GESTION DE L’OUVERTURE
-    document.addEventListener('click', function(e) {
-        const btn = e.target.closest('.btn-success[title="Ajouter une leçon"]');
-        if (!btn) return;
-
-        const moduleCard = btn.closest('.module-card');
-        const moduleId = moduleCard.dataset.moduleId;
-        const moduleTitle = moduleCard.querySelector('.module-title').textContent;
-
-        document.getElementById('lessonModuleId').value = moduleId;
-        document.getElementById('moduleNamePreview').textContent = moduleTitle;
-
-        resetLessonForm();
-
-        addLessonModalInstance.show();
-    });
-
-    // ✅ AVANT LA FERMETURE : Retirer le focus pour éviter aria-hidden error
-    addLessonModalEl.addEventListener('hide.bs.modal', function () {
-        if (document.activeElement instanceof HTMLElement) {
-            document.activeElement.blur();
-            console.log('Focus removed before closing addLessonModal');
-        }
-    });
-
-    // ✅ APRÈS FERMETURE : Réinitialiser le formulaire
-    addLessonModalEl.addEventListener('hidden.bs.modal', function () {
-        resetLessonForm();
-        console.log('addLessonModal closed and reset (hidden event)');
-    });
-
-    // ✅ GESTION DES BOUTONS “Annuler” / “X”
-    addLessonModalEl.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btnClose => {
-        btnClose.addEventListener('click', () => {
-            console.log('Close clicked for addLessonModal');
-            addLessonModalInstance.hide();  // Optionnel si data-bs-dismiss fonctionne déjà
+        // ✅ RÉFOCUS SUR LE BOUTON AJOUT APRÈS FERMETURE
+        addLessonModalEl.addEventListener('hidden.bs.modal', function () {
+            const triggerBtn = document.querySelector('.btn-success[title="Ajouter une leçon"]');
+            if (triggerBtn instanceof HTMLElement) {
+                triggerBtn.focus();
+            }
         });
     });
-
-    // ✅ RÉFOCUS SUR LE BOUTON AJOUT APRÈS FERMETURE
-    addLessonModalEl.addEventListener('hidden.bs.modal', function() {
-        const triggerBtn = document.querySelector('.btn-success[title="Ajouter une leçon"]');
-        if (triggerBtn instanceof HTMLElement) {
-            triggerBtn.focus();
-        }
-    });
-});
-
-
-
-
-
-
 
     // Gestion des uploads de fichiers
     document.getElementById('lessonVideo').addEventListener('change', function (e) {
@@ -551,22 +519,8 @@ document.addEventListener('DOMContentLoaded', function () {
     /* ========================================
        ÉVÉNEMENTS ET INITIALISATION
     ======================================== */
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const cards = document.querySelectorAll('.card-module');
-    //     cards.forEach((card, index) => {
-    //         card.style.opacity = '0';
-    //         card.style.transform = 'translateY(20px)';
-    //         card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-
-    //         setTimeout(() => {
-    //             card.style.opacity = '1';
-    //             card.style.transform = 'translateY(0)';
-    //         }, 100 + (index * 100));
-    //     });
-    // });
-
     document.addEventListener('DOMContentLoaded', function () {
-        // 🌟 Animation des cards
+        // Animation des cards
         const cards = document.querySelectorAll('.card-module');
         cards.forEach((card, index) => {
             card.style.opacity = '0';
@@ -579,50 +533,36 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 100 + (index * 100));
         });
 
-        // 🌟 Gestion des modals (focus / reset / debug)
+        // Gestion des modals (focus / reset)
         const addLessonModal = document.getElementById('addLessonModal');
 
         // Retire le focus actif avant la fermeture du modal pour éviter l'erreur aria-hidden
         addLessonModal.addEventListener('hide.bs.modal', function () {
             if (document.activeElement instanceof HTMLElement) {
                 document.activeElement.blur();
-                console.log('Focus removed from:', document.activeElement);
             }
         });
 
         // Réinitialisation du formulaire quand la modale est complètement fermée
         addLessonModal.addEventListener('hidden.bs.modal', function () {
             resetLessonForm();
-            console.log('addLessonModal closed and reset');
-        });
-
-        // Debug : clique sur X ou Annuler
-        document.querySelector('#addLessonModal .btn-close')?.addEventListener('click', () => {
-            console.log('X clicked');
-        });
-
-        document.querySelector('#addLessonModal .btn-secondary[data-bs-dismiss="modal"]')?.addEventListener('click', () => {
-            console.log('Annuler clicked');
         });
 
         ['#editModuleModal', '#deleteModuleModal', '#addLessonModal'].forEach(modalSelector => {
-    const modalElement = document.querySelector(modalSelector);
-    if (!modalElement) return;
+            const modalElement = document.querySelector(modalSelector);
+            if (!modalElement) return;
 
-    // Avant fermeture, enlever le focus pour éviter aria-hidden errors
-    modalElement.addEventListener('hide.bs.modal', function () {
-        if (document.activeElement instanceof HTMLElement) {
-            document.activeElement.blur();
-            console.log(`Focus removed before closing ${modalSelector}`);
-        }
-    });
-});
+            // Avant fermeture, enlever le focus pour éviter aria-hidden errors
+            modalElement.addEventListener('hide.bs.modal', function () {
+                if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                }
+            });
+        });
 
-
-        // 🌟 Optionnel : instancier le modal UNE SEULE FOIS si tu utilises .show()
+        // Instancier le modal UNE SEULE FOIS
         window.addLessonModalInstance = new bootstrap.Modal(addLessonModal);
     });
-
 
     // Nettoyage des modals
     document.getElementById('deleteModuleModal').addEventListener('hidden.bs.modal', function () {
@@ -664,7 +604,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('addLessonModal')?.addEventListener('hidden.bs.modal', () => {
         document.querySelector('[data-bs-target="#addLessonModal"]')?.focus();
     });
-
 
     // Exposition des fonctions globales pour les boutons inline
     window.removeVideo = removeVideo;
