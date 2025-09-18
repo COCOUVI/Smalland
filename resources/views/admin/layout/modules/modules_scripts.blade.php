@@ -342,9 +342,10 @@
                     closeModal('addLessonModal');
                     showAlert('success', data.message || 'Leçon ajoutée avec succès !');
 
+                    // ACTUALISATION PARTIELLE - REMPLACEMENT DU RELOAD COMPLET
                     setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                        updateLessonsList(moduleId);
+                    }, 500);
                 } else {
                     showAlert('danger', data.message || 'Erreur lors de l\'ajout de la leçon.');
                 }
@@ -394,6 +395,65 @@
                 card.style.boxShadow = '';
             }, 600);
         });
+    }
+
+    // NOUVELLE FONCTION: Actualisation de la liste des leçons
+    function updateLessonsList(moduleId) {
+        fetch(`/dashboard/modules/${moduleId}/lessons`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Mettre à jour le conteneur des leçons
+                    const lessonsContainer = document.querySelector(`.module-card[data-module-id="${moduleId}"] .lessons-container`);
+                    if (lessonsContainer) {
+                        // Générer le HTML pour les leçons
+                        let lessonsHtml = '';
+
+                        if (data.lessons && data.lessons.length > 0) {
+                            data.lessons.forEach(lesson => {
+                                lessonsHtml += `
+                                    <div class="lesson-item mb-2 p-2 border rounded d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-play-circle text-primary me-2"></i>
+                                            <span>${lesson.titre}</span>
+                                        </div>
+                                        <div class="lesson-actions">
+                                            <a href="/storage/${lesson.video_url}" target="_blank" class="btn btn-sm btn-outline-primary me-1" title="Voir la vidéo">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            ${lesson.pdf_url ? `
+                                                <a href="/storage/${lesson.pdf_url}" target="_blank" class="btn btn-sm btn-outline-info me-1" title="Voir le PDF">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </a>
+                                            ` : ''}
+                                            <button class="btn btn-sm btn-outline-danger" title="Supprimer la leçon" onclick="deleteLesson(${lesson.id})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            lessonsHtml = '<p class="text-muted">Aucune leçon pour ce module.</p>';
+                        }
+
+                        lessonsContainer.innerHTML = lessonsHtml;
+
+                        // Mettre à jour le compteur de leçons
+                        const lessonCountBadge = document.querySelector(`.module-card[data-module-id="${moduleId}"] .lesson-count`);
+                        if (lessonCountBadge) {
+                            lessonCountBadge.textContent = data.lessons.length;
+                        }
+                    }
+                } else {
+                    console.error('Erreur lors de la récupération des leçons');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la mise à jour des leçons:', error);
+                // Fallback: rechargement complet en cas d'erreur
+                window.location.reload();
+            });
     }
 
     function showAlert(type, message) {

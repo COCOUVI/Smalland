@@ -307,6 +307,7 @@ class AdminController extends Controller
             'module' => $module
         ]);
     }
+    
 
     /**
      * Supprimer une leçon
