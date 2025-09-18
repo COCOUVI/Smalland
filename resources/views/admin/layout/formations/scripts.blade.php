@@ -181,45 +181,32 @@
         });
 
         // === GÉRER MODULES (AJOUT / ÉDITION / SUPPRESSION DIFFÉRÉE) ===
-        $('.addModuleBtn').on('click', function () {
-            const formationId = $(this).data('formation-id');
-            const formationTitle = $(this).data('formation-title');
+    $('.addModuleBtn').on('click', function () {
+        const formationId = $(this).data('formation-id');
+        const formationTitle = $(this).data('formation-title');
 
-            const form = $('#addModuleForm');
-            form.attr('action', `/dashboard/formations/${formationId}/modules`);
-            $('#addModuleModalLabel').text("Gérer les modules de : " + formationTitle);
-            $('#modulesContainer').html('');
-            $('#ajaxAlert').html('');
+        const form = $('#addModuleForm');
+        form.attr('action', `/dashboard/formations/${formationId}/modules`);
+        $('#addModuleModalLabel').text("Modules : " + formationTitle);
+        $('#modulesContainer').html('');
+        $('#ajaxAlert').html('');
 
-            // Charger les modules existants
-            $.get(`/dashboard/formations/${formationId}/modules`, function (modules) {
-                if (modules.length > 0) {
-                    modules.forEach(module => {
-                        $('#modulesContainer').append(`
-                            <div class="module-item" data-module-id="${module.id}">
-                                <div class="module-input-group">
-                                    <input type="text" name="modules_existing[${module.id}]" value="${module.titre}" class="module-input" required>
-                                    <button type="button" class="remove-module-btn remove-existing-module" data-module-id="${module.id}" title="Supprimer">×</button>
-                                </div>
+        // Charger les modules existants
+        $.get(`/dashboard/formations/${formationId}/modules`, function (modules) {
+            if (modules.length > 0) {
+                modules.forEach(module => {
+                    $('#modulesContainer').append(`
+                        <div class="module-item" data-module-id="${module.id}">
+                            <div class="module-input-group">
+                                <input type="text" name="modules_existing[${module.id}]" value="${module.titre}" class="module-input" required>
+                                <button type="button" class="remove-module-btn remove-existing-module" data-module-id="${module.id}" title="Supprimer">×</button>
                             </div>
-                        `);
-                    });
-                }
-
-                // Champ vide pour nouveaux modules
-                $('#modulesContainer').append(`
-                    <div class="module-item">
-                        <div class="module-input-group">
-                            <input type="text" name="modules_new[]" class="module-input" placeholder="Nouveau module">
-                            <button type="button" class="remove-module-btn remove-module" title="Supprimer">×</button>
                         </div>
-                    </div>
-                `);
-            });
-        });
+                    `);
+                });
+            }
 
-        // ➕ Ajouter un champ vide
-        $('#addModuleField').on('click', function () {
+            // Champ vide pour nouveaux modules
             $('#modulesContainer').append(`
                 <div class="module-item">
                     <div class="module-input-group">
@@ -229,11 +216,31 @@
                 </div>
             `);
         });
+    });
 
-        // ❌ Supprimer un champ nouveau module (frontend uniquement)
-        $(document).on('click', '.remove-module', function () {
-            $(this).closest('.module-item').remove();
-        });
+    // ➕ Ajouter un champ vide
+    $('#addModuleField').on('click', function () {
+        $('#modulesContainer').append(`
+            <div class="module-item">
+                <div class="module-input-group">
+                    <input type="text" name="modules_new[]" class="module-input" placeholder="Nouveau module">
+                    <button type="button" class="remove-module-btn remove-module" title="Supprimer">×</button>
+                </div>
+            </div>
+        `);
+    });
+
+    // Supprimer un champ module
+    $(document).on('click', '.remove-module-btn', function() {
+        const $moduleItem = $(this).closest('.module-item');
+
+        // Animation de suppression
+        $moduleItem.addClass('fade-out');
+
+        setTimeout(function() {
+            $moduleItem.remove();
+        }, 300);
+    });
 
         // ❌ Marquer un module existant pour suppression
         $(document).on('click', '.remove-existing-module', function () {

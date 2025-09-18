@@ -122,12 +122,11 @@
 <div class="modal fade" id="addModuleModal" tabindex="-1" aria-labelledby="addModuleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-
             <!-- En-tête du modal -->
             <div class="modal-header">
                 <h5 class="modal-title" id="addModuleModalLabel">Ajouter un module</h5>
                 <button type="button" class="modal-close" data-bs-dismiss="modal" aria-label="Fermer">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
@@ -137,7 +136,6 @@
             <!-- Formulaire -->
             <form id="addModuleForm" method="POST">
                 @csrf
-
                 <!-- Corps du modal -->
                 <div class="modal-body">
                     <div id="ajaxAlert"></div>
@@ -147,11 +145,9 @@
                         <!-- Module unique -->
                         <div class="module-item">
                             <div class="module-input-group">
-                                <input type="text" name="titres[]" class="module-input" placeholder="Titre du module"
-                                    required>
+                                <input type="text" name="titres[]" class="module-input" placeholder="Titre du module" required>
                                 <button type="button" class="remove-module-btn" title="Supprimer ce module">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
@@ -162,8 +158,7 @@
 
                     <!-- Bouton Ajouter -->
                     <button type="button" id="addModuleField" class="add-module-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
@@ -174,10 +169,9 @@
                 <!-- Pied du modal -->
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn-primary">Enregistrer tous les modules</button>
+                    <button type="submit" class="btn-primary">Enregistrer</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>

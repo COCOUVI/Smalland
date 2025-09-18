@@ -306,4 +306,150 @@
 }
 
 
+
+
+#addModuleModal .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        #addModuleModal .modal-header {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 24px;
+            background: #fff;
+        }
+
+        #addModuleModal .modal-title {
+            font-weight: 500;
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+        #addModuleModal .modal-close {
+            background: none;
+            border: none;
+            padding: 4px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        #addModuleModal .modal-close:hover {
+            opacity: 1;
+        }
+
+        #addModuleModal .modal-body {
+            padding: 24px;
+        }
+
+        #addModuleModal #modulesContainer {
+            margin-bottom: 16px;
+        }
+
+        #addModuleModal .module-item {
+            margin-bottom: 12px;
+        }
+
+        #addModuleModal .module-input-group {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        #addModuleModal .module-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            background: #fafafa;
+        }
+
+        #addModuleModal .module-input:focus {
+            outline: none;
+            border-color: #888;
+            background: #fff;
+        }
+
+        #addModuleModal .remove-module-btn {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        #addModuleModal .remove-module-btn:hover {
+            color: #ff4d4d;
+        }
+
+        #addModuleModal #addModuleField {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: 1px dashed #ccc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        #addModuleModal #addModuleField:hover {
+            border-color: #888;
+            color: #333;
+        }
+
+        #addModuleModal .modal-footer {
+            border-top: 1px solid #f0f0f0;
+            padding: 20px 24px;
+            background: #fff;
+        }
+
+        #addModuleModal .btn-secondary {
+            background: none;
+            border: 1px solid #e0e0e0;
+            color: #666;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        #addModuleModal .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+
+        #addModuleModal .btn-primary {
+            background: #333;
+            border: none;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        #addModuleModal .btn-primary:hover {
+            background: #000;
+        }
+
+        #addModuleModal #ajaxAlert {
+            margin-bottom: 16px;
+        }
+
+        /* Animation pour la suppression des modules */
+        .module-item.fade-out {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
 </style>
