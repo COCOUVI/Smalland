@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FormationRequest;
 use App\Http\Requests\StoreModuleRequest;
 use App\Http\Requests\UpdateFormationRequest;
+use App\Http\Requests\UpdateModuleRequest;
 use App\Models\Formation;
 use App\Models\Module;
 use Illuminate\Http\Request;
@@ -163,11 +164,56 @@ class AdminController extends Controller
         return response()->json($modules);
     }
 
-    public function deleteModule($moduleId)
-    {
+    // public function deleteModule($moduleId)
+    // {
+    //     $module = Module::findOrFail($moduleId);
+    //     $module->delete();
+
+    //     return response()->json(['success' => true]);
+    // }
+
+
+public function deleteModule($moduleId)
+{
+    try {
         $module = Module::findOrFail($moduleId);
         $module->delete();
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Module supprimé avec succès.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la suppression du module.'
+        ], 500);
+    }
+}
+
+    public function listModules()
+    {
+        $modules = Module::with('formation')->paginate(10);
+        return view('admin.layout.modules.list_modules', compact('modules'));
+    }
+
+     public function updateModule(UpdateModuleRequest $request, Module $module)
+    {
+        $validated = $request->validated();
+
+        $module->titre = $validated['titre'];
+        $module->ordre = $validated['ordre'] ?? $module->ordre;
+        $module->save();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Module mis à jour avec succès.',
+                'module' => $module
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Module mis à jour avec succès.');
     }
 }

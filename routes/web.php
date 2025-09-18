@@ -29,8 +29,10 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::delete('/delete_formation/{formation}', [AdminController::class, "DeleteFormation"])->name('delete.formation');
 
     // MODULES
-    Route::get('/formations/{formation}/modules', [AdminController::class, 'getModules'])->name('modules.get'); // ✅ GET AVANT
+    Route::get('/formations/{formation}/modules', [AdminController::class, 'getModules'])->name('modules.get');
+    Route::get('/modules', [AdminController::class, 'listModules'])->name('modules.list'); // Nouvelle route pour la liste
     Route::post('/formations/{formation}/modules', [AdminController::class, 'AddModule'])->name('modules.store');
+    Route::put('/modules/{module}', [AdminController::class, 'updateModule'])->name('modules.update'); // Nouvelle route pour modifier
     Route::delete('/modules/{module}', [AdminController::class, 'deleteModule'])->name('modules.delete');
 });
 
