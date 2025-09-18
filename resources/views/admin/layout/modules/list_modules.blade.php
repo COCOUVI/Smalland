@@ -9,7 +9,7 @@
             </a>
         </div>
 
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -43,7 +43,7 @@
                                         <div class="text-muted small">
                                             <div><i class="fas fa-calendar-plus me-1"></i> Créé le:
                                                 {{ $module->created_at->format('d/m/Y') }}</div>
-                                            @if($module->updated_at != $module->created_at)
+                                            @if ($module->updated_at != $module->created_at)
                                                 <div><i class="fas fa-calendar-check me-1"></i> Modifié le:
                                                     {{ $module->updated_at->format('d/m/Y') }}</div>
                                             @endif
@@ -84,7 +84,8 @@
             <div class="d-md-none">
                 <div id="modules-container-mobile">
                     @forelse($modules as $module)
-                        <div class="card card-module mb-3 shadow-sm border-0 module-card" data-module-id="{{ $module->id }}">
+                        <div class="card card-module mb-3 shadow-sm border-0 module-card"
+                            data-module-id="{{ $module->id }}">
                             <div
                                 class="card-header bg-transparent border-0 pb-0 d-flex justify-content-between align-items-center">
                                 <span class="badge bg-secondary">ID: {{ $module->id }}</span>
@@ -99,7 +100,7 @@
                                     <div class="text-muted small">
                                         <div><i class="fas fa-calendar-plus me-1"></i> Créé le:
                                             {{ $module->created_at->format('d/m/Y') }}</div>
-                                        @if($module->updated_at != $module->created_at)
+                                        @if ($module->updated_at != $module->created_at)
                                             <div><i class="fas fa-calendar-check me-1"></i> Modifié le:
                                                 {{ $module->updated_at->format('d/m/Y') }}</div>
                                         @endif
@@ -133,7 +134,7 @@
         </div>
 
         <!-- Pagination -->
-        @if($modules->hasPages())
+        @if ($modules->hasPages())
             <div class="d-flex justify-content-center mt-4">
                 {{ $modules->links('pagination::bootstrap-5') }}
             </div>
@@ -141,7 +142,8 @@
     </div>
 
     <!-- Modal pour modifier un module -->
-    <div class="modal fade" id="editModuleModal" tabindex="-1" aria-labelledby="editModuleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editModuleModal" tabindex="-1" aria-labelledby="editModuleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -364,7 +366,7 @@
         // Gestion du modal d'édition
         const editModuleModal = document.getElementById('editModuleModal');
         if (editModuleModal) {
-            editModuleModal.addEventListener('show.bs.modal', function (event) {
+            editModuleModal.addEventListener('show.bs.modal', function(event) {
                 const button = event.relatedTarget;
                 const moduleId = button.getAttribute('data-module-id');
                 const moduleTitre = button.getAttribute('data-module-titre');
@@ -384,7 +386,7 @@
 
 
         // VERSION SIMPLIFIÉE - Sans getInstance
-        document.getElementById('editModuleForm').addEventListener('submit', function (e) {
+        document.getElementById('editModuleForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const form = this;
@@ -403,22 +405,42 @@
             };
 
             fetch(`/dashboard/modules/${moduleId}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(data)
-            })
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(data)
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         // Fermer la modal avec l'approche directe
+                        // const modalElement = document.getElementById('editModuleModal');
+                        // const bsModal = new bootstrap.Modal(modalElement);
+                        // bsModal.hide();
+
                         const modalElement = document.getElementById('editModuleModal');
-                        const bsModal = new bootstrap.Modal(modalElement);
-                        bsModal.hide();
+                        const closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+                        if (closeButton) {
+                            closeButton.click();
+                        } else {
+                            // Méthode 2 : Fermeture manuelle si le bouton n'existe pas
+                            modalElement.style.display = 'none';
+                            modalElement.classList.remove('show');
+                            modalElement.setAttribute('aria-hidden', 'true');
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+
+                            // Supprimer le backdrop
+                            const backdrop = document.querySelector('.modal-backdrop');
+                            if (backdrop) {
+                                backdrop.remove();
+                            }
+                        }
 
                         updateModuleInInterface(moduleId, data.module);
                         showAlert('success', data.message || 'Module mis à jour avec succès !');
@@ -487,7 +509,10 @@
             alertDiv.style.display = 'block';
 
             // Scroll vers le haut pour voir l'alerte
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
 
             // Auto-hide après 5 secondes
             setTimeout(() => {
@@ -505,7 +530,7 @@
         }
 
         // Nettoyer lors de la fermeture de la modal d'édition
-        editModuleModal.addEventListener('hidden.bs.modal', function () {
+        editModuleModal.addEventListener('hidden.bs.modal', function() {
             // Reset du formulaire
             this.querySelector('#editModuleForm').reset();
 
@@ -522,7 +547,7 @@
         // === Code existant pour la suppression (inchangé) ===
         const deleteModuleModal = new bootstrap.Modal(document.getElementById('deleteModuleModal'));
 
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             if (e.target.closest('.btn-delete')) {
                 const btn = e.target.closest('.btn-delete');
                 const moduleId = btn.dataset.moduleId;
@@ -539,7 +564,7 @@
             }
         });
 
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
             if (!moduleToDelete) return;
 
             const confirmBtn = this;
@@ -555,13 +580,14 @@
             });
 
             fetch(`/dashboard/modules/${moduleToDelete.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -635,7 +661,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.card-module');
             cards.forEach((card, index) => {
                 card.style.opacity = '0';
@@ -649,7 +675,7 @@
             });
         });
 
-        document.getElementById('deleteModuleModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('deleteModuleModal').addEventListener('hidden.bs.modal', function() {
             moduleToDelete = null;
 
             const backdrop = document.querySelector('.modal-backdrop');
@@ -661,7 +687,7 @@
             document.body.style.paddingRight = '';
         });
 
-        document.querySelector('#deleteModuleModal [data-bs-dismiss="modal"]').addEventListener('click', function () {
+        document.querySelector('#deleteModuleModal [data-bs-dismiss="modal"]').addEventListener('click', function() {
             setTimeout(() => {
                 const backdrop = document.querySelector('.modal-backdrop');
                 if (backdrop) {
