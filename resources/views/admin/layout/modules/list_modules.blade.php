@@ -66,6 +66,11 @@
                                         <button class="btn btn-sm btn-success btn-action" title="Ajouter une leçon">
                                             <i class="fas fa-plus-circle"></i>
                                         </button>
+                                        <button class="btn btn-sm btn-info btn-action btn-ajouter-quizz"
+                                            title="Ajouter un quizz">
+                                            <a href="{{route('quizz_page.get',$module->id)}}"></a>
+                                            <i class="fas fa-question-circle"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -121,6 +126,16 @@
                                     <button class="btn btn-sm btn-success flex-fill" title="Ajouter une leçon">
                                         <i class="fas fa-plus-circle me-1"></i><span class="d-none d-sm-inline">Leçon</span>
                                     </button>
+                                    <button class="btn btn-sm btn-info flex-fill" title="Ajouter un quizz"
+                                        style="min-width: 120px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                            width="24px" fill="#5f6368">
+                                            <path
+                                                d="M424-320q0-81 14.5-116.5T500-514q41-36 62.5-62.5T584-637q0-41-27.5-68T480-732q-51 0-77.5 31T365-638l-103-44q21-64 77-111t141-47q105 0 161.5 58.5T698-641q0 50-21.5 85.5T609-475q-49 47-59.5 71.5T539-320H424Zm56 240q-33 0-56.5-23.5T400-160q0-33 23.5-56.5T480-240q33 0 56.5 23.5T560-160q0 33-23.5 56.5T480-80Z" />
+                                        </svg>
+                                        <span class="d-none d-sm-inline">Ajouter un quizz</span>
+                                    </button>
+
                                 </div>
                             </div>
                         </div>

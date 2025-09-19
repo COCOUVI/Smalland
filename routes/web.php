@@ -44,6 +44,10 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/modules/{moduleId}/lessons', [AdminController::class, 'addLesson'])->name('lessons.store');
     Route::get('/modules/{moduleId}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
     Route::delete('/lessons/{lessonId}', [AdminController::class, 'deleteLesson'])->name('lessons.delete');
+
+
+    //QUIZZ
+    Route::get('/quizz_add/{module}',[AdminController::class,'ShowQuizz'])->name('quizz_page.get');
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===
