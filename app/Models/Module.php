@@ -28,4 +28,9 @@ class Module extends Model
     {
         return $this->lessons()->count();
     }
+
+    public function quizz()
+    {
+        return $this->hasOne(Quizz::class, 'module_id');
+    }
 }

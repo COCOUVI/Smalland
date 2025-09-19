@@ -556,3 +556,26 @@
     window.removePdf = removePdf;
     window.hideAlert = hideAlert;
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+onclick="window.location.href='{{ route('quiz.manage', $module->id) }}'"

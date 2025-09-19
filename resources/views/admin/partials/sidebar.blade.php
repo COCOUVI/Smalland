@@ -53,7 +53,7 @@
                 <i data-feather="help-circle"></i><span>Quiz</span>
             </a>
             <ul class="dropdown-menu">
-                <li><a class="nav-link" href="quiz-index.html">Liste des Quiz</a></li>
+                {{-- <li><a class="nav-link" href="{{ route('quizz.manage', $module->id) }}">Quizz</a></li> --}}
                 <li><a class="nav-link" href="quiz-create.html">Créer Quiz</a></li>
                 <li><a class="nav-link" href="questions.html">Questions</a></li>
             </ul>

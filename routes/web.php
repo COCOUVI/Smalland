@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\QuizzController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,14 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/modules/{moduleId}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
     Route::delete('/lessons/{lessonId}', [AdminController::class, 'deleteLesson'])->name('lessons.delete');
     Route::get('/lessons', [AdminController::class, 'listLessons'])->name('lessons.list');
+
+
+    //Quiz
+    // Gérer le quizz d’un module (création + questions)
+    Route::get('/modules/{module}/quizz', [QuizzController::class, 'manage'])->name('quizz.manage');
+
+    // Sauvegarder ou ajouter questions
+    Route::post('/modules/{module}/quizz/store', [QuizzController::class, 'storeOrUpdate'])->name('quizz.storeOrUpdate');
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===
