@@ -6,12 +6,12 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // === ROUTES PUBLIQUES ===
-Route::get('/', fn () => view('layouts.index'))->name('accueil');
-Route::get('/espace-etudiant', fn () => view('layouts.space-etudiant.dashboard'))->name('espace');
-Route::get('/formation-detail', fn () => view('layouts.formation.formation-detail'))->name('formation-detail');
-Route::get('/formation-list', fn () => view('layouts.formation.formation-catalog'))->name('formation-list');
-Route::get('/cart', fn () => view('layouts.boutique.cart'))->name('cart');
-Route::get('/test', fn () => view("admin.layout.formations.index"));
+Route::get('/', fn() => view('layouts.index'))->name('accueil');
+Route::get('/espace-etudiant', fn() => view('layouts.space-etudiant.dashboard'))->name('espace');
+Route::get('/formation-detail', fn() => view('layouts.formation.formation-detail'))->name('formation-detail');
+Route::get('/formation-list', fn() => view('layouts.formation.formation-catalog'))->name('formation-list');
+Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
+Route::get('/test', fn() => view("admin.layout.formations.index"));
 
 // === DASHBOARD UTILISATEUR (ACCÈS AUTH) ===
 Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
