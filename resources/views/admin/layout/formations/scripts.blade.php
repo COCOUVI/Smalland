@@ -11,13 +11,13 @@
         });
 
         // === MODAL DESCRIPTION ===
-    $('.viewDescriptionBtn').on('click', function() {
-        const title = $(this).data('title');
-        const description = $(this).data('description');
+        $('.viewDescriptionBtn').on('click', function () {
+            const title = $(this).data('title');
+            const description = $(this).data('description');
 
-        $('#formationTitle').text(title);
-        $('#formationDescription').text(description);
-    });
+            $('#formationTitle').text(title);
+            $('#formationDescription').text(description);
+        });
 
         // === AJOUTER FORMATION ===
         $('#addFormationForm').on('submit', function (e) {
@@ -181,21 +181,21 @@
         });
 
         // === GÉRER MODULES (AJOUT / ÉDITION / SUPPRESSION DIFFÉRÉE) ===
-    $('.addModuleBtn').on('click', function () {
-        const formationId = $(this).data('formation-id');
-        const formationTitle = $(this).data('formation-title');
+        $('.addModuleBtn').on('click', function () {
+            const formationId = $(this).data('formation-id');
+            const formationTitle = $(this).data('formation-title');
 
-        const form = $('#addModuleForm');
-        form.attr('action', `/dashboard/formations/${formationId}/modules`);
-        $('#addModuleModalLabel').text("Modules : " + formationTitle);
-        $('#modulesContainer').html('');
-        $('#ajaxAlert').html('');
+            const form = $('#addModuleForm');
+            form.attr('action', `/dashboard/formations/${formationId}/modules`);
+            $('#addModuleModalLabel').text("Modules : " + formationTitle);
+            $('#modulesContainer').html('');
+            $('#ajaxAlert').html('');
 
-        // Charger les modules existants
-        $.get(`/dashboard/formations/${formationId}/modules`, function (modules) {
-            if (modules.length > 0) {
-                modules.forEach(module => {
-                    $('#modulesContainer').append(`
+            // Charger les modules existants
+            $.get(`/dashboard/formations/${formationId}/modules`, function (modules) {
+                if (modules.length > 0) {
+                    modules.forEach(module => {
+                        $('#modulesContainer').append(`
                         <div class="module-item" data-module-id="${module.id}">
                             <div class="module-input-group">
                                 <input type="text" name="modules_existing[${module.id}]" value="${module.titre}" class="module-input" required>
@@ -203,11 +203,11 @@
                             </div>
                         </div>
                     `);
-                });
-            }
+                    });
+                }
 
-            // Champ vide pour nouveaux modules
-            $('#modulesContainer').append(`
+                // Champ vide pour nouveaux modules
+                $('#modulesContainer').append(`
                 <div class="module-item">
                     <div class="module-input-group">
                         <input type="text" name="modules_new[]" class="module-input" placeholder="Nouveau module">
@@ -215,12 +215,12 @@
                     </div>
                 </div>
             `);
+            });
         });
-    });
 
-    // ➕ Ajouter un champ vide
-    $('#addModuleField').on('click', function () {
-        $('#modulesContainer').append(`
+        // ➕ Ajouter un champ vide
+        $('#addModuleField').on('click', function () {
+            $('#modulesContainer').append(`
             <div class="module-item">
                 <div class="module-input-group">
                     <input type="text" name="modules_new[]" class="module-input" placeholder="Nouveau module">
@@ -228,19 +228,19 @@
                 </div>
             </div>
         `);
-    });
+        });
 
-    // Supprimer un champ module
-    $(document).on('click', '.remove-module-btn', function() {
-        const $moduleItem = $(this).closest('.module-item');
+        // Supprimer un champ module
+        $(document).on('click', '.remove-module-btn', function () {
+            const $moduleItem = $(this).closest('.module-item');
 
-        // Animation de suppression
-        $moduleItem.addClass('fade-out');
+            // Animation de suppression
+            $moduleItem.addClass('fade-out');
 
-        setTimeout(function() {
-            $moduleItem.remove();
-        }, 300);
-    });
+            setTimeout(function () {
+                $moduleItem.remove();
+            }, 300);
+        });
 
         // ❌ Marquer un module existant pour suppression
         $(document).on('click', '.remove-existing-module', function () {

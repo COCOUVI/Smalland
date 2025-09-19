@@ -231,123 +231,122 @@ class AdminController extends Controller
     }
 
 
-
-
-
-
-
-
     public function addLesson(Request $request, $moduleId)
-{
-    $request->validate([
-        'titre' => 'required|string|max:255',
-        'video' => 'required|file|mimes:mp4,avi,mov,wmv|max:102400', // 100MB max
-        'pdf' => 'nullable|file|mimes:pdf|max:10240', // 10MB max
-    ]);
+    {
+        $request->validate([
+            'titre' => 'required|string|max:255',
+            'video' => 'required|file|mimes:mp4,avi,mov,wmv|max:102400', // 100MB max
+            'pdf' => 'nullable|file|mimes:pdf|max:10240', // 10MB max
+        ]);
 
-    try {
-        // Vérifier que le module existe
-        $module = Module::findOrFail($moduleId);
+        try {
+            // Vérifier que le module existe
+            $module = Module::findOrFail($moduleId);
 
-        $lesson = new Lesson();
-        $lesson->titre = $request->input('titre');
-        $lesson->module_id = $moduleId;
+            $lesson = new Lesson();
+            $lesson->titre = $request->input('titre');
+            $lesson->module_id = $moduleId;
 
-        // Gestion de l'upload vidéo
-        if ($request->hasFile('video')) {
-            $videoPath = $request->file('video')->store('lessons/videos', 'public');
-            $lesson->video_url = $videoPath;
+            // Gestion de l'upload vidéo
+            if ($request->hasFile('video')) {
+                $videoPath = $request->file('video')->store('lessons/videos', 'public');
+                $lesson->video_url = $videoPath;
+            }
+
+            // Gestion de l'upload PDF (optionnel)
+            if ($request->hasFile('pdf')) {
+                $pdfPath = $request->file('pdf')->store('lessons/pdfs', 'public');
+                $lesson->pdf_url = $pdfPath;
+            }
+
+            $lesson->save();
+
+            // Compter le nombre de leçons du module
+            $lessonsCount = $module->lessons()->count();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Leçon ajoutée avec succès !',
+                    'lesson' => $lesson,
+                    'lessonsCount' => $lessonsCount
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Leçon ajoutée avec succès !');
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de l\'ajout de la leçon: ' . $e->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de l\'ajout de la leçon: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout de la leçon.');
         }
-
-        // Gestion de l'upload PDF (optionnel)
-        if ($request->hasFile('pdf')) {
-            $pdfPath = $request->file('pdf')->store('lessons/pdfs', 'public');
-            $lesson->pdf_url = $pdfPath;
-        }
-
-        $lesson->save();
-
-        // Compter le nombre de leçons du module
-        $lessonsCount = $module->lessons()->count();
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Leçon ajoutée avec succès !',
-                'lesson' => $lesson,
-                'lessonsCount' => $lessonsCount
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Leçon ajoutée avec succès !');
-
-    } catch (\Exception $e) {
-        Log::error('Erreur lors de l\'ajout de la leçon: ' . $e->getMessage());
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de l\'ajout de la leçon: ' . $e->getMessage()
-            ], 500);
-        }
-
-        return redirect()->back()->with('error', 'Erreur lors de l\'ajout de la leçon.');
     }
-}
 
-/**
- * Obtenir les leçons d'un module
- */
-public function getLessons($moduleId)
-{
-    $module = Module::with('lessons')->findOrFail($moduleId);
-
-    return response()->json([
-        'success' => true,
-        'lessons' => $module->lessons,
-        'module' => $module
-    ]);
-}
-
-/**
- * Supprimer une leçon
- */
-public function deleteLesson($lessonId, Request $request)
-{
-    try {
-        $lesson = Lesson::findOrFail($lessonId);
-
-        // Supprimer les fichiers du stockage
-        if ($lesson->video_url && Storage::disk('public')->exists($lesson->video_url)) {
-            Storage::disk('public')->delete($lesson->video_url);
-        }
-
-        if ($lesson->pdf_url && Storage::disk('public')->exists($lesson->pdf_url)) {
-            Storage::disk('public')->delete($lesson->pdf_url);
-        }
-
-        $lesson->delete();
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Leçon supprimée avec succès.'
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Leçon supprimée avec succès.');
-
-    } catch (\Exception $e) {
-        Log::error('Erreur lors de la suppression de la leçon: ' . $e->getMessage());
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la suppression de la leçon.'
-            ], 500);
-        }
-
-        return redirect()->back()->with('error', 'Erreur lors de la suppression de la leçon.');
+    public function listLessons()
+    {
+        $lessons = Lesson::with(['module.formation'])->paginate(10);
+        return view('admin.layout.lessons.list_lessons', compact('lessons'));
     }
-}
+
+    /**
+     * Obtenir les leçons d'un module
+     */
+    public function getLessons($moduleId)
+    {
+        $module = Module::with('lessons')->findOrFail($moduleId);
+
+        return response()->json([
+            'success' => true,
+            'lessons' => $module->lessons,
+            'module' => $module
+        ]);
+    }
+    
+
+    /**
+     * Supprimer une leçon
+     */
+    public function deleteLesson($lessonId, Request $request)
+    {
+        try {
+            $lesson = Lesson::findOrFail($lessonId);
+
+            // Supprimer les fichiers du stockage
+            if ($lesson->video_url && Storage::disk('public')->exists($lesson->video_url)) {
+                Storage::disk('public')->delete($lesson->video_url);
+            }
+
+            if ($lesson->pdf_url && Storage::disk('public')->exists($lesson->pdf_url)) {
+                Storage::disk('public')->delete($lesson->pdf_url);
+            }
+
+            $lesson->delete();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Leçon supprimée avec succès.'
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Leçon supprimée avec succès.');
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la suppression de la leçon: ' . $e->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la suppression de la leçon.'
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Erreur lors de la suppression de la leçon.');
+        }
+    }
 }

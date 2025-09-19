@@ -6,12 +6,12 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // === ROUTES PUBLIQUES ===
-Route::get('/', fn () => view('layouts.index'))->name('accueil');
-Route::get('/espace-etudiant', fn () => view('layouts.space-etudiant.dashboard'))->name('espace');
-Route::get('/formation-detail', fn () => view('layouts.formation.formation-detail'))->name('formation-detail');
-Route::get('/formation-list', fn () => view('layouts.formation.formation-catalog'))->name('formation-list');
-Route::get('/cart', fn () => view('layouts.boutique.cart'))->name('cart');
-Route::get('/test', fn () => view("admin.layout.formations.index"));
+Route::get('/', fn() => view('layouts.index'))->name('accueil');
+Route::get('/espace-etudiant', fn() => view('layouts.space-etudiant.dashboard'))->name('espace');
+Route::get('/formation-detail', fn() => view('layouts.formation.formation-detail'))->name('formation-detail');
+Route::get('/formation-list', fn() => view('layouts.formation.formation-catalog'))->name('formation-list');
+Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
+Route::get('/test', fn() => view("admin.layout.formations.index"));
 
 // === DASHBOARD UTILISATEUR (ACCÈS AUTH) ===
 Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -37,17 +37,10 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
 
 
     // LESSONS (nouvelles routes)
-    // Route::post('/modules/{module}/lessons', [AdminController::class, 'addLesson'])->name('lessons.store');
-    // Route::get('/modules/{module}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
-    // Route::delete('/lessons/{lesson}', [AdminController::class, 'deleteLesson'])->name('lessons.delete');
-
     Route::post('/modules/{moduleId}/lessons', [AdminController::class, 'addLesson'])->name('lessons.store');
     Route::get('/modules/{moduleId}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
     Route::delete('/lessons/{lessonId}', [AdminController::class, 'deleteLesson'])->name('lessons.delete');
-
-
-    //QUIZZ
-    Route::get('/quizz_add/{module}',[AdminController::class,'ShowQuizz'])->name('quizz_page.get');
+    Route::get('/lessons', [AdminController::class, 'listLessons'])->name('lessons.list');
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===

@@ -39,7 +39,7 @@
                 <li class="{{request()->routeIs('lists_formation') ? 'active':''}}"><a class="nav-link" href="{{route('lists_formation')}}">Liste des Formations</a></li>
                 {{-- <li class="{{request()->routeIs('add_formation_page') ? 'active':''}}"><a class="nav-link" href="{{route('add_formation_page')}}">Ajouter Formation</a></li> --}}
                 <li><a class="nav-link" href="{{ route("modules.list") }}">Modules</a></li>
-                <li><a class="nav-link" href="modules.html">Lecons</a></li>
+                <li><a class="nav-link" href="{{ route("lessons.list") }}">Lecons</a></li>
                 <li><a class="nav-link" href="modules.html">Quizz</a></li>
                 <li><a class="nav-link" href="attestations.html">Attestations</a></li>
                 <li><a class="nav-link" href="modules.html">Paiments-formations</a></li>
