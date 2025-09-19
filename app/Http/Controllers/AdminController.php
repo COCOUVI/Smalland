@@ -13,6 +13,7 @@ use App\Http\Requests\StoreModuleRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UpdateModuleRequest;
 use App\Http\Requests\UpdateFormationRequest;
+use App\Http\Requests\UpdateLessonRequest;
 
 class AdminController extends Controller
 {
@@ -307,7 +308,7 @@ class AdminController extends Controller
             'module' => $module
         ]);
     }
-    
+
 
     /**
      * Supprimer une leçon
@@ -348,5 +349,24 @@ class AdminController extends Controller
 
             return redirect()->back()->with('error', 'Erreur lors de la suppression de la leçon.');
         }
+    }
+    public function updateLesson(UpdateLessonRequest $request, Lesson $lesson)
+    {
+        $lesson->update($request->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Leçon mise à jour avec succès.',
+            'lesson' => $lesson
+        ]);
+    }
+    public function destroyLesson(Lesson $lesson)
+    {
+        $lesson->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Leçon supprimée avec succès.'
+        ]);
     }
 }

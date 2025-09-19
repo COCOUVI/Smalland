@@ -41,6 +41,9 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/modules/{moduleId}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
     Route::delete('/lessons/{lessonId}', [AdminController::class, 'deleteLesson'])->name('lessons.delete');
     Route::get('/lessons', [AdminController::class, 'listLessons'])->name('lessons.list');
+    Route::put('/lessons/{lesson}', [AdminController::class, 'updateLesson'])->name('lessons.update');
+    Route::delete('/lessons/{lesson}', [AdminController::class, 'destroyLesson'])->name('lessons.destroy');
+
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===

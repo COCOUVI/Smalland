@@ -63,7 +63,7 @@
                                         </button>
                                         <button class="btn btn-sm btn-info btn-action btn-ajouter-quizz"
                                             title="Ajouter un quizz">
-                                            <a href="{{route('quizz_page.get',$module->id)}}"></a>
+                                            <a href=""></a>
                                             <i class="fas fa-question-circle"></i>
                                         </button>
                                     </div>
