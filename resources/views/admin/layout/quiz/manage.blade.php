@@ -60,21 +60,25 @@
     <div class="card">
         <div class="card-header">Questions existantes</div>
         <div class="card-body">
-            @foreach($module->quizz->questions as $qIndex => $question)
-                <div class="mb-3">
-                    <strong>Q{{ $qIndex + 1 }}: {{ $question->content }}</strong>
-                    <ul>
-                        @foreach($question->reponses as $rIndex => $rep)
-                            <li>
-                                {{ $rep->content }}
-                                @if($rep->is_correct)
-                                    <span class="badge bg-success">Correct</span>
-                                @endif
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endforeach
+            @if($module->quizz && $module->quizz->questions->count() > 0)
+                @foreach($module->quizz->questions as $qIndex => $question)
+                    <div class="mb-3">
+                        <strong>Q{{ $qIndex + 1 }}: {{ $question->content }}</strong>
+                        <ul>
+                            @foreach($question->reponses as $rIndex => $rep)
+                                <li>
+                                    {{ $rep->content }}
+                                    @if($rep->is_correct)
+                                        <span class="badge bg-success">Correct</span>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endforeach
+            @else
+                <p class="text-muted">Aucune question ajoutée pour le moment.</p>
+            @endif
         </div>
     </div>
     @endif
@@ -82,19 +86,61 @@
 
 @endsection
 
-@section('scripts')
+<!-- ✅ SCRIPT INLINE POUR TEST -->
 <script>
-let reponseCount = 2; // déjà deux réponses par défaut
-document.getElementById('add-reponse').addEventListener('click', function() {
-    const container = document.getElementById('reponses-container');
-    const div = document.createElement('div');
-    div.classList.add('mb-2');
-    div.innerHTML = `
-        <input type="text" name="reponses[]" class="form-control d-inline-block w-75" placeholder="Réponse ${reponseCount + 1}" required>
-        <input type="radio" name="is_correct" value="${reponseCount}" required> Correct
-    `;
-    container.appendChild(div);
-    reponseCount++;
+console.log('Script chargé !'); // Pour vérifier dans la console
+
+// ✅ Attendre que le DOM soit chargé
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM chargé !'); // Pour vérifier dans la console
+
+    let reponseCount = 2; // déjà deux réponses par défaut
+
+    const addButton = document.getElementById('add-reponse');
+    console.log('Bouton trouvé :', addButton); // Pour vérifier dans la console
+
+    if (addButton) { // ✅ Vérifier que l'élément existe
+        console.log('Event listener ajouté !'); // Pour vérifier dans la console
+
+        addButton.addEventListener('click', function() {
+            console.log('Bouton cliqué !'); // Pour vérifier dans la console
+
+            const container = document.getElementById('reponses-container');
+            const div = document.createElement('div');
+            div.classList.add('mb-2');
+            div.innerHTML = `
+                <input type="text" name="reponses[]" class="form-control d-inline-block w-75" placeholder="Réponse ${reponseCount + 1}" required>
+                <input type="radio" name="is_correct" value="${reponseCount}" required> Correct
+                <button type="button" class="btn btn-sm btn-danger ms-2 remove-reponse">×</button>
+            `;
+            container.appendChild(div);
+            reponseCount++;
+        });
+    } else {
+        console.error('Bouton add-reponse non trouvé !');
+    }
+
+    // ✅ Délégation d'événements pour les boutons de suppression
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-reponse')) {
+            const parentDiv = e.target.closest('.mb-2');
+            if (parentDiv) {
+                parentDiv.remove();
+                // Optionnel : réajuster les valeurs des radio buttons
+                updateRadioValues();
+            }
+        }
+    });
+
+    // ✅ Fonction pour réajuster les valeurs des boutons radio
+    function updateRadioValues() {
+        const reponseInputs = document.querySelectorAll('#reponses-container .mb-2');
+        reponseInputs.forEach((div, index) => {
+            const radio = div.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.value = index;
+            }
+        });
+    }
 });
 </script>
-@endsection
