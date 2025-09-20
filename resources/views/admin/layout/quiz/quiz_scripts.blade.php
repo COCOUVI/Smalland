@@ -10,14 +10,12 @@
         if (deleteModalElement) {
             deleteModal = new bootstrap.Modal(deleteModalElement);
 
-            // ✅ CORRECTION: Avant que le modal commence à se cacher
             deleteModalElement.addEventListener('hide.bs.modal', function () {
                 if (document.activeElement instanceof HTMLElement) {
                     document.activeElement.blur();
                 }
             });
 
-            // Gérer la fermeture complète du modal
             deleteModalElement.addEventListener('hidden.bs.modal', function () {
                 currentQuestionIdToDelete = null;
             });
@@ -28,12 +26,10 @@
             const successAlert = document.getElementById('ajax-success');
             const successMessage = document.getElementById('ajax-success-message');
 
-            // Vérifier que les éléments existent avant de les manipuler
             if (successAlert && successMessage) {
                 successMessage.textContent = message;
                 successAlert.style.display = 'block';
 
-                // Masquer automatiquement après 5 secondes
                 setTimeout(() => {
                     successAlert.style.display = 'none';
                 }, 5000);
@@ -45,19 +41,17 @@
             const errorAlert = document.getElementById('ajax-error');
             const errorMessage = document.getElementById('ajax-error-message');
 
-            // Vérifier que les éléments existent avant de les manipuler
             if (errorAlert && errorMessage) {
                 errorMessage.textContent = message;
                 errorAlert.style.display = 'block';
 
-                // Masquer automatiquement après 5 secondes
                 setTimeout(() => {
                     errorAlert.style.display = 'none';
                 }, 5000);
             }
         }
 
-        // ✅ AJOUTER UNE NOUVELLE RÉPONSE
+        // ✅ AJOUTER UNE NOUVELLE RÉPONSE avec checkbox
         const addButton = document.getElementById('add-reponse');
         if (addButton) {
             addButton.addEventListener('click', function() {
@@ -70,7 +64,7 @@
                     <div class="input-group">
                         <input type="text" name="reponses[]" class="form-control" placeholder="Réponse ${reponseCount + 1}" required>
                         <div class="input-group-text">
-                            <input type="radio" name="is_correct" value="${reponseCount}" class="form-check-input" id="${uniqueId}" required>
+                            <input type="checkbox" name="correct_answers[]" value="${reponseCount}" class="form-check-input" id="${uniqueId}">
                             <label class="form-check-label ms-2" for="${uniqueId}">Correct</label>
                         </div>
                         <button type="button" class="btn btn-sm btn-outline-danger remove-reponse">
@@ -80,6 +74,20 @@
                 `;
                 container.appendChild(div);
                 reponseCount++;
+            });
+        }
+
+        // ✅ VALIDATION : Vérifier qu'au moins une réponse est cochée avant soumission
+        const addQuestionForm = document.getElementById('add-question-form');
+        if (addQuestionForm) {
+            addQuestionForm.addEventListener('submit', function(e) {
+                const checkedAnswers = this.querySelectorAll('input[name="correct_answers[]"]:checked');
+
+                if (checkedAnswers.length === 0) {
+                    e.preventDefault();
+                    showErrorMessage('Vous devez cocher au moins une réponse correcte.');
+                    return false;
+                }
             });
         }
 
@@ -96,7 +104,7 @@
                 const parentDiv = button.closest('.mb-3');
                 if (parentDiv && document.querySelectorAll('#reponses-container .mb-3').length > 2) {
                     parentDiv.remove();
-                    updateRadioValues();
+                    updateCheckboxValues();
                 } else {
                     showErrorMessage('Vous devez avoir au moins deux réponses.');
                 }
@@ -124,7 +132,7 @@
                 editDiv.style.display = 'none';
             }
 
-            // Ajouter une réponse en mode édition
+            // Ajouter une réponse en mode édition avec checkbox
             if (e.target.classList.contains('add-edit-reponse')) {
                 const questionForm = e.target.closest('.edit-question-form');
                 const questionId = questionForm.getAttribute('data-question-id');
@@ -137,7 +145,7 @@
                 div.innerHTML = `
                     <input type="text" name="reponses[${newReponseId}]" class="form-control" placeholder="Nouvelle réponse" required>
                     <span class="input-group-text">
-                        <input type="radio" name="correct_reponse" value="${newReponseId}" class="form-check-input mt-0" id="${uniqueEditId}" required>
+                        <input type="checkbox" name="correct_reponses[]" value="${newReponseId}" class="form-check-input mt-0" id="${uniqueEditId}">
                     </span>
                     <span class="input-group-text">
                         <label class="form-check-label mb-0" for="${uniqueEditId}">Correct</label>
@@ -165,7 +173,6 @@
                 const button = e.target.classList.contains('btn-delete-question') ? e.target : e.target.closest('.btn-delete-question');
                 currentQuestionIdToDelete = button.getAttribute('data-question-id');
 
-                // Afficher le modal de confirmation personnalisé
                 if (deleteModal) {
                     deleteModal.show();
                 }
@@ -196,7 +203,6 @@
                     showErrorMessage('Erreur lors de la suppression');
                 })
                 .finally(() => {
-                    // Fermer le modal
                     if (deleteModal) {
                         deleteModal.hide();
                     }
@@ -213,7 +219,7 @@
             currentQuestionIdToDelete = null;
         });
 
-        // ✅ SAUVEGARDER MODIFICATION
+        // ✅ SAUVEGARDER MODIFICATION avec support checkbox multiples
         document.addEventListener('submit', function(e) {
             if (e.target.classList.contains('edit-question-form')) {
                 e.preventDefault();
@@ -221,11 +227,18 @@
                 const questionId = e.target.getAttribute('data-question-id');
                 const formData = new FormData(e.target);
 
+                // Vérifier qu'au moins une réponse est cochée
+                const checkedAnswers = e.target.querySelectorAll('input[name="correct_reponses[]"]:checked');
+                if (checkedAnswers.length === 0) {
+                    showErrorMessage('Vous devez cocher au moins une réponse correcte.');
+                    return false;
+                }
+
                 // Convertir FormData en objet
                 const data = {
                     question_content: formData.get('question_content'),
                     reponses: {},
-                    correct_reponse: formData.get('correct_reponse')
+                    correct_reponses: []
                 };
 
                 // Récupérer toutes les réponses
@@ -233,6 +246,9 @@
                     if (key.startsWith('reponses[')) {
                         const reponseId = key.match(/reponses\[(.+)\]/)[1];
                         data.reponses[reponseId] = value;
+                    }
+                    if (key === 'correct_reponses[]') {
+                        data.correct_reponses.push(value);
                     }
                 }
 
@@ -271,7 +287,7 @@
 
                                     if (data.reponses) {
                                         Object.entries(data.reponses).forEach(([id, reponse], index) => {
-                                            const isCorrect = id == data.correct_reponse;
+                                            const isCorrect = data.correct_reponses.includes(id);
                                             const li = document.createElement('li');
                                             li.classList.add('mb-1');
                                             li.innerHTML = `
@@ -304,14 +320,14 @@
             }
         });
 
-        // ✅ Fonction pour réajuster les valeurs des boutons radio
-        function updateRadioValues() {
+        // ✅ Fonction pour réajuster les valeurs des checkboxes
+        function updateCheckboxValues() {
             const reponseInputs = document.querySelectorAll('#reponses-container .mb-3');
             reponseInputs.forEach((div, index) => {
-                const radio = div.querySelector('input[type="radio"]');
-                if (radio) {
-                    radio.value = index;
-                    radio.id = 'new_correct_' + index;
+                const checkbox = div.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.value = index;
+                    checkbox.id = 'new_correct_' + index;
                     const label = div.querySelector('label');
                     if (label) {
                         label.setAttribute('for', 'new_correct_' + index);
@@ -324,14 +340,6 @@
                     input.placeholder = `Réponse ${index + 1}`;
                 }
             });
-
-            // S'assurer qu'au moins un radio est sélectionné
-            if (!document.querySelector('input[name="is_correct"]:checked')) {
-                const firstRadio = document.querySelector('input[name="is_correct"]');
-                if (firstRadio) {
-                    firstRadio.checked = true;
-                }
-            }
         }
     });
 </script>
