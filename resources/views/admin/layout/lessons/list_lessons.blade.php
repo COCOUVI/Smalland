@@ -36,7 +36,7 @@
                             <tbody>
                                 @forelse($lessons as $lesson)
                                     <tr>
-                                        <td class="text-center">{{ $lesson->id }}</td>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
                                         <td>{{ $lesson->titre }}</td>
                                         <td><span class="badge bg-secondary">{{ $lesson->module->titre ?? 'N/A' }}</span>
                                         </td>

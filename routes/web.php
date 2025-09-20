@@ -40,7 +40,9 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     // LESSONS (nouvelles routes)
     Route::post('/modules/{moduleId}/lessons', [AdminController::class, 'addLesson'])->name('lessons.store');
     Route::get('/modules/{moduleId}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
-    Route::delete('/lessons/{lessonId}', [AdminController::class, 'deleteLesson'])->name('lessons.delete');
+    Route::put('/lessons/{lessonId}', [AdminController::class, 'updateLesson'])->name('lessons.update');
+    Route::delete('/lessons/{lessonId}', [AdminController::class, 'destroyLesson'])->name('lessons.delete');
+
     Route::get('/lessons', [AdminController::class, 'listLessons'])->name('lessons.list');
 
 
