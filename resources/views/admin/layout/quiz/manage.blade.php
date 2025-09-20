@@ -33,7 +33,7 @@
                         Êtes-vous sûr de vouloir supprimer cette question ?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-delete-btn" data-bs-dismiss="modal">Annuler</button>
                         <button type="button" class="btn btn-danger" id="confirm-delete-btn">Supprimer</button>
                     </div>
                 </div>
@@ -185,6 +185,7 @@
     </div>
 @endsection
 
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let reponseCount = 2;
@@ -195,6 +196,11 @@
         const deleteModalElement = document.getElementById('deleteConfirmModal');
         if (deleteModalElement) {
             deleteModal = new bootstrap.Modal(deleteModalElement);
+
+            // Gérer la fermeture du modal
+            deleteModalElement.addEventListener('hidden.bs.modal', function () {
+                currentQuestionIdToDelete = null;
+            });
         }
 
         // Fonction pour afficher les messages de succès
@@ -211,8 +217,6 @@
                 setTimeout(() => {
                     successAlert.style.display = 'none';
                 }, 5000);
-            } else {
-                console.error('Éléments de message de succès non trouvés');
             }
         }
 
@@ -230,8 +234,6 @@
                 setTimeout(() => {
                     errorAlert.style.display = 'none';
                 }, 5000);
-            } else {
-                console.error('Éléments de message d\'erreur non trouvés');
             }
         }
 
@@ -378,6 +380,14 @@
             }
         });
 
+        // Annuler la suppression
+        document.getElementById('cancel-delete-btn').addEventListener('click', function() {
+            if (deleteModal) {
+                deleteModal.hide();
+            }
+            currentQuestionIdToDelete = null;
+        });
+
         // ✅ SAUVEGARDER MODIFICATION
         document.addEventListener('submit', function(e) {
             if (e.target.classList.contains('edit-question-form')) {
@@ -500,6 +510,4 @@
         }
     });
 </script>
-
-@push('scripts')
 @endpush
