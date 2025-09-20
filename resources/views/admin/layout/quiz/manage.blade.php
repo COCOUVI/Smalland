@@ -183,6 +183,10 @@
             </div>
         @endif
     </div>
+
+    @include('admin.layout.quiz.quiz_modals')
+    @include('admin.layout.quiz.quiz_styles')
+    @include('admin.layout.quiz.quiz_scripts')
 @endsection
 
 @push('scripts')
@@ -194,14 +198,21 @@
 
         // Initialiser le modal Bootstrap
         const deleteModalElement = document.getElementById('deleteConfirmModal');
-        if (deleteModalElement) {
-            deleteModal = new bootstrap.Modal(deleteModalElement);
+if (deleteModalElement) {
+    deleteModal = new bootstrap.Modal(deleteModalElement);
 
-            // Gérer la fermeture du modal
-            deleteModalElement.addEventListener('hidden.bs.modal', function () {
-                currentQuestionIdToDelete = null;
-            });
+    // ✅ CORRECTION: Avant que le modal commence à se cacher
+    deleteModalElement.addEventListener('hide.bs.modal', function () {
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
         }
+    });
+
+    // Gérer la fermeture complète du modal
+    deleteModalElement.addEventListener('hidden.bs.modal', function () {
+        currentQuestionIdToDelete = null;
+    });
+}
 
         // Fonction pour afficher les messages de succès
         function showSuccessMessage(message) {
@@ -265,6 +276,11 @@
 
         // ✅ GESTION DES CLICS
         document.addEventListener('click', function(e) {
+            // Gérer la croix de fermeture du modal
+            if (e.target.classList.contains('btn-close') && e.target.closest('#deleteConfirmModal')) {
+        currentQuestionIdToDelete = null;
+    }
+
             // Supprimer une réponse (nouvelle question)
             if (e.target.classList.contains('remove-reponse') || e.target.closest('.remove-reponse')) {
                 const button = e.target.classList.contains('remove-reponse') ? e.target : e.target.closest('.remove-reponse');
