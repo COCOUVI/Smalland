@@ -49,4 +49,58 @@ class QuizzController extends Controller
         return redirect()->route('quizz.manage', $module->id)
                          ->with('success', 'Quizz et questions mis à jour avec succès.');
     }
+
+    // ✅ NOUVELLE MÉTHODE : Modifier une question
+    public function updateQuestion(Request $request, $questionId)
+    {
+        try {
+            $question = Question::with('reponses')->findOrFail($questionId);
+
+            $request->validate([
+                'question_content' => 'required|string',
+                'reponses' => 'required|array|min:2',
+                'correct_reponse' => 'required'
+            ]);
+
+            // Mettre à jour le contenu de la question
+            $question->update([
+                'content' => $request->question_content
+            ]);
+
+            // Supprimer toutes les anciennes réponses
+            $question->reponses()->delete();
+
+            // Créer les nouvelles réponses
+            foreach ($request->reponses as $reponseId => $content) {
+                $question->reponses()->create([
+                    'content' => $content,
+                    'is_correct' => ($reponseId == $request->correct_reponse)
+                ]);
+            }
+
+            return response()->json(['success' => true, 'message' => 'Question modifiée avec succès']);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Erreur: ' . $e->getMessage()]);
+        }
+    }
+
+    // ✅ NOUVELLE MÉTHODE : Supprimer une question
+    public function deleteQuestion($questionId)
+    {
+        try {
+            $question = Question::findOrFail($questionId);
+
+            // Supprimer d'abord les réponses (cascade devrait le faire automatiquement)
+            $question->reponses()->delete();
+
+            // Supprimer la question
+            $question->delete();
+
+            return response()->json(['success' => true, 'message' => 'Question supprimée avec succès']);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Erreur: ' . $e->getMessage()]);
+        }
+    }
 }

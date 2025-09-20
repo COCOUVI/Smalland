@@ -52,6 +52,9 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
 
     // Sauvegarder ou ajouter questions
     Route::post('/modules/{module}/quizz/store', [QuizzController::class, 'storeOrUpdate'])->name('quizz.storeOrUpdate');
+
+    Route::put('/questions/{questionId}', [QuizzController::class, 'updateQuestion'])->name('questions.update');
+Route::delete('/questions/{questionId}', [QuizzController::class, 'deleteQuestion'])->name('questions.delete');
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===
