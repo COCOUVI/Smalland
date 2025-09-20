@@ -202,13 +202,18 @@
             const successAlert = document.getElementById('ajax-success');
             const successMessage = document.getElementById('ajax-success-message');
 
-            successMessage.textContent = message;
-            successAlert.style.display = 'block';
+            // Vérifier que les éléments existent avant de les manipuler
+            if (successAlert && successMessage) {
+                successMessage.textContent = message;
+                successAlert.style.display = 'block';
 
-            // Masquer automatiquement après 5 secondes
-            setTimeout(() => {
-                successAlert.style.display = 'none';
-            }, 5000);
+                // Masquer automatiquement après 5 secondes
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 5000);
+            } else {
+                console.error('Éléments de message de succès non trouvés');
+            }
         }
 
         // Fonction pour afficher les messages d'erreur
@@ -216,13 +221,18 @@
             const errorAlert = document.getElementById('ajax-error');
             const errorMessage = document.getElementById('ajax-error-message');
 
-            errorMessage.textContent = message;
-            errorAlert.style.display = 'block';
+            // Vérifier que les éléments existent avant de les manipuler
+            if (errorAlert && errorMessage) {
+                errorMessage.textContent = message;
+                errorAlert.style.display = 'block';
 
-            // Masquer automatiquement après 5 secondes
-            setTimeout(() => {
-                errorAlert.style.display = 'none';
-            }, 5000);
+                // Masquer automatiquement après 5 secondes
+                setTimeout(() => {
+                    errorAlert.style.display = 'none';
+                }, 5000);
+            } else {
+                console.error('Éléments de message d\'erreur non trouvés');
+            }
         }
 
         // ✅ AJOUTER UNE NOUVELLE RÉPONSE
@@ -407,34 +417,47 @@
 
                         // Mettre à jour l'affichage sans recharger la page
                         const questionItem = document.getElementById('question-' + questionId);
-                        const displayDiv = questionItem.querySelector('.question-display');
-                        const editDiv = questionItem.querySelector('.question-edit');
+                        if (questionItem) {
+                            const displayDiv = questionItem.querySelector('.question-display');
+                            const editDiv = questionItem.querySelector('.question-edit');
 
-                        // Mettre à jour le titre de la question
-                        const questionTitle = questionItem.querySelector('.question-title');
-                        questionTitle.textContent = 'Q' + (Array.from(questionItem.parentNode.children).indexOf(questionItem) + 1) + ': ' + formData.get('question_content');
+                            // Mettre à jour le titre de la question
+                            const questionTitle = questionItem.querySelector('.question-title');
+                            if (questionTitle) {
+                                const questionIndex = Array.from(questionItem.parentNode.children).indexOf(questionItem) + 1;
+                                questionTitle.textContent = 'Q' + questionIndex + ': ' + formData.get('question_content');
+                            }
 
-                        // Mettre à jour les réponses affichées
-                        const reponsesList = displayDiv.querySelector('ul');
-                        reponsesList.innerHTML = '';
+                            // Mettre à jour les réponses affichées
+                            if (displayDiv) {
+                                const reponsesList = displayDiv.querySelector('ul');
+                                if (reponsesList) {
+                                    reponsesList.innerHTML = '';
 
-                        Object.entries(data.reponses).forEach(([id, reponse], index) => {
-                            const isCorrect = id == data.correct_reponse;
-                            const li = document.createElement('li');
-                            li.classList.add('mb-1');
-                            li.innerHTML = `
-                                <span class="badge ${isCorrect ? 'bg-success' : 'bg-secondary'} me-2">
-                                    ${index + 1}
-                                </span>
-                                ${reponse}
-                                ${isCorrect ? '<i class="bi bi-check-circle text-success ms-1"></i>' : ''}
-                            `;
-                            reponsesList.appendChild(li);
-                        });
+                                    if (data.reponses) {
+                                        Object.entries(data.reponses).forEach(([id, reponse], index) => {
+                                            const isCorrect = id == data.correct_reponse;
+                                            const li = document.createElement('li');
+                                            li.classList.add('mb-1');
+                                            li.innerHTML = `
+                                                <span class="badge ${isCorrect ? 'bg-success' : 'bg-secondary'} me-2">
+                                                    ${index + 1}
+                                                </span>
+                                                ${reponse}
+                                                ${isCorrect ? '<i class="bi bi-check-circle text-success ms-1"></i>' : ''}
+                                            `;
+                                            reponsesList.appendChild(li);
+                                        });
+                                    }
+                                }
+                            }
 
-                        // Revenir à l'affichage normal
-                        displayDiv.style.display = 'block';
-                        editDiv.style.display = 'none';
+                            // Revenir à l'affichage normal
+                            if (displayDiv && editDiv) {
+                                displayDiv.style.display = 'block';
+                                editDiv.style.display = 'none';
+                            }
+                        }
                     } else {
                         showErrorMessage('Erreur lors de la modification: ' + (data.message || ''));
                     }
@@ -469,7 +492,10 @@
 
             // S'assurer qu'au moins un radio est sélectionné
             if (!document.querySelector('input[name="is_correct"]:checked')) {
-                document.querySelector('input[name="is_correct"]').checked = true;
+                const firstRadio = document.querySelector('input[name="is_correct"]');
+                if (firstRadio) {
+                    firstRadio.checked = true;
+                }
             }
         }
     });
