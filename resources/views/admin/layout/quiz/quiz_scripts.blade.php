@@ -560,6 +560,21 @@
 
         // Masquer les alertes Bootstrap au chargement si présentes
         hideBootstrapAlerts();
+
+        // ✅ NOUVEAU : Gérer les messages de session Laravel (quiz créé)
+        const sessionSuccess = document.querySelector('.alert-success');
+        if (sessionSuccess && !sessionSuccess.id) { // Éviter les alertes AJAX
+            const message = sessionSuccess.textContent.trim();
+            sessionSuccess.style.display = 'none'; // Masquer l'alerte Bootstrap
+            showNotification(message, 'success');
+        }
+
+        const sessionError = document.querySelector('.alert-danger');
+        if (sessionError && !sessionError.id) { // Éviter les alertes AJAX
+            const message = sessionError.textContent.trim();
+            sessionError.style.display = 'none'; // Masquer l'alerte Bootstrap
+            showNotification(message, 'error');
+        }
     });
 </script>
 @endpush

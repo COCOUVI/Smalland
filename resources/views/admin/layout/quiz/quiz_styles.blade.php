@@ -137,7 +137,9 @@
 
     /* Masquer les anciennes alertes Bootstrap */
     #ajax-success,
-    #ajax-error {
+    #ajax-error,
+    .alert-success:not(.custom-notification),
+    .alert-danger:not(.custom-notification) {
         display: none !important;
     }
 
