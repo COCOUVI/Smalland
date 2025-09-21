@@ -1,6 +1,5 @@
 <!-- Modal Ajouter Formation -->
-<div class="modal fade" id="addFormationModal" tabindex="-1" aria-labelledby="addFormationModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="addFormationModal" tabindex="-1" aria-labelledby="addFormationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -20,14 +19,34 @@
 
                     <div class="mb-3">
                         <label for="addDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="addDescription" name="description" rows="5"
-                            required></textarea>
+                        <textarea class="form-control" id="addDescription" name="description" rows="5" required></textarea>
                         <span class="text-danger" id="addDescriptionError"></span>
+                    </div>
+
+                    <!-- Nouveau champ Niveau -->
+                    <div class="mb-3">
+                        <label for="addLevel" class="form-label">Niveau</label>
+                        <select class="form-select" id="addLevel" name="level" required>
+                            <option value="" disabled selected>-- Sélectionnez un niveau --</option>
+                            <option value="debutant">Débutant</option>
+                            <option value="intermediaire">Intermédiaire</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                        <span class="text-danger" id="addLevelError"></span>
+                    </div>
+
+                    <!-- Nouveau champ Objectifs -->
+                    <div class="mb-3">
+                        <label for="addObjective" class="form-label">Objectifs de la formation</label>
+                        <textarea class="form-control" id="addObjective" name="objective" rows="4"
+                            placeholder="Décrivez les objectifs principaux de la formation" required></textarea>
+                        <span class="text-danger" id="addObjectiveError"></span>
                     </div>
 
                     <div class="mb-3">
                         <label for="addPrice" class="form-label">Prix</label>
-                        <input type="number" min="0" class="form-control" id="addPrice" name="price" required>
+                        <input type="number" min="0" class="form-control" id="addPrice" name="price"
+                            required>
                         <span class="text-danger" id="addPriceError"></span>
                     </div>
 
@@ -70,14 +89,34 @@
 
                     <div class="mb-3">
                         <label for="editDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="editDescription" name="description" rows="5"
-                            required></textarea>
+                        <textarea class="form-control" id="editDescription" name="description" rows="5" required></textarea>
                         <span class="text-danger" id="editDescriptionError"></span>
+                    </div>
+
+                    <!-- Nouveau champ Niveau -->
+                    <div class="mb-3">
+                        <label for="editLevel" class="form-label">Niveau</label>
+                        <select class="form-select" id="editLevel" name="level" required>
+                            <option value="" disabled>-- Sélectionnez un niveau --</option>
+                            <option value="debutant">Débutant</option>
+                            <option value="intermediaire">Intermédiaire</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                        <span class="text-danger" id="editLevelError"></span>
+                    </div>
+
+                    <!-- Nouveau champ Objectifs -->
+                    <div class="mb-3">
+                        <label for="editObjective" class="form-label">Objectifs de la formation</label>
+                        <textarea class="form-control" id="editObjective" name="objective" rows="4"
+                            placeholder="Modifier les objectifs de la formation" required></textarea>
+                        <span class="text-danger" id="editObjectiveError"></span>
                     </div>
 
                     <div class="mb-3">
                         <label for="editPrice" class="form-label">Prix (FCFA)</label>
-                        <input type="number" step="0.01" class="form-control" id="editPrice" name="price" required>
+                        <input type="number" min="0" class="form-control" id="editPrice" name="price"
+                            required>
                         <span class="text-danger" id="editPriceError"></span>
                     </div>
 
@@ -119,14 +158,16 @@
 </div>
 
 <!-- Modal Ajouter Module -->
-<div class="modal fade" id="addModuleModal" tabindex="-1" aria-labelledby="addModuleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addModuleModal" tabindex="-1" aria-labelledby="addModuleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <!-- En-tête du modal -->
             <div class="modal-header">
                 <h5 class="modal-title" id="addModuleModalLabel">Ajouter un module</h5>
                 <button type="button" class="modal-close" data-bs-dismiss="modal" aria-label="Fermer">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
@@ -145,9 +186,11 @@
                         <!-- Module unique -->
                         <div class="module-item">
                             <div class="module-input-group">
-                                <input type="text" name="titres[]" class="module-input" placeholder="Titre du module" required>
+                                <input type="text" name="titres[]" class="module-input"
+                                    placeholder="Titre du module" required>
                                 <button type="button" class="remove-module-btn" title="Supprimer ce module">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
@@ -158,7 +201,8 @@
 
                     <!-- Bouton Ajouter -->
                     <button type="button" id="addModuleField" class="add-module-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
@@ -178,7 +222,8 @@
 
 
 <!-- Modal Description -->
-<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

@@ -36,6 +36,8 @@ class AdminController extends Controller
         $formation->titre = $request->input('title');
         $formation->description = $request->input('description');
         $formation->price = $request->input('price');
+        $formation->niveau = $request->input('level');
+        $formation->objectif = $request->input('objective');
 
         // Gestion de l'image si fournie
         if ($request->hasFile('image')) {
@@ -84,6 +86,8 @@ class AdminController extends Controller
         $formation->titre = $request->input('titre');
         $formation->description = $request->input('description');
         $formation->price = $request->input('price');
+        $formation->niveau = $request->input('level');
+        $formation->objectif = $request->input('objective');
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('formations', 'public');

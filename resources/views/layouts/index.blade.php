@@ -203,7 +203,7 @@
                                         <span class="h5 mb-0 text-primary">
                                             {{ $formation->price ?? 'Gratuit' }} FCFA
                                         </span>
-                                        <a href="" class="btn btn-primary">
+                                        <a href="{{route('formation-detail',$formation->id)}}" class="btn btn-primary">
                                             Voir détails
                                         </a>
                                     </div>

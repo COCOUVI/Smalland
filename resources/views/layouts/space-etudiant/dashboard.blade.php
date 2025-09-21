@@ -111,7 +111,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="h4 mb-0">4</div>
-                                <div class="text-muted">Leçons cette semaine</div>
+                                <div class="text-muted">Certifications</div>
                             </div>
                         </div>
                     </div>

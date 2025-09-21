@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 // === ROUTES PUBLIQUES ===
 Route::get('/',[HomeController::class,'index'])->name('accueil');
-Route::get('/formation-detail', fn() => view('layouts.formation.formation-detail'))->name('formation-detail');
+Route::get('/formation-detail/{formation}', [HomeController::class,'ShowOneFormation'])->name('formation-detail');
 Route::get('/formation-list', [HomeController::class,'showFormations'])->name('formation-list');
 Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
 Route::get('/test', fn() => view("admin.layout.formations.index"));

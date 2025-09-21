@@ -19,6 +19,11 @@ class HomeController extends Controller
       $formations = Formation::paginate(9);
        return view('layouts.formation.formation-catalog',compact('formations'));  
     }
+
+     public function ShowOneFormation(Formation $formation){
+        
+        return view('layouts.formation.formation-detail',compact('formation'));
+     }
     
 
 }
