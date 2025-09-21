@@ -187,18 +187,19 @@
             });
         }
 
-        // ✅ FONCTION POUR AJOUTER UNE QUESTION À LA LISTE
+        // ✅ FONCTION CORRIGÉE POUR AJOUTER UNE QUESTION À LA FIN DE LA LISTE
         function addQuestionToList(questionData) {
-            const questionsContainer = document.querySelector('.card .card-body');
+            // Trouver le bon conteneur (celui avec les questions existantes)
+            const questionsCard = document.querySelector('.card:last-of-type .card-body');
 
             // Supprimer le message "Aucune question" s'il existe
-            const noQuestionMessage = questionsContainer.querySelector('p.text-muted');
+            const noQuestionMessage = questionsCard.querySelector('p.text-muted');
             if (noQuestionMessage) {
                 noQuestionMessage.remove();
             }
 
-            // Calculer l'index de la nouvelle question
-            const existingQuestions = questionsContainer.querySelectorAll('.question-item');
+            // Calculer l'index de la nouvelle question (basé sur les questions existantes)
+            const existingQuestions = document.querySelectorAll('.question-item');
             const questionIndex = existingQuestions.length + 1;
 
             // Créer l'élément HTML de la nouvelle question
@@ -274,10 +275,10 @@
                 </div>
             `;
 
-            // Ajouter avec une animation
+            // Ajouter avec une animation À LA FIN de la liste des questions
             questionDiv.style.opacity = '0';
             questionDiv.style.transform = 'translateY(20px)';
-            questionsContainer.appendChild(questionDiv);
+            questionsCard.appendChild(questionDiv);
 
             // Animation d'apparition
             setTimeout(() => {
