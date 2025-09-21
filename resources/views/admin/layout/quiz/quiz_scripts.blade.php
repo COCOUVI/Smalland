@@ -21,34 +21,70 @@
             });
         }
 
-        // Fonction pour afficher les messages de succès
-        function showSuccessMessage(message) {
-            const successAlert = document.getElementById('ajax-success');
-            const successMessage = document.getElementById('ajax-success-message');
+        // ✅ NOUVEAU SYSTÈME DE NOTIFICATIONS ÉLÉGANT
+        function showNotification(message, type = 'success') {
+            // Supprimer toutes les notifications existantes
+            const existingNotifications = document.querySelectorAll('.custom-notification');
+            existingNotifications.forEach(notif => notif.remove());
 
-            if (successAlert && successMessage) {
-                successMessage.textContent = message;
-                successAlert.style.display = 'block';
+            // Créer la nouvelle notification
+            const notification = document.createElement('div');
+            notification.className = `custom-notification custom-notification-${type}`;
 
-                setTimeout(() => {
-                    successAlert.style.display = 'none';
-                }, 5000);
-            }
+            const icon = type === 'success' ?
+                '<i class="bi bi-check-circle-fill"></i>' :
+                '<i class="bi bi-exclamation-triangle-fill"></i>';
+
+            notification.innerHTML = `
+                ${icon}
+                <span>${message}</span>
+                <button type="button" class="notification-close">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+
+            // Ajouter au body
+            document.body.appendChild(notification);
+
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            // Fermeture automatique après 4 secondes
+            const autoClose = setTimeout(() => {
+                closeNotification(notification);
+            }, 4000);
+
+            // Fermeture manuelle
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                clearTimeout(autoClose);
+                closeNotification(notification);
+            });
+
+            // Pause du timer au survol
+            notification.addEventListener('mouseenter', () => clearTimeout(autoClose));
+            notification.addEventListener('mouseleave', () => {
+                setTimeout(() => closeNotification(notification), 2000);
+            });
         }
 
-        // Fonction pour afficher les messages d'erreur
-        function showErrorMessage(message) {
-            const errorAlert = document.getElementById('ajax-error');
-            const errorMessage = document.getElementById('ajax-error-message');
+        function closeNotification(notification) {
+            notification.classList.remove('show');
+            notification.classList.add('hide');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }
 
-            if (errorAlert && errorMessage) {
-                errorMessage.textContent = message;
-                errorAlert.style.display = 'block';
-
-                setTimeout(() => {
-                    errorAlert.style.display = 'none';
-                }, 5000);
-            }
+        // Masquer les anciennes alertes Bootstrap
+        function hideBootstrapAlerts() {
+            const alerts = document.querySelectorAll('#ajax-success, #ajax-error');
+            alerts.forEach(alert => {
+                alert.style.display = 'none';
+            });
         }
 
         // ✅ AJOUTER UNE NOUVELLE RÉPONSE avec checkbox
@@ -77,21 +113,181 @@
             });
         }
 
-        // ✅ VALIDATION : Vérifier qu'au moins une réponse est cochée avant soumission
+        // ✅ NOUVEAU : AJOUT DE QUESTION EN AJAX
         const addQuestionForm = document.getElementById('add-question-form');
         if (addQuestionForm) {
             addQuestionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
                 const checkedAnswers = this.querySelectorAll('input[name="correct_answers[]"]:checked');
 
                 if (checkedAnswers.length === 0) {
-                    e.preventDefault();
-                    showErrorMessage('Vous devez cocher au moins une réponse correcte.');
+                    showNotification('Vous devez cocher au moins une réponse correcte.', 'error');
                     return false;
                 }
+
+                // Afficher un indicateur de chargement
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Ajout en cours...';
+
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur réseau');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Question ajoutée avec succès !', 'success');
+
+                        // Réinitialiser le formulaire
+                        this.reset();
+
+                        // Remettre à 2 réponses par défaut
+                        const container = document.getElementById('reponses-container');
+                        const allReponses = container.querySelectorAll('.mb-3');
+
+                        // Supprimer les réponses supplémentaires
+                        for (let i = 2; i < allReponses.length; i++) {
+                            allReponses[i].remove();
+                        }
+
+                        reponseCount = 2;
+                        updateCheckboxValues();
+
+                        // Ajouter la nouvelle question à la liste
+                        addQuestionToList(data.question);
+
+                    } else {
+                        showNotification('Erreur lors de l\'ajout: ' + (data.message || 'Erreur inconnue'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de l\'ajout de la question', 'error');
+                })
+                .finally(() => {
+                    // Restaurer le bouton
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                });
             });
         }
 
-        // ✅ GESTION DES CLICS
+        // ✅ FONCTION POUR AJOUTER UNE QUESTION À LA LISTE
+        function addQuestionToList(questionData) {
+            const questionsContainer = document.querySelector('.card .card-body');
+
+            // Supprimer le message "Aucune question" s'il existe
+            const noQuestionMessage = questionsContainer.querySelector('p.text-muted');
+            if (noQuestionMessage) {
+                noQuestionMessage.remove();
+            }
+
+            // Calculer l'index de la nouvelle question
+            const existingQuestions = questionsContainer.querySelectorAll('.question-item');
+            const questionIndex = existingQuestions.length + 1;
+
+            // Créer l'élément HTML de la nouvelle question
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'mb-4 p-3 border rounded question-item';
+            questionDiv.id = 'question-' + questionData.id;
+
+            let responsesHTML = '';
+            questionData.reponses.forEach((reponse, index) => {
+                responsesHTML += `
+                    <li class="mb-1">
+                        <span class="badge ${reponse.is_correct ? 'bg-success' : 'bg-secondary'} me-2">
+                            ${index + 1}
+                        </span>
+                        ${reponse.content}
+                        ${reponse.is_correct ? '<i class="bi bi-check-circle text-success ms-1"></i>' : ''}
+                    </li>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <strong class="question-title">Q${questionIndex}: ${questionData.content}</strong>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary btn-edit-question" data-question-id="${questionData.id}">
+                            <i class="bi bi-pencil"></i> Modifier
+                        </button>
+                        <button class="btn btn-outline-danger btn-delete-question" data-question-id="${questionData.id}">
+                            <i class="bi bi-trash"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+
+                <div class="question-display">
+                    <ul class="list-unstyled">
+                        ${responsesHTML}
+                    </ul>
+                </div>
+
+                <div class="question-edit" style="display: none;">
+                    <form class="edit-question-form" data-question-id="${questionData.id}">
+                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                        <div class="mb-3">
+                            <label class="form-label">Question</label>
+                            <input type="text" name="question_content" class="form-control" value="${questionData.content}" required>
+                        </div>
+
+                        <div class="edit-reponses-container">
+                            ${questionData.reponses.map((reponse, index) => `
+                                <div class="mb-3 input-group reponse-item">
+                                    <input type="text" name="reponses[${reponse.id}]" class="form-control" value="${reponse.content}" required>
+                                    <span class="input-group-text">
+                                        <input type="checkbox" name="correct_reponses[]" value="${reponse.id}" class="form-check-input mt-0" id="edit_correct_${reponse.id}" ${reponse.is_correct ? 'checked' : ''}>
+                                    </span>
+                                    <span class="input-group-text">
+                                        <label class="form-check-label mb-0" for="edit_correct_${reponse.id}">Correct</label>
+                                    </span>
+                                    ${index >= 2 ? '<button type="button" class="btn btn-sm btn-outline-danger remove-edit-reponse"><i class="bi bi-trash"></i></button>' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-sm btn-outline-secondary add-edit-reponse">
+                                Ajouter une réponse
+                            </button>
+                            <div class="float-end">
+                                <button type="button" class="btn btn-secondary btn-cancel-edit">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            // Ajouter avec une animation
+            questionDiv.style.opacity = '0';
+            questionDiv.style.transform = 'translateY(20px)';
+            questionsContainer.appendChild(questionDiv);
+
+            // Animation d'apparition
+            setTimeout(() => {
+                questionDiv.style.transition = 'all 0.3s ease';
+                questionDiv.style.opacity = '1';
+                questionDiv.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        // ✅ GESTION DES CLICS (reste identique mais avec nouvelles notifications)
         document.addEventListener('click', function(e) {
             // Gérer la croix de fermeture du modal
             if (e.target.classList.contains('btn-close') && e.target.closest('#deleteConfirmModal')) {
@@ -106,7 +302,7 @@
                     parentDiv.remove();
                     updateCheckboxValues();
                 } else {
-                    showErrorMessage('Vous devez avoir au moins deux réponses.');
+                    showNotification('Vous devez avoir au moins deux réponses.', 'error');
                 }
             }
 
@@ -164,7 +360,7 @@
                 if (parentDiv && document.querySelectorAll('.edit-reponses-container .reponse-item').length > 2) {
                     parentDiv.remove();
                 } else {
-                    showErrorMessage('Vous devez avoir au moins deux réponses.');
+                    showNotification('Vous devez avoir au moins deux réponses.', 'error');
                 }
             }
 
@@ -192,15 +388,23 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        document.getElementById('question-' + currentQuestionIdToDelete).remove();
-                        showSuccessMessage('Question supprimée avec succès !');
+                        const questionElement = document.getElementById('question-' + currentQuestionIdToDelete);
+                        questionElement.style.transition = 'all 0.3s ease';
+                        questionElement.style.opacity = '0';
+                        questionElement.style.transform = 'translateX(-20px)';
+
+                        setTimeout(() => {
+                            questionElement.remove();
+                        }, 300);
+
+                        showNotification('Question supprimée avec succès !', 'success');
                     } else {
-                        showErrorMessage('Erreur lors de la suppression: ' + (data.message || ''));
+                        showNotification('Erreur lors de la suppression: ' + (data.message || ''), 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    showErrorMessage('Erreur lors de la suppression');
+                    showNotification('Erreur lors de la suppression', 'error');
                 })
                 .finally(() => {
                     if (deleteModal) {
@@ -230,9 +434,15 @@
                 // Vérifier qu'au moins une réponse est cochée
                 const checkedAnswers = e.target.querySelectorAll('input[name="correct_reponses[]"]:checked');
                 if (checkedAnswers.length === 0) {
-                    showErrorMessage('Vous devez cocher au moins une réponse correcte.');
+                    showNotification('Vous devez cocher au moins une réponse correcte.', 'error');
                     return false;
                 }
+
+                // Indicateur de chargement
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Sauvegarde...';
 
                 // Convertir FormData en objet
                 const data = {
@@ -264,7 +474,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showSuccessMessage('Question modifiée avec succès !');
+                        showNotification('Question modifiée avec succès !', 'success');
 
                         // Mettre à jour l'affichage sans recharger la page
                         const questionItem = document.getElementById('question-' + questionId);
@@ -310,12 +520,17 @@
                             }
                         }
                     } else {
-                        showErrorMessage('Erreur lors de la modification: ' + (data.message || ''));
+                        showNotification('Erreur lors de la modification: ' + (data.message || ''), 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    showErrorMessage('Erreur lors de la modification');
+                    showNotification('Erreur lors de la modification', 'error');
+                })
+                .finally(() => {
+                    // Restaurer le bouton
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
                 });
             }
         });
@@ -341,6 +556,9 @@
                 }
             });
         }
+
+        // Masquer les alertes Bootstrap au chargement si présentes
+        hideBootstrapAlerts();
     });
 </script>
 @endpush
