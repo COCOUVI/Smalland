@@ -11,4 +11,10 @@ class Formation extends Model
     {
         return $this->hasMany(Module::class);
     }
+
+    // Une formation a plusieurs objectifs
+    public function objectifs()
+    {
+        return $this->hasMany(Objectif::class);
+    }
 }

@@ -23,25 +23,28 @@
                         <span class="text-danger" id="addDescriptionError"></span>
                     </div>
 
-                    <!-- Nouveau champ Niveau -->
+
+
                     <div class="mb-3">
-                        <label for="addLevel" class="form-label">Niveau</label>
-                        <select class="form-select" id="addLevel" name="level" required>
-                            <option value="" disabled selected>-- Sélectionnez un niveau --</option>
-                            <option value="debutant">Débutant</option>
-                            <option value="intermediaire">Intermédiaire</option>
-                            <option value="expert">Expert</option>
-                        </select>
-                        <span class="text-danger" id="addLevelError"></span>
+                        <label class="form-label">Objectifs</label>
+                        <div id="objectivesContainer">
+                            <!-- Premier objectif obligatoire, sans bouton supprimer -->
+                            <div class="objective-item mb-2">
+                                <input type="text" name="objectives[]" class="form-control" placeholder="Objectif"
+                                    required>
+                            </div>
+                        </div>
+                        <button type="button" id="addObjectiveField"
+                            class="btn btn-primary mt-2 d-flex align-items-center btn-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-plus me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                            </svg>
+                            Ajouter un objectif
+                        </button>
                     </div>
 
-                    <!-- Nouveau champ Objectifs -->
-                    <div class="mb-3">
-                        <label for="addObjective" class="form-label">Objectifs de la formation</label>
-                        <textarea class="form-control" id="addObjective" name="objective" rows="4"
-                            placeholder="Décrivez les objectifs principaux de la formation" required></textarea>
-                        <span class="text-danger" id="addObjectiveError"></span>
-                    </div>
 
                     <div class="mb-3">
                         <label for="addPrice" class="form-label">Prix</label>
@@ -93,29 +96,9 @@
                         <span class="text-danger" id="editDescriptionError"></span>
                     </div>
 
-                    <!-- Nouveau champ Niveau -->
-                    <div class="mb-3">
-                        <label for="editLevel" class="form-label">Niveau</label>
-                        <select class="form-select" id="editLevel" name="level" required>
-                            <option value="" disabled>-- Sélectionnez un niveau --</option>
-                            <option value="debutant">Débutant</option>
-                            <option value="intermediaire">Intermédiaire</option>
-                            <option value="expert">Expert</option>
-                        </select>
-                        <span class="text-danger" id="editLevelError"></span>
-                    </div>
-
-                    <!-- Nouveau champ Objectifs -->
-                    <div class="mb-3">
-                        <label for="editObjective" class="form-label">Objectifs de la formation</label>
-                        <textarea class="form-control" id="editObjective" name="objective" rows="4"
-                            placeholder="Modifier les objectifs de la formation" required></textarea>
-                        <span class="text-danger" id="editObjectiveError"></span>
-                    </div>
-
                     <div class="mb-3">
                         <label for="editPrice" class="form-label">Prix (FCFA)</label>
-                        <input type="number" min="0" class="form-control" id="editPrice" name="price"
+                        <input type="number" step="0.01" class="form-control" id="editPrice" name="price"
                             required>
                         <span class="text-danger" id="editPriceError"></span>
                     </div>

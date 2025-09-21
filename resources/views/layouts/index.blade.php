@@ -183,12 +183,25 @@
                                     <!-- Titre -->
                                     <h5 class="card-title">{{ $formation->titre }}</h5>
 
+                                    <!-- Niveau avec couleur dynamique -->
+                                    @php
+                                        $levelColors = [
+                                            'debutant' => 'success', // vert
+                                            'intermediaire' => 'warning', // orange
+                                            'expert' => 'danger', // rouge
+                                        ];
+                                    @endphp
+
+                                    <p class="badge bg-{{ $levelColors[$formation->niveau] ?? 'secondary' }} mb-2">
+                                        Niveau : {{ ucfirst($formation->niveau) }}
+                                    </p>
+
                                     <!-- Description courte -->
                                     <p class="card-text">
                                         {{ Str::limit($formation->description, 100) }}
                                     </p>
 
-                                    <!-- Rating fictif ou dynamique si tu l’as -->
+                                    <!-- Rating fictif ou dynamique -->
                                     <div class="rating mb-2">
                                         <i class="bi bi-star-fill"></i>
                                         <i class="bi bi-star-fill"></i>
@@ -203,7 +216,7 @@
                                         <span class="h5 mb-0 text-primary">
                                             {{ $formation->price ?? 'Gratuit' }} FCFA
                                         </span>
-                                        <a href="{{route('formation-detail',$formation->id)}}" class="btn btn-primary">
+                                        <a href="{{ route('formation-detail', $formation->id) }}" class="btn btn-primary">
                                             Voir détails
                                         </a>
                                     </div>

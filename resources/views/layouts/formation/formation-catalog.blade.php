@@ -30,13 +30,29 @@
                     <img src="/storage/{{ $formation->image_path }}" class="card-img-top" alt="{{ $formation->titre }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $formation->titre }}</h5>
-                        <p class="card-text">{{ $formation->description }}</p>
+
+                        <!-- Niveau avec couleurs -->
+                        @php
+                            $levelColors = [
+                                'debutant' => 'success',      // vert
+                                'intermediaire' => 'warning', // orange
+                                'expert' => 'danger',         // rouge
+                            ];
+                        @endphp
+
+                        <p class="badge bg-{{ $levelColors[$formation->niveau] ?? 'secondary' }} mb-2">
+                            Niveau : {{ ucfirst($formation->niveau) }}
+                        </p>
+
+                        <p class="card-text">{{ Str::limit($formation->description, 120) }}</p>
+
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span><i class="bi bi-collection-play me-1"></i> {{ $formation->lecons }} leçons</span>
                         </div>
+
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="h5 mb-0 text-primary">{{ $formation->price }} FCFA</span>
-                            <a href="{{route('formation-detail',$formation->id)}}" class="btn btn-primary">Voir détails</a>
+                            <a href="{{ route('formation-detail', $formation->id) }}" class="btn btn-primary">Voir détails</a>
                         </div>
                     </div>
                 </div>
