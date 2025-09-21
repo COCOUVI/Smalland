@@ -558,8 +558,70 @@
             });
         }
 
-        // Masquer les alertes Bootstrap au chargement si présentes
-        hideBootstrapAlerts();
+        // ✅ NOUVEAU : AJOUT DE QUIZ EN AJAX (éviter rechargement)
+        const createQuizForm = document.querySelector('form[action*="storeOrUpdate"]:not(#add-question-form)');
+        if (createQuizForm) {
+            createQuizForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Création en cours...';
+
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Quiz créé avec succès !', 'success');
+
+                        // Masquer le formulaire de création
+                        const createCard = this.closest('.card');
+                        createCard.style.transition = 'all 0.3s ease';
+                        createCard.style.opacity = '0';
+                        createCard.style.transform = 'translateY(-20px)';
+
+                        setTimeout(() => {
+                            createCard.style.display = 'none';
+
+                            // Afficher la section d'ajout de questions
+                            const addQuestionCard = document.querySelector('.card:nth-of-type(2)');
+                            if (addQuestionCard) {
+                                addQuestionCard.style.display = 'block';
+                                addQuestionCard.style.opacity = '0';
+                                addQuestionCard.style.transform = 'translateY(20px)';
+
+                                setTimeout(() => {
+                                    addQuestionCard.style.transition = 'all 0.3s ease';
+                                    addQuestionCard.style.opacity = '1';
+                                    addQuestionCard.style.transform = 'translateY(0)';
+                                }, 10);
+                            }
+                        }, 300);
+                    } else {
+                        showNotification('Erreur lors de la création: ' + (data.message || 'Erreur inconnue'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la création du quiz', 'error');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                });
+            });
+        }
 
         // ✅ NOUVEAU : Gérer les messages de session Laravel (quiz créé)
         const sessionSuccess = document.querySelector('.alert-success');

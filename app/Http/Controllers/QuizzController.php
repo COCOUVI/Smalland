@@ -26,16 +26,21 @@ class QuizzController extends Controller
             return $this->handleAjaxStoreOrUpdate($request, $module);
         }
 
-        // Traitement classique pour les requêtes non-AJAX
+        // Traitement classique pour les requêtes non-AJAX (création quiz uniquement)
         try {
+            // Validation pour création de quiz
+            $request->validate([
+                'titre' => 'required|string|max:255'
+            ]);
+
             // 1️⃣ Créer le quizz si inexistant
             $quizz = $module->quizz ?? Quizz::create([
                 'module_id' => $module->id,
-                'titre' => $request->titre ?? 'Quizz du module ' . $module->titre,
+                'titre' => $request->titre,
             ]);
 
             return redirect()->route('quizz.manage', $module->id)
-                             ->with('success', 'Quizz créé avec succès.');
+                             ->with('success', 'Quiz créé avec succès.');
 
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erreur lors de la création: ' . $e->getMessage());
@@ -46,60 +51,88 @@ class QuizzController extends Controller
     private function handleAjaxStoreOrUpdate(Request $request, Module $module)
     {
         try {
-            // Validation
-            $request->validate([
-                'question'       => 'required|string|max:255',
-                'reponses'       => 'required|array|min:2|max:10',
-                'reponses.*'     => 'required|string|max:255',
-                'correct_answers' => 'required|array|min:1',
-                'correct_answers.*' => 'integer|min:0'
-            ], [
-                'question.required' => 'La question est obligatoire.',
-                'reponses.required' => 'Au moins deux réponses sont requises.',
-                'reponses.min' => 'Vous devez fournir au moins 2 réponses.',
-                'reponses.max' => 'Maximum 10 réponses autorisées.',
-                'correct_answers.required' => 'Vous devez sélectionner au moins une réponse correcte.',
-                'correct_answers.min' => 'Vous devez sélectionner au moins une réponse correcte.'
-            ]);
+            // 1️⃣ Gérer la création de quiz seul
+            if (!$request->filled('question') && $request->filled('titre')) {
+                $request->validate([
+                    'titre' => 'required|string|max:255'
+                ]);
 
-            // 1️⃣ Créer le quizz si inexistant
-            $quizz = $module->quizz ?? Quizz::create([
-                'module_id' => $module->id,
-                'titre' => $request->titre ?? 'Quizz du module ' . $module->titre,
-            ]);
+                $quizz = $module->quizz ?? Quizz::create([
+                    'module_id' => $module->id,
+                    'titre' => $request->titre,
+                ]);
 
-            // 2️⃣ Créer la question
-            $question = $quizz->questions()->create([
-                'content' => trim($request->question),
-            ]);
-
-            // 3️⃣ Créer les réponses
-            $reponses = [];
-            foreach ($request->reponses as $key => $rep) {
-                if (!empty(trim($rep))) { // Vérifier que la réponse n'est pas vide
-                    $reponse = $question->reponses()->create([
-                        'content'    => trim($rep),
-                        'is_correct' => in_array($key, $request->correct_answers),
-                    ]);
-
-                    $reponses[] = [
-                        'id' => $reponse->id,
-                        'content' => $reponse->content,
-                        'is_correct' => $reponse->is_correct
-                    ];
-                }
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Quiz créé avec succès!',
+                    'quiz' => [
+                        'id' => $quizz->id,
+                        'titre' => $quizz->titre
+                    ]
+                ], 200);
             }
 
-            // ✅ Retourner une réponse JSON structurée
+            // 2️⃣ Gérer l'ajout de questions (code existant)
+            if ($request->filled('question') && $request->filled('reponses')) {
+                // Validation
+                $request->validate([
+                    'question'       => 'required|string|max:255',
+                    'reponses'       => 'required|array|min:2|max:10',
+                    'reponses.*'     => 'required|string|max:255',
+                    'correct_answers' => 'required|array|min:1',
+                    'correct_answers.*' => 'integer|min:0'
+                ], [
+                    'question.required' => 'La question est obligatoire.',
+                    'reponses.required' => 'Au moins deux réponses sont requises.',
+                    'reponses.min' => 'Vous devez fournir au moins 2 réponses.',
+                    'reponses.max' => 'Maximum 10 réponses autorisées.',
+                    'correct_answers.required' => 'Vous devez sélectionner au moins une réponse correcte.',
+                    'correct_answers.min' => 'Vous devez sélectionner au moins une réponse correcte.'
+                ]);
+
+                // S'assurer que le quiz existe
+                $quizz = $module->quizz ?? Quizz::create([
+                    'module_id' => $module->id,
+                    'titre' => 'Quizz du module ' . $module->titre,
+                ]);
+
+                // Créer la question
+                $question = $quizz->questions()->create([
+                    'content' => trim($request->question),
+                ]);
+
+                // Créer les réponses
+                $reponses = [];
+                foreach ($request->reponses as $key => $rep) {
+                    if (!empty(trim($rep))) {
+                        $reponse = $question->reponses()->create([
+                            'content'    => trim($rep),
+                            'is_correct' => in_array($key, $request->correct_answers),
+                        ]);
+
+                        $reponses[] = [
+                            'id' => $reponse->id,
+                            'content' => $reponse->content,
+                            'is_correct' => $reponse->is_correct
+                        ];
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Question ajoutée avec succès!',
+                    'question' => [
+                        'id' => $question->id,
+                        'content' => $question->content,
+                        'reponses' => $reponses
+                    ]
+                ], 200);
+            }
+
             return response()->json([
-                'success' => true,
-                'message' => 'Question ajoutée avec succès!',
-                'question' => [
-                    'id' => $question->id,
-                    'content' => $question->content,
-                    'reponses' => $reponses
-                ]
-            ], 200);
+                'success' => false,
+                'message' => 'Données manquantes'
+            ], 400);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -109,7 +142,7 @@ class QuizzController extends Controller
             ], 422);
 
         } catch (\Exception $e) {
-            Log::error('Erreur lors de l\'ajout de question: ' . $e->getMessage());
+            Log::error('Erreur AJAX: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
