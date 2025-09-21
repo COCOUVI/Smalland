@@ -51,7 +51,7 @@
                                                     data-bs-toggle="modal" data-bs-target="#lessonModal"
                                                     data-lesson-title="{{ $lesson->titre }}"
                                                     data-lesson-video="/storage/{{ $lesson->video_url }}"
-                                                    data-lesson-pdf="/storage/{{ $lesson->pdf_url }}">
+                                                    data-lesson-pdf="/storage/{{ $lesson->pdf_url ? '/storage/'.$lesson->pdf_url : ''}}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                 <!-- Modifier -->
@@ -60,7 +60,7 @@
                                                     data-lesson-id="{{ $lesson->id }}"
                                                     data-lesson-title="{{ $lesson->titre }}"
                                                     data-lesson-video="/storage/{{ $lesson->video_url }}"
-                                                    data-lesson-pdf="/storage/{{ $lesson->pdf_url }}">
+                                                    data-lesson-pdf="/storage/{{ $lesson->pdf_url ? '/storage/'.$lesson->pdf_url : ''}}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <!-- Supprimer -->
@@ -120,7 +120,7 @@
                                 <button type="button" class="btn btn-sm btn-warning flex-fill btn-edit-lesson"
                                     data-bs-toggle="modal" data-bs-target="#editLessonModal"
                                     data-lesson-id="{{ $lesson->id }}" data-lesson-title="{{ $lesson->titre }}"
-                                    data-lesson-video="{{ $lesson->video_url }}" data-lesson-pdf="{{ $lesson->pdf_url }}">
+                                    data-lesson-video="/storage/{{ $lesson->video_url }}" data-lesson-pdf="/storage/{{ $lesson->pdf_url ? '/storage/'.$lesson->pdf_url : ''}}">
                                     <i class="fas fa-edit me-1"></i>Modifier
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger btn-delete-lesson"

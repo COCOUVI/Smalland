@@ -20,11 +20,17 @@ class QuizzController extends Controller
     // Créer ou mettre à jour le quizz + ajouter des questions
     public function storeOrUpdate(Request $request, Module $module)
     {
-        // 1️⃣ Créer le quizz si inexistant
-        $quizz = $module->quizz ?? Quizz::create([
-            'module_id' => $module->id,
-            'titre' => $request->titre ?? 'Quizz du module ' . $module->titre,
-        ]);
+        // 1️⃣ Vérifier si le quizz existe déjà
+        $isNewQuizz = false;
+        $quizz = $module->quizz;
+
+        if (!$quizz) {
+            $quizz = Quizz::create([
+                'module_id' => $module->id,
+                'titre'     => $request->titre ?? 'Quizz du module ' . $module->titre,
+            ]);
+            $isNewQuizz = true;
+        }
 
         // 2️⃣ Ajouter une question si présente
         if ($request->filled('question') && $request->filled('reponses')) {
@@ -46,8 +52,13 @@ class QuizzController extends Controller
             }
         }
 
+        // 3️⃣ Déterminer le message à afficher
+        $message = $isNewQuizz
+            ? 'Quizz créé avec succès 🎉.'
+            : 'Question ajouté avec succès ✅.';
+
         return redirect()->route('quizz.manage', $module->id)
-                         ->with('success', 'Quizz et questions mis à jour avec succès.');
+            ->with('success', $message);
     }
 
     // ✅ NOUVELLE MÉTHODE : Modifier une question
@@ -79,7 +90,6 @@ class QuizzController extends Controller
             }
 
             return response()->json(['success' => true, 'message' => 'Question modifiée avec succès']);
-
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Erreur: ' . $e->getMessage()]);
         }
@@ -98,7 +108,6 @@ class QuizzController extends Controller
             $question->delete();
 
             return response()->json(['success' => true, 'message' => 'Question supprimée avec succès']);
-
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Erreur: ' . $e->getMessage()]);
         }

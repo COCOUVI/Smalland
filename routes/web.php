@@ -1,18 +1,27 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\QuizzController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // === ROUTES PUBLIQUES ===
-Route::get('/', fn() => view('layouts.index'))->name('accueil');
-Route::get('/espace-etudiant', fn() => view('layouts.space-etudiant.dashboard'))->name('espace');
+Route::get('/',[HomeController::class,'index'])->name('accueil');
 Route::get('/formation-detail', fn() => view('layouts.formation.formation-detail'))->name('formation-detail');
-Route::get('/formation-list', fn() => view('layouts.formation.formation-catalog'))->name('formation-list');
+Route::get('/formation-list', [HomeController::class,'showFormations'])->name('formation-list');
 Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
 Route::get('/test', fn() => view("admin.layout.formations.index"));
+
+
+//Route pour l'espace etudiant
+Route::prefix('espace-etudiant')->group(function () {
+    Route::get('/', fn() => view('layouts.space-etudiant.dashboard'))->name('espace.etudiant');
+})->middleware(['auth']);
+
+
+
 
 // === DASHBOARD UTILISATEUR (ACCÈS AUTH) ===
 Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -54,7 +63,7 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/modules/{module}/quizz/store', [QuizzController::class, 'storeOrUpdate'])->name('quizz.storeOrUpdate');
 
     Route::put('/questions/{questionId}', [QuizzController::class, 'updateQuestion'])->name('questions.update');
-Route::delete('/questions/{questionId}', [QuizzController::class, 'deleteQuestion'])->name('questions.delete');
+    Route::delete('/questions/{questionId}', [QuizzController::class, 'deleteQuestion'])->name('questions.delete');
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===

@@ -40,7 +40,7 @@
                          <div id="currentVideoPreview" class="mb-2"></div>
                          <input type="file" name="video_file" class="form-control">
                      </div>
-
+                   
                      <div class="mb-3">
                          <label class="form-label">PDF actuel</label>
                          <div id="currentPdfPreview" class="mb-2"></div>

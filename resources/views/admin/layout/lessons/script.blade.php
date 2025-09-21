@@ -18,7 +18,7 @@
                 </video>` :
                     `<p class="text-muted">Aucune vidéo disponible.</p>`;
 
-                lessonModal.querySelector('#lessonPdfContainer').innerHTML = pdf ?
+                lessonModal.querySelector('#lessonPdfContainer').innerHTML = (pdf && pdf !== '/storage/') ?
                     `<a href="${pdf}" target="_blank" class="btn btn-outline-danger">
                     <i class="fas fa-file-pdf me-1"></i> Voir PDF
                 </a>` :
@@ -46,7 +46,7 @@
                 </video>` :
                     `<p class="text-muted">Aucune vidéo disponible</p>`;
 
-                document.getElementById('currentPdfPreview').innerHTML = pdf ?
+                document.getElementById('currentPdfPreview').innerHTML = (pdf && pdf !== '/storage/') ?
                     `<a href="${pdf}" target="_blank" class="btn btn-outline-danger">
                     <i class="fas fa-file-pdf me-1"></i> Voir PDF
                 </a>` :
