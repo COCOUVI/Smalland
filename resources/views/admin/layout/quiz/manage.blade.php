@@ -55,7 +55,7 @@
                                 <div class="input-group">
                                     <input type="text" name="reponses[]" class="form-control" placeholder="Réponse 1" required>
                                     <div class="input-group-text">
-                                        <input type="radio" name="is_correct" value="0" class="form-check-input" id="new_correct_0" required checked>
+                                        <input type="checkbox" name="correct_answers[]" value="0" class="form-check-input" id="new_correct_0">
                                         <label class="form-check-label ms-2" for="new_correct_0">Correct</label>
                                     </div>
                                 </div>
@@ -64,7 +64,7 @@
                                 <div class="input-group">
                                     <input type="text" name="reponses[]" class="form-control" placeholder="Réponse 2" required>
                                     <div class="input-group-text">
-                                        <input type="radio" name="is_correct" value="1" class="form-check-input" id="new_correct_1" required>
+                                        <input type="checkbox" name="correct_answers[]" value="1" class="form-check-input" id="new_correct_1">
                                         <label class="form-check-label ms-2" for="new_correct_1">Correct</label>
                                     </div>
                                 </div>
@@ -129,7 +129,7 @@
                                                     <input type="text" name="reponses[{{ $rep->id }}]" class="form-control" value="{{ $rep->content }}" required>
 
                                                     <span class="input-group-text">
-                                                        <input type="radio" name="correct_reponse" value="{{ $rep->id }}" class="form-check-input mt-0" id="edit_correct_{{ $rep->id }}" {{ $rep->is_correct ? 'checked' : '' }} required>
+                                                        <input type="checkbox" name="correct_reponses[]" value="{{ $rep->id }}" class="form-check-input mt-0" id="edit_correct_{{ $rep->id }}" {{ $rep->is_correct ? 'checked' : '' }}>
                                                     </span>
                                                     <span class="input-group-text">
                                                         <label class="form-check-label mb-0" for="edit_correct_{{ $rep->id }}">Correct</label>
