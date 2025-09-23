@@ -1,6 +1,6 @@
 {{-- Modal pour modifier le titre du quizz --}}
 <div class="modal fade" id="editQuizzTitleModal" tabindex="-1" aria-labelledby="editQuizzTitleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editQuizzTitleModalLabel">Modifier le titre du quizz</h5>
@@ -28,7 +28,7 @@
 
 {{-- Modal pour supprimer le quizz --}}
 <div class="modal fade" id="deleteQuizzModal" tabindex="-1" aria-labelledby="deleteQuizzModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteQuizzModalLabel">Supprimer le quizz</h5>

@@ -25,8 +25,6 @@
                         <span class="text-danger" id="addDescriptionError"></span>
                     </div>
 
-
-
                     <div class="mb-3">
                         <label class="form-label">Objectifs</label>
                         <div id="objectivesContainer">
@@ -80,9 +78,9 @@
     </div>
 </div>
 
+
 <!-- Modal Modifier Formation -->
-<div class="modal fade" id="editFormationModal" tabindex="-1" aria-labelledby="editFormationModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="editFormationModal" tabindex="-1" aria-labelledby="editFormationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -104,15 +102,42 @@
 
                     <div class="mb-3">
                         <label for="editDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="editDescription" name="description" rows="5"
-                            required></textarea>
+                        <textarea class="form-control" id="editDescription" name="description" rows="5" required></textarea>
                         <span class="text-danger" id="editDescriptionError"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Objectifs</label>
+                        <div id="editObjectivesContainer">
+                            <!-- Les objectifs existants seront chargés ici -->
+                        </div>
+                        <button type="button" id="editAddObjectiveField"
+                            class="btn btn-primary mt-2 d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-plus me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                            </svg>
+                            Ajouter un objectif
+                        </button>
+                        <span class="text-danger" id="editObjectivesError"></span>
                     </div>
 
                     <div class="mb-3">
                         <label for="editPrice" class="form-label">Prix (FCFA)</label>
                         <input type="number" step="0.01" class="form-control" id="editPrice" name="price" required>
                         <span class="text-danger" id="editPriceError"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editLevel" class="form-label">Niveau</label>
+                        <select class="form-control" id="editLevel" name="level">
+                            <option value="">Sélectionnez un niveau</option>
+                            <option value="Débutant">Débutant</option>
+                            <option value="Intermédiaire">Intermédiaire</option>
+                            <option value="Avancé">Avancé</option>
+                        </select>
+                        <span class="text-danger" id="editLevelError"></span>
                     </div>
 
                     <div class="mb-3">

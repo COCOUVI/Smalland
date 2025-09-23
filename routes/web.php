@@ -37,6 +37,9 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/page_modify_formation/{formation}', [AdminController::class, "Put_Page_Formation"])->name('put_page.formation');
     Route::put('/modify_formation/{formation}', [AdminController::class, 'PutFormation'])->name('admin.formations.update');
     Route::delete('/delete_formation/{formation}', [AdminController::class, "DeleteFormation"])->name('delete.formation');
+    Route::get('/formations/{formation}/objectives', [AdminController::class, 'getObjectives'])->name('objectives.get');
+
+        Route::get('/formations/{formation}/objectives', [AdminController::class, 'getObjectives'])->name('formations.objectives');
 
     // MODULES
     Route::get('/formations/{formation}/modules', [AdminController::class, 'getModules'])->name('modules.get');

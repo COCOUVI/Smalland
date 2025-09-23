@@ -30,139 +30,64 @@ class AdminController extends Controller
     /**
      * @param \Illuminate\Http\Request $request
      */
-    // public function AddFormation(FormationRequest $request)
-    // {
-    //     // Création d'une instance de Formation
-    //     $formation = new Formation();
-    //     $formation->titre = $request->input('title');
-    //     $formation->description = $request->input('description');
-    //     $formation->price = $request->input('price');
-    //     $formation->niveau = $request->input('level');
-    //     $formation->objectif = $request->input('objective');
-
-    //     // Gestion de l'image si fournie
-    //     if ($request->hasFile('image')) {
-    //         $imagePath = $request->file('image')->store('formations', 'public');
-    //         $formation->image_path = $imagePath;
-    //     }
-
-    //     // Sauvegarde dans la base
-    //     $formation->save();
-
-    //     // Retour JSON pour AJAX ou redirection classique
-    //     if ($request->ajax()) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Formation créée avec succès.',
-    //             'formation' => $formation
-    //         ]);
-    //     }
-
-    //     // Redirection avec message de succès (fallback)
-    //     return redirect()->back()->with('success', 'Formation créée avec succès.');
-    // }
-
-
-    // public function AddFormation(FormationRequest $request)
-    // {
-    //     // Création d'une instance de Formation
-    //     $formation = new Formation();
-    //     $formation->titre = $request->input('title');
-    //     $formation->description = $request->input('description');
-    //     $formation->price = $request->input('price');
-    //     $formation->niveau = $request->input('level');
-
-    //     // Gérer les objectifs (soit array soit string)
-    //     if ($request->has('objectives') && is_array($request->input('objectives'))) {
-    //         // Si c'est un tableau, on le joint avec des virgules ou des retours à la ligne
-    //         $formation->objectif = implode("\n", array_filter($request->input('objectives')));
-    //     } else {
-    //         // Si c'est une chaîne simple ou null
-    //         $formation->objectif = $request->input('objective');
-    //     }
-
-    //     // Gestion de l'image si fournie
-    //     if ($request->hasFile('image')) {
-    //         $imagePath = $request->file('image')->store('formations', 'public');
-    //         $formation->image_path = $imagePath;
-    //     }
-
-    //     // Sauvegarde dans la base
-    //     $formation->save();
-
-    //     // Retour JSON pour AJAX ou redirection classique
-    //     if ($request->ajax()) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Formation créée avec succès.',
-    //             'formation' => $formation
-    //         ]);
-    //     }
-
-    //     // Redirection avec message de succès (fallback)
-    //     return redirect()->back()->with('success', 'Formation créée avec succès.');
-    // }
-
-
 
     public function AddFormation(FormationRequest $request)
-{
-    try {
-        // Création d'une instance de Formation
-        $formation = new Formation();
-        $formation->titre = $request->input('title');
-        $formation->description = $request->input('description');
-        $formation->price = $request->input('price');
-        $formation->niveau = $request->input('level', 'Non spécifié');
+    {
+        try {
+            // Création d'une instance de Formation
+            $formation = new Formation();
+            $formation->titre = $request->input('title');
+            $formation->description = $request->input('description');
+            $formation->price = $request->input('price');
+            $formation->niveau = $request->input('level', 'Non spécifié');
 
-        // Gestion de l'image si fournie
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('formations', 'public');
-            $formation->image_path = $imagePath;
-        }
+            // Gestion de l'image si fournie
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('formations', 'public');
+                $formation->image_path = $imagePath;
+            }
 
-        // Sauvegarde de la formation d'abord
-        $formation->save();
+            // Sauvegarde de la formation d'abord
+            $formation->save();
 
-        // Gérer les objectifs dans la table objectifs séparée
-        $objectives = $request->input('objectives', []);
-        if (is_array($objectives) && !empty($objectives)) {
-            foreach (array_filter($objectives) as $objectiveText) {
-                if (!empty(trim($objectiveText))) {
-                    DB::table('objectifs')->insert([
-                        'formation_id' => $formation->id,
-                        'content' => trim($objectiveText),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+            // Gérer les objectifs dans la table objectifs séparée
+            $objectives = $request->input('objectives', []);
+            if (is_array($objectives) && !empty($objectives)) {
+                foreach (array_filter($objectives) as $objectiveText) {
+                    if (!empty(trim($objectiveText))) {
+                        DB::table('objectifs')->insert([
+                            'formation_id' => $formation->id,
+                            'content' => trim($objectiveText),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
                 }
             }
+
+            // Retour JSON pour AJAX
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Formation créée avec succès.',
+                    'formation' => $formation
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Formation créée avec succès.');
+        } catch (\Exception $e) {
+            Log::error('Erreur création formation: ' . $e->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la création: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Erreur lors de la création.');
         }
-
-        // Retour JSON pour AJAX
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Formation créée avec succès.',
-                'formation' => $formation
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Formation créée avec succès.');
-
-    } catch (\Exception $e) {
-        Log::error('Erreur création formation: ' . $e->getMessage());
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la création: ' . $e->getMessage()
-            ], 500);
-        }
-
-        return redirect()->back()->with('error', 'Erreur lors de la création.');
     }
-}
 
     public function ShowFormations()
     {
@@ -185,12 +110,12 @@ class AdminController extends Controller
      * @param \Illuminate\Http\Request|\App\Http\Requests\UpdateFormationRequest $request
      */
     public function PutFormation(UpdateFormationRequest $request, Formation $formation)
-    {
+{
+    try {
         $formation->titre = $request->input('titre');
         $formation->description = $request->input('description');
         $formation->price = $request->input('price');
         $formation->niveau = $request->input('level');
-        $formation->objectif = $request->input('objective');
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('formations', 'public');
@@ -198,6 +123,42 @@ class AdminController extends Controller
         }
 
         $formation->save();
+
+        // Gérer les objectifs à supprimer
+        if ($request->has('objectives_to_delete')) {
+            DB::table('objectifs')
+              ->whereIn('id', $request->input('objectives_to_delete'))
+              ->delete();
+        }
+
+        // Mettre à jour les objectifs existants
+        if ($request->has('objectives_existing')) {
+            foreach ($request->input('objectives_existing') as $id => $content) {
+                if (!empty(trim($content))) {
+                    DB::table('objectifs')
+                      ->where('id', $id)
+                      ->where('formation_id', $formation->id)
+                      ->update([
+                          'content' => trim($content),
+                          'updated_at' => now()
+                      ]);
+                }
+            }
+        }
+
+        // Ajouter les nouveaux objectifs
+        if ($request->has('objectives_new')) {
+            foreach ($request->input('objectives_new') as $content) {
+                if (!empty(trim($content))) {
+                    DB::table('objectifs')->insert([
+                        'formation_id' => $formation->id,
+                        'content' => trim($content),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+        }
 
         if ($request->ajax()) {
             return response()->json([
@@ -207,9 +168,21 @@ class AdminController extends Controller
             ]);
         }
 
-        return redirect()->back()
-            ->with('success', 'Formation mise à jour avec succès.');
+        return redirect()->back()->with('success', 'Formation mise à jour avec succès.');
+
+    } catch (\Exception $e) {
+        Log::error('Erreur modification formation: ' . $e->getMessage());
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la modification: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->back()->with('error', 'Erreur lors de la modification.');
     }
+}
 
 
     public function DeleteFormation(Formation $formation, Request $request)
@@ -328,7 +301,6 @@ class AdminController extends Controller
             ], 500);
         }
     }
-
 
     public function addLesson(Request $request, $moduleId)
     {
@@ -467,4 +439,27 @@ class AdminController extends Controller
             'message' => 'Leçon supprimée avec succès.'
         ]);
     }
+
+    // public function getObjectives(Formation $formation)
+    // {
+    //     $objectives = DB::table('objectifs')->where('formation_id', $formation->id)->get();
+    //     return response()->json($objectives);
+    // }
+
+    public function getObjectives(Formation $formation)
+{
+    try {
+        // Utilisez le modèle Objectif si vous en avez un, sinon utilisez DB
+        $objectives = DB::table('objectifs')
+            ->where('formation_id', $formation->id)
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return response()->json($objectives);
+
+    } catch (\Exception $e) {
+        Log::error('Erreur récupération objectifs: ' . $e->getMessage());
+        return response()->json([], 500);
+    }
+}
 }

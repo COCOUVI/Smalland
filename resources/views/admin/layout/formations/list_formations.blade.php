@@ -68,12 +68,25 @@
 
 
                                                 <!-- Bouton Modifier -->
+                                                {{-- <button type="button" class="btn btn-sm btn-warning editFormationBtn"
+                                                    data-bs-toggle="modal" data-bs-target="#editFormationModal"
+                                                    data-formation-id="{{ $formation->id }}"
+                                                    data-formation-title="{{ $formation->titre }}"
+                                                    data-formation-description="{{ $formation->description }}"
+                                                    data-formation-price="{{ $formation->price }}"
+                                                    data-formation-image="{{ $formation->image_path ? asset('storage/' . $formation->image_path) : '' }}"
+                                                    title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </button> --}}
+
+                                                <!-- Bouton Modifier -->
                                                 <button type="button" class="btn btn-sm btn-warning editFormationBtn"
                                                     data-bs-toggle="modal" data-bs-target="#editFormationModal"
                                                     data-formation-id="{{ $formation->id }}"
                                                     data-formation-title="{{ $formation->titre }}"
                                                     data-formation-description="{{ $formation->description }}"
                                                     data-formation-price="{{ $formation->price }}"
+                                                    data-formation-niveau="{{ $formation->niveau }}"
                                                     data-formation-image="{{ $formation->image_path ? asset('storage/' . $formation->image_path) : '' }}"
                                                     title="Modifier">
                                                     <i class="fas fa-edit"></i>
@@ -112,14 +125,13 @@
                                         </p>
 
                                         <div class="d-flex justify-content-center flex-wrap gap-1">
-                                            <a href="{{ route('details.formation', $formation->id) }}"
-                                                class="btn btn-sm btn-info" title="Voir">
+                                            <a href="{{ route('details.formation', $formation->id) }}" class="btn btn-sm btn-info"
+                                                title="Voir">
                                                 <i class="fas fa-eye"></i>
                                             </a>
 
-                                            <button type="button" class="btn btn-sm btn-success addModuleBtn"
-                                                data-bs-toggle="modal" data-bs-target="#addModuleModal"
-                                                data-formation-id="{{ $formation->id }}"
+                                            <button type="button" class="btn btn-sm btn-success addModuleBtn" data-bs-toggle="modal"
+                                                data-bs-target="#addModuleModal" data-formation-id="{{ $formation->id }}"
                                                 data-formation-title="{{ $formation->titre }}" title="Ajouter module">
                                                 <i class="fas fa-plus-circle"></i>
                                             </button>

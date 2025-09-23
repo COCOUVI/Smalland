@@ -63,11 +63,14 @@
                         const errors = xhr.responseJSON.errors;
                         $.each(errors, function (key, value) {
                             if (key === 'title') $('#addTitleError').text(value[0]);
-                            if (key === 'description') $('#addDescriptionError').text(value[0]);
+                            if (key === 'description') $('#addDescriptionError')
+                                .text(value[0]);
                             if (key === 'price') $('#addPriceError').text(value[0]);
-                            if (key === 'level') $('#addLevelError').text(value[0]); // AJOUTEZ CETTE LIGNE
+                            if (key === 'level') $('#addLevelError').text(value[
+                                0]); // AJOUTEZ CETTE LIGNE
                             if (key === 'image') $('#addImageError').text(value[0]);
-                            if (key === 'objectives') $('#addObjectivesError').text(value[0]);
+                            if (key === 'objectives') $('#addObjectivesError').text(
+                                value[0]);
                         });
                     } else {
                         $('#addFormationAlert').html(
@@ -84,24 +87,116 @@
             const titre = $(this).data('formation-title');
             const description = $(this).data('formation-description');
             const price = $(this).data('formation-price');
+            const niveau = $(this).data('formation-niveau') || '';
             const imagePath = $(this).data('formation-image');
 
             $('#editFormationId').val(formationId);
             $('#editTitre').val(titre);
             $('#editDescription').val(description);
             $('#editPrice').val(price);
+            $('#editLevel').val(niveau);
+
+            // Charger les objectifs existants
+            $('#editObjectivesContainer').html('<div class="text-center"><div class="spinner-border" role="status"></div></div>');
+
+            $.ajax({
+                url: `/dashboard/formations/${formationId}/objectives`,
+                type: 'GET',
+                success: function (objectives) {
+                    $('#editObjectivesContainer').html('');
+
+                    if (objectives && objectives.length > 0) {
+                        objectives.forEach(function (objective) {
+                            $('#editObjectivesContainer').append(`
+                        <div class="objective-item mb-2">
+                            <div class="input-group">
+                                <input type="text" name="objectives_existing[${objective.id}]"
+                                       value="${objective.content.replace(/"/g, '&quot;')}"
+                                       class="form-control" required>
+                                <button type="button" class="btn btn-danger remove-existing-objective-btn"
+                                        data-objective-id="${objective.id}" title="Supprimer">
+                                    &times;
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                        });
+                    }
+
+                    // Ajouter un champ vide pour nouveau objectif même s'il y a des objectifs existants
+                    $('#editObjectivesContainer').append(`
+                <div class="objective-item mb-2">
+                    <div class="input-group">
+                        <input type="text" name="objectives_new[]" class="form-control" placeholder="Nouvel objectif">
+                        <button type="button" class="btn btn-danger remove-new-objective-btn" title="Supprimer">
+                            &times;
+                        </button>
+                    </div>
+                </div>
+            `);
+                },
+                error: function (xhr) {
+                    console.error('Erreur chargement objectifs:', xhr);
+                    $('#editObjectivesContainer').html(`
+                <div class="alert alert-warning mb-2">
+                    Impossible de charger les objectifs existants.
+                </div>
+                <div class="objective-item mb-2">
+                    <div class="input-group">
+                        <input type="text" name="objectives_new[]" class="form-control" placeholder="Objectif" required>
+                        <button type="button" class="btn btn-danger remove-new-objective-btn" title="Supprimer">
+                            &times;
+                        </button>
+                    </div>
+                </div>
+            `);
+                }
+            });
 
             if (imagePath) {
                 $('#currentImagePreview').html(`
-                <p>Image actuelle :</p>
-                <img src="${imagePath}" alt="Image formation" class="img-thumbnail" style="max-width: 200px;">
-            `);
+            <p>Image actuelle :</p>
+            <img src="${imagePath}" alt="Image formation" class="img-thumbnail" style="max-width: 200px;">
+        `);
             } else {
                 $('#currentImagePreview').html('');
             }
 
             $('.text-danger').text('');
             $('#editFormationAlert').html('');
+        });
+
+        // Ajouter un nouvel objectif dans le modal d'édition
+        $(document).on('click', '#editAddObjectiveField', function () {
+            $('#editObjectivesContainer').append(`
+        <div class="objective-item mb-2">
+            <div class="input-group">
+                <input type="text" name="objectives_new[]" class="form-control" placeholder="Nouvel objectif" required>
+                <button type="button" class="btn btn-danger remove-new-objective-btn" title="Supprimer">
+                    &times;
+                </button>
+            </div>
+        </div>
+    `);
+        });
+
+        // Supprimer un objectif existant (marquer pour suppression)
+        $(document).on('click', '.remove-existing-objective-btn', function () {
+            const objectiveId = $(this).data('objective-id');
+            const element = $(this).closest('.objective-item');
+
+            // Ajouter un input caché pour signaler la suppression
+            $('#editFormationForm').append(`
+        <input type="hidden" name="objectives_to_delete[]" value="${objectiveId}">
+    `);
+
+            // Supprimer visuellement l'élément
+            element.remove();
+        });
+
+        // Supprimer un nouvel objectif
+        $(document).on('click', '.remove-new-objective-btn', function () {
+            $(this).closest('.objective-item').remove();
         });
 
         $('#editFormationForm').on('submit', function (e) {
@@ -131,14 +226,12 @@
                     if (xhr.status === 422) {
                         const errors = xhr.responseJSON.errors;
                         $.each(errors, function (key, value) {
-                            if (key === 'titre') $('#editTitreError').text(value[
-                                0]);
-                            if (key === 'description') $('#editDescriptionError')
-                                .text(value[0]);
-                            if (key === 'price') $('#editPriceError').text(value[
-                                0]);
-                            if (key === 'image') $('#editImageError').text(value[
-                                0]);
+                            if (key === 'titre') $('#editTitreError').text(value[0]);
+                            if (key === 'description') $('#editDescriptionError').text(value[0]);
+                            if (key === 'price') $('#editPriceError').text(value[0]);
+                            if (key === 'level') $('#editLevelError').text(value[0]);
+                            if (key === 'image') $('#editImageError').text(value[0]);
+                            if (key === 'objectives') $('#editObjectivesError').text(value[0]);
                         });
                     } else {
                         $('#editFormationAlert').html(
@@ -147,6 +240,13 @@
                     }
                 }
             });
+        });
+
+        // Nettoyer le modal lors de sa fermeture
+        $('#editFormationModal').on('hidden.bs.modal', function () {
+            // Supprimer les inputs cachés objectives_to_delete s'ils existent
+            $('#editFormationForm input[name="objectives_to_delete[]"]').remove();
+            $('#editObjectivesContainer').html('');
         });
 
         // === SUPPRIMER FORMATION ===
