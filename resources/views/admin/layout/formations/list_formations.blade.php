@@ -66,19 +66,6 @@
                                                     <i class="fas fa-plus-circle"></i>
                                                 </button>
 
-
-                                                <!-- Bouton Modifier -->
-                                                {{-- <button type="button" class="btn btn-sm btn-warning editFormationBtn"
-                                                    data-bs-toggle="modal" data-bs-target="#editFormationModal"
-                                                    data-formation-id="{{ $formation->id }}"
-                                                    data-formation-title="{{ $formation->titre }}"
-                                                    data-formation-description="{{ $formation->description }}"
-                                                    data-formation-price="{{ $formation->price }}"
-                                                    data-formation-image="{{ $formation->image_path ? asset('storage/' . $formation->image_path) : '' }}"
-                                                    title="Modifier">
-                                                    <i class="fas fa-edit"></i>
-                                                </button> --}}
-
                                                 <!-- Bouton Modifier -->
                                                 <button type="button" class="btn btn-sm btn-warning editFormationBtn"
                                                     data-bs-toggle="modal" data-bs-target="#editFormationModal"

@@ -28,7 +28,7 @@
                             <h5>Marie Dupont</h5>
                             <p class="text-muted">Étudiante depuis juin 2023</p>
                         </div>
-                        
+
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a class="nav-link active" href="#">
@@ -68,7 +68,7 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <!-- Statistiques -->
                 <div class="card mt-4">
                     <div class="card-body stats-card">
@@ -77,7 +77,7 @@
                         <p>de formation suivies</p>
                     </div>
                 </div>
-                
+
                 <div class="card mt-4">
                     <div class="card-body stats-card">
                         <i class="bi bi-award display-6 text-primary mb-3"></i>
@@ -121,7 +121,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <h3 class="section-title">Formations en cours</h3>
-                        
+
                         <div class="row">
                             <!-- Formation 1 -->
                             <div class="col-md-6 mb-4">
@@ -147,7 +147,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Formation 2 -->
                             <div class="col-md-6 mb-4">
                                 <div class="card h-100">
@@ -180,7 +180,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <h3 class="section-title">Formations terminées</h3>
-                        
+
                         <div class="row">
                             <!-- Formation 1 -->
                             <div class="col-md-6 mb-4">
@@ -206,7 +206,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Formation 2 -->
                             <div class="col-md-6 mb-4">
                                 <div class="card h-100">
@@ -239,7 +239,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h3 class="section-title">Activité récente</h3>
-                        
+
                         <div class="list-group">
                             <div class="list-group-item border-0">
                                 <div class="d-flex w-100 justify-content-between">
@@ -248,7 +248,7 @@
                                 </div>
                                 <p class="mb-1">Maraîchage biologique intensif</p>
                             </div>
-                            
+
                             <div class="list-group-item border-0">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h6 class="mb-1">Quiz "Techniques de compostage" réussi</h6>
@@ -257,7 +257,7 @@
                                 <p class="mb-1">Maîtriser l'art du compostage</p>
                                 <small class="text-muted">Score: 85%</small>
                             </div>
-                            
+
                             <div class="list-group-item border-0">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h6 class="mb-1">Certificat obtenu</h6>
@@ -266,7 +266,7 @@
                                 <p class="mb-1">Initiation à l'apiculture</p>
                                 <small class="text-muted">Félicitations !</small>
                             </div>
-                            
+
                             <div class="list-group-item border-0">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h6 class="mb-1">Nouvelle formation commencée</h6>
