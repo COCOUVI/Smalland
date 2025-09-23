@@ -2,7 +2,13 @@
 
 @section('content')
     <div class="container mt-4">
-        <h2>Quizz du module : {{ $module->titre }}</h2>
+        <h2>
+            @if($module->quizz)
+                {{ $module->quizz->titre }}
+            @else
+                Quizz du module : {{ $module->titre }}
+            @endif
+        </h2>
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -24,13 +30,26 @@
         {{-- Création du quizz si inexistant --}}
         @if (!$module->quizz)
             <div class="card mb-4">
-                <div class="card-header">Créer le quizz</div>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Créer le quizz</span>
+                    <div>
+                        {{-- Bouton Modifier le titre (désactivé car pas encore créé) --}}
+                        <button type="button" class="btn btn-outline-secondary btn-sm" disabled>
+                            <i class="bi bi-pencil"></i> Modifier
+                        </button>
+                        {{-- Bouton Supprimer (désactivé car pas encore créé) --}}
+                        <button type="button" class="btn btn-outline-danger btn-sm ms-1" disabled>
+                            <i class="bi bi-trash"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+                {{-- ✅ AJOUT DU FORMULAIRE DE CRÉATION MANQUANT --}}
                 <div class="card-body">
                     <form method="POST" action="{{ route('quizz.storeOrUpdate', $module->id) }}">
                         @csrf
                         <div class="mb-3">
                             <label>Titre du quizz</label>
-                            <input type="text" name="titre" class="form-control" value="Quizz du module {{ $module->titre }}">
+                            <input type="text" name="titre" class="form-control" value="Quizz du module {{ $module->titre }}" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Créer le quizz</button>
                     </form>
@@ -41,7 +60,19 @@
         {{-- Ajouter une question --}}
         @if ($module->quizz)
             <div class="card mb-4">
-                <div class="card-header">Ajouter une question</div>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Ajouter une question</span>
+                    <div>
+                        {{-- Bouton Modifier le titre du quizz --}}
+                        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editQuizzTitleModal">
+                            <i class="bi bi-pencil"></i> Modifier le titre
+                        </button>
+                        {{-- Bouton Supprimer le quizz --}}
+                        <button type="button" class="btn btn-outline-danger btn-sm ms-1" data-bs-toggle="modal" data-bs-target="#deleteQuizzModal">
+                            <i class="bi bi-trash"></i> Supprimer le quizz
+                        </button>
+                    </div>
+                </div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('quizz.storeOrUpdate', $module->id) }}" id="add-question-form">
                         @csrf

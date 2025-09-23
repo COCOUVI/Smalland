@@ -244,4 +244,113 @@ class QuizzController extends Controller
             ], 500);
         }
     }
+
+
+
+// Ajouter ces méthodes à votre QuizzController
+
+/**
+ * Modifier le titre du quizz
+ */
+public function updateTitle(Request $request, Quizz $quizz)
+{
+    try {
+        // Validation
+        $request->validate([
+            'titre' => 'required|string|max:255'
+        ], [
+            'titre.required' => 'Le titre est obligatoire.',
+            'titre.max' => 'Le titre ne peut pas dépasser 255 caractères.'
+        ]);
+
+        // Mise à jour du titre
+        $quizz->update([
+            'titre' => trim($request->titre)
+        ]);
+
+        // Réponse selon le type de requête
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Titre du quizz modifié avec succès',
+                'titre' => $quizz->titre
+            ], 200);
+        }
+
+        return redirect()->route('quizz.manage', $quizz->module_id)
+                         ->with('success', 'Titre du quizz modifié avec succès.');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de validation',
+                'errors' => $e->errors()
+            ], 422);
+        }
+
+        return redirect()->back()
+                         ->withErrors($e->errors())
+                         ->withInput();
+
+    } catch (\Exception $e) {
+        Log::error('Erreur lors de la modification du titre du quizz: ' . $e->getMessage());
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur interne: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->back()
+                         ->with('error', 'Erreur lors de la modification: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Supprimer complètement le quizz et toutes ses questions/réponses
+ */
+public function destroy(Request $request, Quizz $quizz)
+{
+    try {
+        $moduleId = $quizz->module_id;
+
+        // Supprimer toutes les réponses via les questions (cascade)
+        foreach ($quizz->questions as $question) {
+            $question->reponses()->delete();
+        }
+
+        // Supprimer toutes les questions
+        $quizz->questions()->delete();
+
+        // Supprimer le quizz
+        $quizz->delete();
+
+        // Réponse selon le type de requête
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Quizz supprimé avec succès',
+                'redirect_url' => route('quizz.manage', $moduleId)
+            ], 200);
+        }
+
+        return redirect()->route('quizz.manage', $moduleId)
+                         ->with('success', 'Quizz supprimé avec succès.');
+
+    } catch (\Exception $e) {
+        Log::error('Erreur lors de la suppression du quizz: ' . $e->getMessage());
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->back()
+                         ->with('error', 'Erreur lors de la suppression: ' . $e->getMessage());
+    }
+}
 }

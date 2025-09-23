@@ -64,6 +64,13 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
 
     Route::put('/questions/{questionId}', [QuizzController::class, 'updateQuestion'])->name('questions.update');
     Route::delete('/questions/{questionId}', [QuizzController::class, 'deleteQuestion'])->name('questions.delete');
+
+    //Quiz - Ajouter ces routes dans votre groupe middleware(['auth', 'admin'])
+// Modifier le titre du quizz
+Route::put('/quizz/{quizz}/update-title', [QuizzController::class, 'updateTitle'])->name('quizz.updateTitle');
+
+// Supprimer le quizz entier
+Route::delete('/quizz/{quizz}', [QuizzController::class, 'destroy'])->name('quizz.destroy');
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===

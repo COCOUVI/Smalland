@@ -4,8 +4,10 @@
         let reponseCount = 2;
         let currentQuestionIdToDelete = null;
         let deleteModal = null;
+        let editTitleModal = null;
+        let deleteQuizzModal = null;
 
-        // Initialiser le modal Bootstrap
+        // Initialiser les modals Bootstrap
         const deleteModalElement = document.getElementById('deleteConfirmModal');
         if (deleteModalElement) {
             deleteModal = new bootstrap.Modal(deleteModalElement);
@@ -21,7 +23,19 @@
             });
         }
 
-        // ✅ NOUVEAU SYSTÈME DE NOTIFICATIONS ÉLÉGANT
+        // Modal pour modifier le titre du quiz
+        const editTitleModalElement = document.getElementById('editQuizzTitleModal');
+        if (editTitleModalElement) {
+            editTitleModal = new bootstrap.Modal(editTitleModalElement);
+        }
+
+        // Modal pour supprimer le quiz
+        const deleteQuizzModalElement = document.getElementById('deleteQuizzModal');
+        if (deleteQuizzModalElement) {
+            deleteQuizzModal = new bootstrap.Modal(deleteQuizzModalElement);
+        }
+
+        // ✅ SYSTÈME DE NOTIFICATIONS ÉLÉGANT
         function showNotification(message, type = 'success') {
             // Supprimer toutes les notifications existantes
             const existingNotifications = document.querySelectorAll('.custom-notification');
@@ -79,11 +93,110 @@
             }, 300);
         }
 
-        // Masquer les anciennes alertes Bootstrap
-        function hideBootstrapAlerts() {
-            const alerts = document.querySelectorAll('#ajax-success, #ajax-error');
-            alerts.forEach(alert => {
-                alert.style.display = 'none';
+        // ✅ GESTION MODIFICATION TITRE DU QUIZ - VERSION CORRIGÉE AVEC RAFRAÎCHISSEMENT
+        const editQuizzTitleForm = document.getElementById('editQuizzTitleForm');
+        if (editQuizzTitleForm) {
+            editQuizzTitleForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Sauvegarde...';
+
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Titre du quiz modifié avec succès !', 'success');
+
+                        // Fermer le modal
+                        if (editTitleModal) {
+                            editTitleModal.hide();
+                        }
+
+                        // ✅ Actualiser la page après un court délai pour voir les changements
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification('Erreur lors de la modification: ' + (data.message || 'Erreur inconnue'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la modification du titre', 'error');
+                })
+                .finally(() => {
+                    // Restaurer le bouton
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                });
+            });
+        }
+
+        // ✅ GESTION SUPPRESSION DU QUIZ COMPLET - VERSION CORRIGÉE AVEC RAFRAÎCHISSEMENT
+        const deleteQuizzForm = document.getElementById('deleteQuizzForm');
+        if (deleteQuizzForm) {
+            deleteQuizzForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Suppression...';
+
+                // ✅ Création du FormData pour simuler DELETE avec Laravel
+                const formData = new FormData();
+                formData.append('_method', 'DELETE');
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+                fetch(this.action, {
+                    method: 'POST', // Laravel utilise POST avec _method pour simuler DELETE
+                    body: formData, // Utiliser FormData au lieu de headers vides
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Quiz supprimé avec succès !', 'success');
+
+                        // Fermer le modal
+                        if (deleteQuizzModal) {
+                            deleteQuizzModal.hide();
+                        }
+
+                        // ✅ Actualiser la page après un court délai pour voir les changements
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification('Erreur lors de la suppression: ' + (data.message || 'Erreur inconnue'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la suppression du quiz', 'error');
+                })
+                .finally(() => {
+                    // Restaurer le bouton
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                });
             });
         }
 
@@ -113,7 +226,7 @@
             });
         }
 
-        // ✅ NOUVEAU : AJOUT DE QUESTION EN AJAX
+        // ✅ AJOUT DE QUESTION EN AJAX
         const addQuestionForm = document.getElementById('add-question-form');
         if (addQuestionForm) {
             addQuestionForm.addEventListener('submit', function(e) {
@@ -187,7 +300,7 @@
             });
         }
 
-        // ✅ FONCTION CORRIGÉE POUR AJOUTER UNE QUESTION À LA FIN DE LA LISTE
+        // ✅ FONCTION POUR AJOUTER UNE QUESTION À LA LISTE
         function addQuestionToList(questionData) {
             // Trouver le bon conteneur (celui avec les questions existantes)
             const questionsCard = document.querySelector('.card:last-of-type .card-body');
@@ -288,13 +401,8 @@
             }, 10);
         }
 
-        // ✅ GESTION DES CLICS (reste identique mais avec nouvelles notifications)
+        // ✅ GESTION DES CLICS
         document.addEventListener('click', function(e) {
-            // Gérer la croix de fermeture du modal
-            if (e.target.classList.contains('btn-close') && e.target.closest('#deleteConfirmModal')) {
-                currentQuestionIdToDelete = null;
-            }
-
             // Supprimer une réponse (nouvelle question)
             if (e.target.classList.contains('remove-reponse') || e.target.closest('.remove-reponse')) {
                 const button = e.target.classList.contains('remove-reponse') ? e.target : e.target.closest('.remove-reponse');
@@ -376,7 +484,7 @@
             }
         });
 
-        // Confirmation de suppression depuis le modal
+        // Confirmation de suppression question depuis le modal
         document.getElementById('confirm-delete-btn').addEventListener('click', function() {
             if (currentQuestionIdToDelete) {
                 fetch(`/dashboard/questions/${currentQuestionIdToDelete}`, {
@@ -558,7 +666,7 @@
             });
         }
 
-        // ✅ NOUVEAU : AJOUT DE QUIZ EN AJAX (éviter rechargement)
+        // ✅ CRÉATION DE QUIZ EN AJAX (éviter rechargement)
         const createQuizForm = document.querySelector('form[action*="storeOrUpdate"]:not(#add-question-form)');
         if (createQuizForm) {
             createQuizForm.addEventListener('submit', function(e) {
@@ -623,7 +731,7 @@
             });
         }
 
-        // ✅ NOUVEAU : Gérer les messages de session Laravel (quiz créé)
+        // ✅ Gérer les messages de session Laravel (quiz créé)
         const sessionSuccess = document.querySelector('.alert-success');
         if (sessionSuccess && !sessionSuccess.id) { // Éviter les alertes AJAX
             const message = sessionSuccess.textContent.trim();
