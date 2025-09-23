@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UpdateModuleRequest;
 use App\Http\Requests\UpdateFormationRequest;
 use App\Http\Requests\UpdateLessonRequest;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -29,15 +30,90 @@ class AdminController extends Controller
     /**
      * @param \Illuminate\Http\Request $request
      */
+    // public function AddFormation(FormationRequest $request)
+    // {
+    //     // Création d'une instance de Formation
+    //     $formation = new Formation();
+    //     $formation->titre = $request->input('title');
+    //     $formation->description = $request->input('description');
+    //     $formation->price = $request->input('price');
+    //     $formation->niveau = $request->input('level');
+    //     $formation->objectif = $request->input('objective');
+
+    //     // Gestion de l'image si fournie
+    //     if ($request->hasFile('image')) {
+    //         $imagePath = $request->file('image')->store('formations', 'public');
+    //         $formation->image_path = $imagePath;
+    //     }
+
+    //     // Sauvegarde dans la base
+    //     $formation->save();
+
+    //     // Retour JSON pour AJAX ou redirection classique
+    //     if ($request->ajax()) {
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Formation créée avec succès.',
+    //             'formation' => $formation
+    //         ]);
+    //     }
+
+    //     // Redirection avec message de succès (fallback)
+    //     return redirect()->back()->with('success', 'Formation créée avec succès.');
+    // }
+
+
+    // public function AddFormation(FormationRequest $request)
+    // {
+    //     // Création d'une instance de Formation
+    //     $formation = new Formation();
+    //     $formation->titre = $request->input('title');
+    //     $formation->description = $request->input('description');
+    //     $formation->price = $request->input('price');
+    //     $formation->niveau = $request->input('level');
+
+    //     // Gérer les objectifs (soit array soit string)
+    //     if ($request->has('objectives') && is_array($request->input('objectives'))) {
+    //         // Si c'est un tableau, on le joint avec des virgules ou des retours à la ligne
+    //         $formation->objectif = implode("\n", array_filter($request->input('objectives')));
+    //     } else {
+    //         // Si c'est une chaîne simple ou null
+    //         $formation->objectif = $request->input('objective');
+    //     }
+
+    //     // Gestion de l'image si fournie
+    //     if ($request->hasFile('image')) {
+    //         $imagePath = $request->file('image')->store('formations', 'public');
+    //         $formation->image_path = $imagePath;
+    //     }
+
+    //     // Sauvegarde dans la base
+    //     $formation->save();
+
+    //     // Retour JSON pour AJAX ou redirection classique
+    //     if ($request->ajax()) {
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Formation créée avec succès.',
+    //             'formation' => $formation
+    //         ]);
+    //     }
+
+    //     // Redirection avec message de succès (fallback)
+    //     return redirect()->back()->with('success', 'Formation créée avec succès.');
+    // }
+
+
+
     public function AddFormation(FormationRequest $request)
-    {
+{
+    try {
         // Création d'une instance de Formation
         $formation = new Formation();
         $formation->titre = $request->input('title');
         $formation->description = $request->input('description');
         $formation->price = $request->input('price');
-        $formation->niveau = $request->input('level');
-        $formation->objectif = $request->input('objective');
+        $formation->niveau = $request->input('level', 'Non spécifié');
 
         // Gestion de l'image si fournie
         if ($request->hasFile('image')) {
@@ -45,10 +121,25 @@ class AdminController extends Controller
             $formation->image_path = $imagePath;
         }
 
-        // Sauvegarde dans la base
+        // Sauvegarde de la formation d'abord
         $formation->save();
 
-        // Retour JSON pour AJAX ou redirection classique
+        // Gérer les objectifs dans la table objectifs séparée
+        $objectives = $request->input('objectives', []);
+        if (is_array($objectives) && !empty($objectives)) {
+            foreach (array_filter($objectives) as $objectiveText) {
+                if (!empty(trim($objectiveText))) {
+                    DB::table('objectifs')->insert([
+                        'formation_id' => $formation->id,
+                        'content' => trim($objectiveText),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+        }
+
+        // Retour JSON pour AJAX
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
@@ -57,9 +148,21 @@ class AdminController extends Controller
             ]);
         }
 
-        // Redirection avec message de succès (fallback)
         return redirect()->back()->with('success', 'Formation créée avec succès.');
+
+    } catch (\Exception $e) {
+        Log::error('Erreur création formation: ' . $e->getMessage());
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->back()->with('error', 'Erreur lors de la création.');
     }
+}
 
     public function ShowFormations()
     {
@@ -171,15 +274,6 @@ class AdminController extends Controller
 
         return response()->json($modules);
     }
-
-    // public function deleteModule($moduleId)
-    // {
-    //     $module = Module::findOrFail($moduleId);
-    //     $module->delete();
-
-    //     return response()->json(['success' => true]);
-    // }
-
 
     public function deleteModule($moduleId)
     {

@@ -8,9 +8,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // === ROUTES PUBLIQUES ===
-Route::get('/',[HomeController::class,'index'])->name('accueil');
-Route::get('/formation-detail/{formation}', [HomeController::class,'ShowOneFormation'])->name('formation-detail');
-Route::get('/formation-list', [HomeController::class,'showFormations'])->name('formation-list');
+Route::get('/', [HomeController::class, 'index'])->name('accueil');
+Route::get('/formation-detail/{formation}', [HomeController::class, 'ShowOneFormation'])->name('formation-detail');
+Route::get('/formation-list', [HomeController::class, 'showFormations'])->name('formation-list');
 Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
 Route::get('/test', fn() => view("admin.layout.formations.index"));
 
@@ -56,21 +56,12 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
 
 
     //Quiz
-    // Gérer le quizz d’un module (création + questions)
     Route::get('/modules/{module}/quizz', [QuizzController::class, 'manage'])->name('quizz.manage');
-
-    // Sauvegarder ou ajouter questions
     Route::post('/modules/{module}/quizz/store', [QuizzController::class, 'storeOrUpdate'])->name('quizz.storeOrUpdate');
-
     Route::put('/questions/{questionId}', [QuizzController::class, 'updateQuestion'])->name('questions.update');
     Route::delete('/questions/{questionId}', [QuizzController::class, 'deleteQuestion'])->name('questions.delete');
-
-    //Quiz - Ajouter ces routes dans votre groupe middleware(['auth', 'admin'])
-// Modifier le titre du quizz
-Route::put('/quizz/{quizz}/update-title', [QuizzController::class, 'updateTitle'])->name('quizz.updateTitle');
-
-// Supprimer le quizz entier
-Route::delete('/quizz/{quizz}', [QuizzController::class, 'destroy'])->name('quizz.destroy');
+    Route::put('/quizz/{quizz}/update-title', [QuizzController::class, 'updateTitle'])->name('quizz.updateTitle');
+    Route::delete('/quizz/{quizz}', [QuizzController::class, 'destroy'])->name('quizz.destroy');
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===
