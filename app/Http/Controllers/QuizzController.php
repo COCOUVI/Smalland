@@ -12,11 +12,22 @@ use Illuminate\Support\Facades\Log;
 class QuizzController extends Controller
 {
     // Affiche la page de gestion du quizz pour un module
+    // public function manage(Module $module)
+    // {
+    //     $module->load('quizz.questions.reponses'); // charge quizz + questions + réponses
+    //     return view('admin.layout.quiz.manage', compact('module'));
+    // }
+
     public function manage(Module $module)
-    {
-        $module->load('quizz.questions.reponses'); // charge quizz + questions + réponses
-        return view('admin.layout.quiz.manage', compact('module'));
-    }
+{
+    $module->load('quizz.questions.reponses');
+
+    $response = response()->view('admin.layout.quiz.manage', compact('module'));
+
+    return $response->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                   ->header('Pragma', 'no-cache')
+                   ->header('Expires', '0');
+}
 
     // ✅ CORRIGÉ : Créer ou mettre à jour le quizz + ajouter des questions
     public function storeOrUpdate(Request $request, Module $module)

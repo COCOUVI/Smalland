@@ -731,12 +731,15 @@
             });
         }
 
-        // ✅ Gérer les messages de session Laravel (quiz créé)
+        // ✅ Gérer les messages de session Laravel et empêcher leur réapparition
         const sessionSuccess = document.querySelector('.alert-success');
         if (sessionSuccess && !sessionSuccess.id) { // Éviter les alertes AJAX
             const message = sessionSuccess.textContent.trim();
             sessionSuccess.style.display = 'none'; // Masquer l'alerte Bootstrap
             showNotification(message, 'success');
+
+            // ✅ Marquer le message comme affiché pour éviter la réapparition
+            sessionStorage.setItem('quiz_message_shown', 'true');
         }
 
         const sessionError = document.querySelector('.alert-danger');
@@ -744,7 +747,29 @@
             const message = sessionError.textContent.trim();
             sessionError.style.display = 'none'; // Masquer l'alerte Bootstrap
             showNotification(message, 'error');
+
+            // ✅ Marquer le message comme affiché pour éviter la réapparition
+            sessionStorage.setItem('quiz_message_shown', 'true');
         }
+
+        // ✅ Empêcher la réapparition des messages lors du retour navigateur
+        window.addEventListener('pageshow', function(event) {
+            // Si la page est chargée depuis le cache (bouton retour)
+            if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0].type === "back_forward")) {
+                // Masquer tous les messages de session
+                const alerts = document.querySelectorAll('.alert-success, .alert-danger');
+                alerts.forEach(alert => {
+                    if (!alert.id) { // Éviter les alertes AJAX
+                        alert.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // ✅ Nettoyer le sessionStorage lors de la navigation
+        window.addEventListener('beforeunload', function() {
+            sessionStorage.removeItem('quiz_message_shown');
+        });
     });
 </script>
 @endpush
