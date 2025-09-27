@@ -15,6 +15,7 @@ use App\Http\Requests\UpdateModuleRequest;
 use App\Http\Requests\UpdateFormationRequest;
 use App\Http\Requests\UpdateLessonRequest;
 use Illuminate\Support\Facades\DB;
+use App\Services\VideoService;
 
 class AdminController extends Controller
 {
@@ -110,79 +111,78 @@ class AdminController extends Controller
      * @param \Illuminate\Http\Request|\App\Http\Requests\UpdateFormationRequest $request
      */
     public function PutFormation(UpdateFormationRequest $request, Formation $formation)
-{
-    try {
-        $formation->titre = $request->input('titre');
-        $formation->description = $request->input('description');
-        $formation->price = $request->input('price');
-        $formation->niveau = $request->input('level');
+    {
+        try {
+            $formation->titre = $request->input('titre');
+            $formation->description = $request->input('description');
+            $formation->price = $request->input('price');
+            $formation->niveau = $request->input('level');
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('formations', 'public');
-            $formation->image_path = $imagePath;
-        }
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('formations', 'public');
+                $formation->image_path = $imagePath;
+            }
 
-        $formation->save();
+            $formation->save();
 
-        // Gérer les objectifs à supprimer
-        if ($request->has('objectives_to_delete')) {
-            DB::table('objectifs')
-              ->whereIn('id', $request->input('objectives_to_delete'))
-              ->delete();
-        }
+            // Gérer les objectifs à supprimer
+            if ($request->has('objectives_to_delete')) {
+                DB::table('objectifs')
+                    ->whereIn('id', $request->input('objectives_to_delete'))
+                    ->delete();
+            }
 
-        // Mettre à jour les objectifs existants
-        if ($request->has('objectives_existing')) {
-            foreach ($request->input('objectives_existing') as $id => $content) {
-                if (!empty(trim($content))) {
-                    DB::table('objectifs')
-                      ->where('id', $id)
-                      ->where('formation_id', $formation->id)
-                      ->update([
-                          'content' => trim($content),
-                          'updated_at' => now()
-                      ]);
+            // Mettre à jour les objectifs existants
+            if ($request->has('objectives_existing')) {
+                foreach ($request->input('objectives_existing') as $id => $content) {
+                    if (!empty(trim($content))) {
+                        DB::table('objectifs')
+                            ->where('id', $id)
+                            ->where('formation_id', $formation->id)
+                            ->update([
+                                'content' => trim($content),
+                                'updated_at' => now()
+                            ]);
+                    }
                 }
             }
-        }
 
-        // Ajouter les nouveaux objectifs
-        if ($request->has('objectives_new')) {
-            foreach ($request->input('objectives_new') as $content) {
-                if (!empty(trim($content))) {
-                    DB::table('objectifs')->insert([
-                        'formation_id' => $formation->id,
-                        'content' => trim($content),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+            // Ajouter les nouveaux objectifs
+            if ($request->has('objectives_new')) {
+                foreach ($request->input('objectives_new') as $content) {
+                    if (!empty(trim($content))) {
+                        DB::table('objectifs')->insert([
+                            'formation_id' => $formation->id,
+                            'content' => trim($content),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
                 }
             }
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Formation mise à jour avec succès.',
+                    'formation' => $formation
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Formation mise à jour avec succès.');
+        } catch (\Exception $e) {
+            Log::error('Erreur modification formation: ' . $e->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la modification: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Erreur lors de la modification.');
         }
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Formation mise à jour avec succès.',
-                'formation' => $formation
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Formation mise à jour avec succès.');
-
-    } catch (\Exception $e) {
-        Log::error('Erreur modification formation: ' . $e->getMessage());
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la modification: ' . $e->getMessage()
-            ], 500);
-        }
-
-        return redirect()->back()->with('error', 'Erreur lors de la modification.');
     }
-}
 
 
     public function DeleteFormation(Formation $formation, Request $request)
@@ -302,16 +302,17 @@ class AdminController extends Controller
         }
     }
 
+
+
     public function addLesson(Request $request, $moduleId)
     {
         $request->validate([
             'titre' => 'required|string|max:255',
-            'video' => 'required|file|mimes:mp4,avi,mov,wmv|max:102400', // 100MB max
-            'pdf' => 'nullable|file|mimes:pdf|max:10240', // 10MB max
+            'video' => 'required|file|mimes:mp4,avi,mov,wmv|max:102400',
+            'pdf' => 'nullable|file|mimes:pdf|max:10240',
         ]);
 
         try {
-            // Vérifier que le module existe
             $module = Module::findOrFail($moduleId);
 
             $lesson = new Lesson();
@@ -322,9 +323,13 @@ class AdminController extends Controller
             if ($request->hasFile('video')) {
                 $videoPath = $request->file('video')->store('lessons/videos', 'public');
                 $lesson->video_url = $videoPath;
+
+                // Récupérer la durée avec FFmpeg
+                $fullPath = storage_path("app/public/" . $videoPath);
+                $lesson->duree = VideoService::getVideoDuration($fullPath);
             }
 
-            // Gestion de l'upload PDF (optionnel)
+            // Gestion de l'upload PDF
             if ($request->hasFile('pdf')) {
                 $pdfPath = $request->file('pdf')->store('lessons/pdfs', 'public');
                 $lesson->pdf_url = $pdfPath;
@@ -332,7 +337,6 @@ class AdminController extends Controller
 
             $lesson->save();
 
-            // Compter le nombre de leçons du module
             $lessonsCount = $module->lessons()->count();
 
             if ($request->ajax()) {
@@ -358,6 +362,7 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de l\'ajout de la leçon.');
         }
     }
+
 
     public function listLessons()
     {
@@ -447,19 +452,18 @@ class AdminController extends Controller
     // }
 
     public function getObjectives(Formation $formation)
-{
-    try {
-        // Utilisez le modèle Objectif si vous en avez un, sinon utilisez DB
-        $objectives = DB::table('objectifs')
-            ->where('formation_id', $formation->id)
-            ->orderBy('id', 'asc')
-            ->get();
+    {
+        try {
+            // Utilisez le modèle Objectif si vous en avez un, sinon utilisez DB
+            $objectives = DB::table('objectifs')
+                ->where('formation_id', $formation->id)
+                ->orderBy('id', 'asc')
+                ->get();
 
-        return response()->json($objectives);
-
-    } catch (\Exception $e) {
-        Log::error('Erreur récupération objectifs: ' . $e->getMessage());
-        return response()->json([], 500);
+            return response()->json($objectives);
+        } catch (\Exception $e) {
+            Log::error('Erreur récupération objectifs: ' . $e->getMessage());
+            return response()->json([], 500);
+        }
     }
-}
 }

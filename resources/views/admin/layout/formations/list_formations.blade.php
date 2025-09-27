@@ -86,7 +86,7 @@
                                                     data-formation-title="{{ $formation->titre }}"
                                                     data-formation-description="{{ $formation->description }}"
                                                     data-formation-price="{{ $formation->price }}"
-                                                    data-formation-niveau="{{ $formation->niveau }}"
+                                                    data-formation-niveau="{{ $formation->niveau}}"
                                                     data-formation-image="{{ $formation->image_path ? asset('storage/' . $formation->image_path) : '' }}"
                                                     title="Modifier">
                                                     <i class="fas fa-edit"></i>

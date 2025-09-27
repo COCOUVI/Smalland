@@ -132,10 +132,10 @@
                     <div class="mb-3">
                         <label for="editLevel" class="form-label">Niveau</label>
                         <select class="form-control" id="editLevel" name="level">
-                            <option value="">Sélectionnez un niveau</option>
-                            <option value="Débutant">Débutant</option>
-                            <option value="Intermédiaire">Intermédiaire</option>
-                            <option value="Avancé">Avancé</option>
+                            <option value="" disabled selected>Sélectionnez un niveau</option>
+                            <option value="debutant">Débutant</option>
+                            <option value="intermédiaire">Intermédiaire</option>
+                            <option value="expert">Avancé</option>
                         </select>
                         <span class="text-danger" id="editLevelError"></span>
                     </div>
