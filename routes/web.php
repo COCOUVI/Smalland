@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuizzController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -19,6 +20,19 @@ Route::get('/test', fn() => view("admin.layout.formations.index"));
 Route::prefix('espace-etudiant')->group(function () {
     Route::get('/', fn() => view('layouts.space-etudiant.dashboard'))->name('espace.etudiant');
 })->middleware(['auth']);
+
+
+//ROUTE FOR THE PAIEMENTS
+Route::prefix('paiement')->group(function () {
+    Route::get('/{formation}', [PaymentController::class, 'initier'])
+        ->name('paiement.initier')
+        ->middleware('auth')
+    ;
+
+     Route::match(['get', 'post'], '/callback', [PaymentController::class, 'callback'])
+        ->name('paiement.callback');
+});
+
 
 
 
@@ -39,7 +53,7 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::delete('/delete_formation/{formation}', [AdminController::class, "DeleteFormation"])->name('delete.formation');
     Route::get('/formations/{formation}/objectives', [AdminController::class, 'getObjectives'])->name('objectives.get');
 
-        Route::get('/formations/{formation}/objectives', [AdminController::class, 'getObjectives'])->name('formations.objectives');
+    Route::get('/formations/{formation}/objectives', [AdminController::class, 'getObjectives'])->name('formations.objectives');
 
     // MODULES
     Route::get('/formations/{formation}/modules', [AdminController::class, 'getModules'])->name('modules.get');

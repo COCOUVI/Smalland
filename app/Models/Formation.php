@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Formation extends Model
 {
-    protected $fillable = ['titre', 'description', 'prix', 'duree']; 
+    protected $fillable = ['titre', 'description', 'prix', 'duree'];
     // Une formation a plusieurs modules
     public function modules()
     {
@@ -19,7 +19,7 @@ class Formation extends Model
         return $this->hasMany(Objectif::class);
     }
 
-      // Accesseur pour la durée totale
+    // Accesseur pour la durée totale
     public function getTotalDurationAttribute()
     {
         // somme de toutes les durées des leçons (en secondes)
@@ -36,8 +36,39 @@ class Formation extends Model
             return $minutes . 'm';
         }
     }
-     public function avis()
+    public function avis()
     {
         return $this->hasMany(Avis::class);
+    }
+    public function averageRating()
+    {
+        return $this->avis()->avg('note'); // moyenne des notes
+    }
+
+    public function totalAvis()
+    {
+        return $this->avis()->count(); // nombre d'avis
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_formations')
+            ->withTimestamps();
+    }
+
+    public function totalInscriptions()
+    {
+        return $this->users()->count();
+    }
+
+    public function lessons()
+    {
+        return $this->hasManyThrough(Lesson::class, Module::class);
+    }
+
+    // Nombre total de leçons
+    public function getTotalLessonsAttribute()
+    {
+        return $this->lessons()->count();
     }
 }

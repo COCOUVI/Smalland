@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class user_formation extends Model
 {
     //
+    protected $guarded=[];
 }
