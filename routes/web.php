@@ -5,7 +5,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuizzController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 // === ROUTES PUBLIQUES ===
@@ -18,20 +20,33 @@ Route::get('/test', fn() => view("admin.layout.formations.index"));
 
 //Route pour l'espace etudiant
 Route::prefix('espace-etudiant')->group(function () {
-    Route::get('/', fn() => view('layouts.space-etudiant.dashboard'))->name('espace.etudiant');
+    Route::get('/',[StudentController::class,"index"])->name('espace.etudiant');
+    Route::get('/mes-formations',[StudentController::class,"ShowTranings"])->name('trainings.paid');
 })->middleware(['auth']);
 
 
 //ROUTE FOR THE PAIEMENTS
 Route::prefix('paiement')->group(function () {
-    Route::get('/{formation}', [PaymentController::class, 'initier'])
-        ->name('paiement.initier')
-        ->middleware('auth')
-    ;
+    // Initier le paiement (utilisateur connecté)
+    // Route::get('/{formation}', [PaymentController::class, 'initier'])
+    //     ->name('paiement.initier')
+    //     ->middleware('auth');
 
-     Route::match(['get', 'post'], '/callback', [PaymentController::class, 'callback'])
+    // Callback KKiaPay (publique)
+    Route::any('/api/callback', [PaymentController::class, 'callback'])
         ->name('paiement.callback');
+
+    Route::post('/initier/{formation}', [PaymentController::class, 'initierAjax'])
+     ->name('paiement.initier.ajax')
+     ->middleware('auth')
+     ;
+    
+
 });
+ Route::any('/api/webhook', [PaymentController::class, 'webhook'])
+    ->name('paiement.webhook')
+    ->withoutMiddleware(VerifyCsrfToken::class)
+    ;
 
 
 

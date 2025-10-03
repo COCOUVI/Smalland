@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::table('paiements', function (Blueprint $table) {
             //
-             $table->uuid('transaction_id')->unique()->after('id');
+             $table->string('transaction_id')->nullable()->unique()->after('id');
+
         });
     }
 

@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class user_formation extends Model
 {
     //
-    protected $guarded=[];
+     protected $fillable = [
+        'user_id',
+        'formation_id',
+        'progression',
+        'path_attestation'
+    ];
+    
 }

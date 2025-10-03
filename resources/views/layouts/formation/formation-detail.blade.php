@@ -138,6 +138,41 @@
     <!-- En-tête de la formation -->
     <div class="formation-header">
         <div class="container">
+            {{-- Ne montrer les toasts que si l'utilisateur n'est pas encore inscrit --}}
+            @if (!$isEnrolled && (session('success') || session('error') || session('info')))
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                    @if (session('success'))
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Succès !',
+                            text: '{{ session('success') }}',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    @endif
+
+                    @if (session('error'))
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: '{{ session('error') }}',
+                            confirmButtonColor: '#2e7d32'
+                        });
+                    @endif
+
+                    @if (session('info'))
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Information',
+                            text: '{{ session('info') }}',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    @endif
+                </script>
+            @endif
+
             <div class="row align-items-center">
                 <div class="col-lg-8">
                     <span
@@ -188,28 +223,37 @@
                         <div class="card-body text-center">
                             <div class="h2 text-primary mb-3">{{ $formation->price }} FCFA</div>
                             @auth
-                                <a href="{{ route('paiement.initier', $formation->id) }}"
+                                {{-- <a href="{{ route('paiement.initier', $formation->id) }}"
                                     class="btn btn-primary btn-lg w-100 mb-3">
                                     S'inscrire maintenant
-                                </a>
-                            @else
-                                <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100 mb-3">
-                                    Connectez-vous pour vous inscrire
-                                </a>
-                            @endauth
+                                </a> --}}
+                                    @if ($isEnrolled)
+                                        <a href="{{ route('espace.etudiant') }}" class="btn btn-success btn-lg w-100 mb-3">
+                                            <i class="bi bi-check-circle me-2"></i>Déjà inscrit - Accéder au cours
+                                        </a>
+                                    @else
+                                        <button id="btn-pay" class="btn btn-primary">S'inscrire maintenant</button>
 
-                            <div class="text-muted small">Garantie satisfait ou remboursé 30 jours</div>
-                            <hr>
-                            <ul class="list-unstyled text-start">
-                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Accès à vie</li>
-                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>
-                                    {{ $formation->total_lessons }} leçons vidéo</li>
-                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Certificat de
-                                    completion</li>
-                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Accès sur mobile et
-                                    TV</li>
-                                <li><i class="bi bi-check-circle text-success me-2"></i> Support formateur</li>
-                            </ul>
+                                    @endif
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                                        Connectez-vous pour vous inscrire
+                                    </a>
+                                @endauth
+
+                                <div class="text-muted small">Garantie satisfait ou remboursé 30 jours</div>
+                                <hr>
+                                <ul class="list-unstyled text-start">
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Accès à vie</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>
+                                        {{ $formation->total_lessons }} leçons vidéo</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Certificat de
+                                        completion</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Accès sur mobile
+                                        et
+                                        TV</li>
+                                    <li><i class="bi bi-check-circle text-success me-2"></i> Support formateur</li>
+                                </ul>
                         </div>
                     </div>
                 </div>
@@ -363,8 +407,8 @@
                         @foreach ($formation->avis as $avis)
                             <div class="border-bottom pb-3 mb-3">
                                 <div class="d-flex align-items-center mb-2">
-                                    <img src="{{ $avis->user->avatar ?? 'https://via.placeholder.com/40' }}" alt="Avatar"
-                                        class="rounded-circle me-2" width="40">
+                                    <img src="{{ $avis->user->avatar ?? 'https://via.placeholder.com/40' }}"
+                                        alt="Avatar" class="rounded-circle me-2" width="40">
                                     <div>
                                         <div>{{ $avis->user->name }}</div>
                                         <div class="rating small">
@@ -405,7 +449,7 @@
                         <h5 class="card-title">Cette formation comprend</h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item"><i class="bi bi-play-btn me-2 text-primary"></i>
-                                {{ $formation->total_duration }} h de vidéo</li>
+                                {{ $formation->total_duration }}  de vidéo</li>
                             <li class="list-group-item"><i class="bi bi-file-text me-2 text-primary"></i>
                                 {{ $formation->total_lessons }} leçons</li>
                             <li class="list-group-item"><i class="bi bi-phone me-2 text-primary"></i> Accès mobile & TV
@@ -420,3 +464,64 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            @auth
+            const widget = FedaPay.init({
+                public_key: '{{ $publicKey }}',
+                transaction: {
+                    amount: {{ $formation->price }},
+                    description: 'Paiement formation {{ addslashes($formation->titre) }}'
+                },
+                customer: {
+                    email: '{{ auth()->user()->email }}',
+                    firstname: '{{ auth()->user()->nom }}',
+                    lastname: '{{ auth()->user()->prenom }}'
+                },
+                onComplete: function(data) {
+                    console.log('onComplete appelé', data);
+
+                    if (data.reason === 'CHECKOUT COMPLETE') {
+                        console.log('Paiement complété - envoi des données...');
+
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '{{ route('paiement.callback') }}';
+
+                        // CSRF Token
+                        const csrf = document.createElement('input');
+                        csrf.type = 'hidden';
+                        csrf.name = '_token';
+                        csrf.value = '{{ csrf_token() }}';
+                        form.appendChild(csrf);
+
+                        // Transaction ID - CHANGÉ DE transaction_id À id
+                        const transactionId = document.createElement('input');
+                        transactionId.type = 'hidden';
+                        transactionId.name = 'id'; // ← Votre controller cherche 'id'
+                        transactionId.value = data.transaction.id;
+                        form.appendChild(transactionId);
+
+                        // Formation ID (optionnel si vous en avez besoin)
+                        const formationId = document.createElement('input');
+                        formationId.type = 'hidden';
+                        formationId.name = 'formation_id';
+                        formationId.value = '{{ $formation->id }}';
+                        form.appendChild(formationId);
+
+                        console.log('Soumission avec id:', data.transaction.id);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                }
+            });
+
+            document.getElementById('btn-pay').addEventListener('click', () => {
+                widget.open();
+            });
+        @endauth
+        });
+    </script>
+@endpush

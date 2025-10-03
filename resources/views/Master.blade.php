@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +23,7 @@
         }
 
         .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .bg-primary {
@@ -44,7 +45,8 @@
         }
 
         .hero-section {
-            background: url('/assets/img/2.jpg');;
+            background: url('/assets/img/2.jpg');
+            ;
 
             background-size: cover;
             background-position: center;
@@ -57,12 +59,12 @@
             transition: transform 0.3s, box-shadow 0.3s;
             margin-bottom: 20px;
             border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
         .category-badge {
@@ -119,12 +121,12 @@
             transition: transform 0.3s, box-shadow 0.3s;
             margin-bottom: 20px;
             border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
         .footer {
@@ -165,7 +167,8 @@
             margin-bottom: 5px;
         }
 
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
             background-color: var(--primary-color);
             color: white;
         }
@@ -204,17 +207,18 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Navigation principale -->
-   @include('partials.navbar')
+    @include('partials.navbar')
     <main class="content">
         @yield('content')
     </main>
     <!-- Footer -->
-   @include('partials.footer')
-
-
+    @include('partials.footer')
+    @stack('scripts')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

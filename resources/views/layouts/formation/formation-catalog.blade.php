@@ -23,6 +23,12 @@
 </div>
 
 <div class="container">
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
     <div class="row">
         @foreach($formations as $formation)
             <div class="col-md-6 col-lg-4 mb-4">

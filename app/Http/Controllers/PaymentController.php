@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Formation;
 use App\Models\Paiement;
-use DragonCode\Contracts\Cashier\Config\Payment;
+use App\Models\user_formation;
 use App\Services\PaymentService;
+use FedaPay\FedaPay;
+use FedaPay\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -19,65 +24,98 @@ class PaymentController extends Controller
         $this->paymentService = $paymentService;
     }
 
-    public function initier(Formation $formation)
-    {
-        $user = auth()->user();
 
-        // Crée le paiement en BDD avant d'afficher le widget KKiaPay
-        $paiement = $this->paymentService->createPaiement(
-            $user->id,
-            $formation->id,
-            $formation->price, // ou le montant que tu veux
-            'momo' // méthode de paiement
-        );
 
-        // Passe les infos nécessaires au widget
-        return view('layouts.formation.paiement', [
-            'formation' => $formation,
-            'publicKey' => env('KKIAPAY_PUBLIC_KEY'),
-            'callbackUrl' => env('KKIAPAY_CALLBACK_URL'),
-            'paiement' => $paiement, // transaction_id ou id du paiement
-        ]);
-    }
 
 
     public function callback(Request $request)
     {
-        // On récupère le paiement via l'id passé dans data
-        $paiementId = $request->input('paiement_id') ?? $request->query('paiement_id');
+        $transactionId = $request->get('id');
+        $formationId = $request->get('formation_id');
 
-        if (!$paiementId) {
-            return response()->json(['error' => 'Paiement ID manquant'], 400);
+        // Log les erreurs côté serveur pour le debug
+        if (!$transactionId || !$formationId) {
+            Log::warning('Callback paiement: données manquantes', [
+                'transaction_id' => $transactionId,
+                'formation_id' => $formationId,
+                'user_id' => auth()->id(),
+                'ip' => $request->ip()
+            ]);
+
+            // Message générique pour l'utilisateur
+            return back()->with('error', 'Une erreur est survenue lors du traitement de votre paiement. Veuillez contacter le support.');
         }
 
-        DB::transaction(function () use ($paiementId) {
-            $paiement = Paiement::where('id', $paiementId)->lockForUpdate()->first();
+        try {
+            $transaction = $this->paymentService->getTransaction($transactionId);
 
-            if (!$paiement) {
-                return;
+            if ($transaction->status !== 'approved') {
+                Log::info('Paiement non approuvé', [
+                    'transaction_id' => $transactionId,
+                    'status' => $transaction->status,
+                    'user_id' => auth()->id()
+                ]);
+
+                // Message clair et utile pour l'utilisateur
+                return back()->with('error', 'Votre paiement n\'a pas été validé. Aucun montant n\'a été débité.');
             }
 
-            $data = $this->paymentService->verifyTransaction($paiement->transaction_id);
+            $userId = auth()->id();
+            $formation = Formation::findOrFail($formationId);
 
-            $paiement->status = $data['status'] === 'success' ? 'success' : 'failed';
-            $paiement->save();
+            $existingUserFormation = user_formation::where('user_id', $userId)
+                ->where('formation_id', $formationId)
+                ->first();
 
-            if ($paiement->status === 'success') {
-                DB::table('user_formations')->updateOrInsert(
-                    [
-                        'user_id' => $paiement->user_id,
-                        'formation_id' => $paiement->formation_id,
-                    ],
-                    [
-                        'progression' => 0,
-                        'path_attestation' => null,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]
-                );
+            if ($existingUserFormation) {
+                return redirect()->route('espace.etudiant')
+                    ->with('info', 'Vous êtes déjà inscrit à cette formation');
             }
-        });
 
-        return response()->json(['status' => 'ok'], 200);
+            DB::beginTransaction();
+
+            try {
+                Paiement::create([
+                    'montant_payé' => $transaction->amount,
+                    'moyen_de_paiment' => $transaction->mode ?? 'fedapay',
+                    'status' => 'success',
+                    'user_id' => $userId,
+                    'formation_id' => $formationId,
+                    'transaction_id' => $transaction->id
+                ]);
+
+                user_formation::create([
+                    'user_id' => $userId,
+                    'formation_id' => $formationId,
+                    'progression' => 0,
+                    'path_attestation' => null,
+                ]);
+
+                DB::commit();
+
+                return redirect()->route('espace.etudiant')
+                    ->with('success', 'Félicitations ! Votre inscription a été confirmée.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                Log::error('Erreur insertion paiement/formation', [
+                    'error' => $e->getMessage(),
+                    'transaction_id' => $transactionId,
+                    'user_id' => $userId
+                ]);
+
+                // Message générique
+                return back()->with('error', 'Une erreur technique est survenue. Votre paiement sera vérifié par notre équipe.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Erreur récupération transaction FedaPay', [
+                'error' => $e->getMessage(),
+                'transaction_id' => $transactionId,
+                'user_id' => auth()->id()
+            ]);
+
+            return back()->with('error', 'Impossible de vérifier votre paiement. Veuillez contacter le support si le problème persiste.');
+        }
     }
+  
 }

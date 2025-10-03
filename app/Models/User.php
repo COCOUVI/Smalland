@@ -58,9 +58,15 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    
+
     public function avis()
     {
         return $this->hasMany(Avis::class);
+    }
+    public function formationsAchetees()
+    {
+        return $this->belongsToMany(Formation::class, 'user_formations')
+            ->withPivot('progression', 'path_attestation')
+            ->withTimestamps();
     }
 }

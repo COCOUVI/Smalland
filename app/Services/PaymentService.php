@@ -2,39 +2,60 @@
 
 namespace App\Services;
 
-use Kkiapay\Kkiapay;
 use App\Models\Paiement;
+use FedaPay\FedaPay;
+use FedaPay\Transaction;
 use Illuminate\Support\Str;
 
 class PaymentService
 {
-    protected $kkiapay;
-
     public function __construct()
     {
-        $this->kkiapay = new Kkiapay(
-            env('KKIAPAY_PUBLIC_KEY'),
-            env('KKIAPAY_PRIVATE_KEY'),
-            env('KKIAPAY_SECRET'),
-            env('KKIAPAY_SANDBOX', true)
-            
-        );
+        FedaPay::setApiKey(config('fedapay.secret_key'));
+
+        FedaPay::setEnvironment(config('fedapay.environment'));
     }
 
-    public function verifyTransaction($transactionId)
+    public function createTransaction($user, $formation)
     {
-        return $this->kkiapay->verifyTransaction($transactionId);
-    }
-
-    public function createPaiement($userId, $formationId, $amount, $method = null)
-    {
-        return Paiement::create([
-            'user_id' => $userId,
-            'formation_id' => $formationId,
-            'montant_payé' => $amount,
-            'moyen_de_paiment' => $method,
-            'status' => 'pending',
-            'transaction_id' => Str::uuid(), 
+        return Transaction::create([
+            "description"  => "Paiement de la formation " . $formation->titre,
+            "amount"       => $formation->price,
+            "currency"     => ["iso" => "XOF"],
+            "callback_url" => route('paiement.callback'),
+            "customer"     => [
+                "firstname"    => $user->nom,
+                "lastname"     => $user->prenom,
+                "email"        => $user->email
+            ]
         ]);
+    }
+
+    public function getTransaction($transactionId)
+    {
+        return Transaction::retrieve($transactionId, [
+            'expand' => ['currency', 'customer']
+        ]);
+    }
+
+
+
+    public function createFrontendTransaction($user, $formation)
+    {
+        // Création de la transaction FedaPay
+        $transaction = Transaction::create([
+            "description"  => "Paiement de la formation " . $formation->titre,
+            "amount"       => $formation->price,
+            "currency"     => ["iso" => "XOF"],
+            "callback_url" => route('paiement.callback'),
+            "customer"     => [
+                "firstname"    => $user->nom,
+                "lastname"     => $user->prenom,
+                "email"        => $user->email,
+                "phone_number" => $user->telephone,
+            ]
+        ]);
+
+        return $transaction;
     }
 }
