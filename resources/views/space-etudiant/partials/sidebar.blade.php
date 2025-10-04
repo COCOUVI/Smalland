@@ -4,24 +4,33 @@
             <div class="text-center mb-4">
                 <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
                     alt="Avatar" class="rounded-circle mb-2" width="80">
-                <h5>{{ Auth::user()->name ?? 'Marie Dupont' }}</h5>
-                <p class="text-muted">Étudiante depuis juin 2023</p>
+                <h5>{{ auth()->user()->nom }} {{ auth()->user()->prenom }}</h5>
+
+
+                @if ($firstFormation)
+                    <p class="text-muted">
+                        Étudiant depuis le {{ $firstFormation->created_at->translatedFormat('d F Y') }}
+                    </p>
+                @else
+                    <p class="text-muted">Aucune formation commencée</p>
+                @endif
             </div>
 
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('espace.etudiant') ? 'active' : '' }}" href="{{ route('espace.etudiant') }}" data-url="{{ route('espace.etudiant') }}">
+                    <a class="nav-link {{ request()->routeIs('espace.etudiant') ? 'active' : '' }}"
+                        href="{{ route('espace.etudiant') }}" data-url="{{ route('espace.etudiant') }}">
                         <i class="bi bi-house"></i> Tableau de bord
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{request()->routeIs('trainings.paid') ? 'active' : '' }}" href="{{route('trainings.paid')}}" data-url="{{route('trainings.paid')}}">
+                    <a class="nav-link {{ request()->routeIs('trainings.paid') ? 'active' : '' }}"
+                        href="{{ route('trainings.paid') }}" data-url="{{ route('trainings.paid') }}">
                         <i class="bi bi-collection-play"></i> Mes formations
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-url=""
-                        <i class="bi bi-award"></i> Certificats
+                    <a class="nav-link" href="#" data-url="" <i class="bi bi-award"></i> Certificats
                     </a>
                 </li>
                 <li class="nav-item">

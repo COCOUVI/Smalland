@@ -55,6 +55,7 @@ class User extends Authenticatable
     public function formations()
     {
         return $this->belongsToMany(Formation::class, 'user_formations')
+            ->withPivot(['progression', 'path_attestation'])
             ->withTimestamps();
     }
 
@@ -67,6 +68,20 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Formation::class, 'user_formations')
             ->withPivot('progression', 'path_attestation')
+            ->withTimestamps();
+    }
+
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class, 'user_lessons')
+            ->withPivot(['terminee', 'terminee_at'])
+            ->withTimestamps();
+    }
+
+    public function quizzs()
+    {
+        return $this->belongsToMany(Quizz::class, 'user__quizzs')
+            ->withPivot(['score'])
             ->withTimestamps();
     }
 }

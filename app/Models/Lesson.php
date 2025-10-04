@@ -14,6 +14,7 @@ class Lesson extends Model
         'video_url',
         'pdf_url',
         'module_id'
+        
     ];
 
     /**

@@ -1,199 +1,167 @@
- <!-- Progression globale -->
- <div class="card mb-4">
-     <div class="card-body">
-         <h3 class="section-title">Votre progression</h3>
-         <div class="progress mb-3" style="height: 20px;">
-             <div class="progress-bar" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0"
-                 aria-valuemax="100">65%</div>
-         </div>
-         <div class="row text-center">
-             <div class="col-md-3">
-                 <div class="h4 mb-0">3</div>
-                 <div class="text-muted">Formations</div>
-             </div>
-             <div class="col-md-3">
-                 <div class="h4 mb-0">2</div>
-                 <div class="text-muted">Terminées</div>
-             </div>
-             <div class="col-md-3">
-                 <div class="h4 mb-0">1</div>
-                 <div class="text-muted">En cours</div>
-             </div>
-             <div class="col-md-3">
-                 <div class="h4 mb-0">4</div>
-                 <div class="text-muted">Certifications</div>
-             </div>
-         </div>
-     </div>
- </div>
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="section-title">Votre progression</h3>
+        <div class="progress mb-3" style="height: 20px;">
+            <div class="progress-bar" role="progressbar" style="width: {{ $progressGlobal }}%;"
+                aria-valuenow="{{ $progressGlobal }}" aria-valuemin="0" aria-valuemax="100">
+                {{ $progressGlobal }}%
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-md-3">
+                <div class="h4 mb-0">{{ $totalFormations }}</div>
+                <div class="text-muted">Formations</div>
+            </div>
+            <div class="col-md-3">
+                <div class="h4 mb-0">{{ $termines }}</div>
+                <div class="text-muted">Terminées</div>
+            </div>
+            <div class="col-md-3">
+                <div class="h4 mb-0">{{ $enCours }}</div>
+                <div class="text-muted">En cours</div>
+            </div>
+            <div class="col-md-3">
+                <div class="h4 mb-0">{{ $total_certifications }}</div>
+                <div class="text-muted">Certifications</div>
+            </div>
+        </div>
+    </div>
+</div>
 
- <!-- Formations en cours -->
- <div class="card mb-4">
-     <div class="card-body">
-         <h3 class="section-title">Formations en cours</h3>
 
-         <div class="row">
-             <!-- Formation 1 -->
-             <div class="col-md-6 mb-4">
-                 <div class="card h-100">
-                     <span class="certificate-badge badge bg-warning text-dark">En cours</span>
-                     <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                         class="card-img-top" alt="Maraîchage">
-                     <div class="card-body">
-                         <h5 class="card-title">Maraîchage biologique intensif</h5>
-                         <p class="card-text">Apprenez à maximiser votre production sur de petites surfaces
-                             avec des techniques écologiques.</p>
-                         <div class="mb-3">
-                             <div class="d-flex justify-content-between mb-1">
-                                 <small>Progression</small>
-                                 <small>75%</small>
-                             </div>
-                             <div class="progress course-progress">
-                                 <div class="progress-bar" style="width: 75%;"></div>
-                             </div>
-                         </div>
-                         <div class="d-flex justify-content-between align-items-center">
-                             <small class="text-muted">8h de formation</small>
-                             <a href="#" class="btn btn-sm btn-primary continue-btn">Continuer</a>
-                         </div>
-                     </div>
-                 </div>
-             </div>
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="section-title">Formations en cours</h3>
 
-             <!-- Formation 2 -->
-             <div class="col-md-6 mb-4">
-                 <div class="card h-100">
-                     <span class="certificate-badge badge bg-warning text-dark">En cours</span>
-                     <img src="https://images.unsplash.com/photo-1593686340314-42f27a1e50c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                         class="card-img-top" alt="Compostage">
-                     <div class="card-body">
-                         <h5 class="card-title">Maîtriser l'art du compostage</h5>
-                         <p class="card-text">Transformez vos déchets en or noir pour votre jardin avec les
-                             techniques de compostage.</p>
-                         <div class="mb-3">
-                             <div class="d-flex justify-content-between mb-1">
-                                 <small>Progression</small>
-                                 <small>30%</small>
-                             </div>
-                             <div class="progress course-progress">
-                                 <div class="progress-bar" style="width: 30%;"></div>
-                             </div>
-                         </div>
-                         <div class="d-flex justify-content-between align-items-center">
-                             <small class="text-muted">5h de formation</small>
-                             <a href="#" class="btn btn-sm btn-primary continue-btn">Continuer</a>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
- </div>
+        <div class="row">
+            @forelse ($formationsEnCours as $userFormation)
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <span class="certificate-badge badge bg-warning text-dark">En cours</span>
+                        <img src="/storage/{{ $userFormation->formation->image_path ?? 'https://via.placeholder.com/500' }}"
+                            class="card-img-top" alt="{{ $userFormation->formation->titre }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $userFormation->formation->titre }}</h5>
+                            <p class="card-text">{{ $userFormation->formation->description }}</p>
 
- <!-- Formations terminées -->
- <div class="card mb-4">
-     <div class="card-body">
-         <h3 class="section-title">Formations terminées</h3>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small>Progression</small>
+                                    <small>{{ $userFormation->progression }}%</small>
+                                </div>
+                                <div class="progress course-progress">
+                                    <div class="progress-bar" style="width: {{ $userFormation->progression }}%;"></div>
+                                </div>
+                            </div>
 
-         <div class="row">
-             <!-- Formation 1 -->
-             <div class="col-md-6 mb-4">
-                 <div class="card h-100">
-                     <span class="certificate-badge badge bg-success">Terminé</span>
-                     <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                         class="card-img-top" alt="Apiculture">
-                     <div class="card-body">
-                         <h5 class="card-title">Initiation à l'apiculture</h5>
-                         <p class="card-text">Découvrez les bases de l'apiculture et comment installer votre
-                             première ruche.</p>
-                         <div class="mb-3">
-                             <div class="d-flex justify-content-between mb-1">
-                                 <small>Progression</small>
-                                 <small>100%</small>
-                             </div>
-                             <div class="progress course-progress">
-                                 <div class="progress-bar" style="width: 100%;"></div>
-                             </div>
-                         </div>
-                         <div class="d-flex justify-content-between align-items-center">
-                             <small class="text-muted">Terminé le 15/06/2023</small>
-                             <a href="#" class="btn btn-sm btn-outline-primary continue-btn">Voir
-                                 certificat</a>
-                         </div>
-                     </div>
-                 </div>
-             </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ $userFormation->formation->getTotalDurationAttribute() }}
+                                    de formation</small>
+                                <a href="" class="btn btn-sm btn-primary continue-btn">Continuer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="text-center fw-bold">Aucune formation déjà terminée</p>
+            @endforelse
+        </div>
+    </div>
+</div>
 
-             <!-- Formation 2 -->
-             <div class="col-md-6 mb-4">
-                 <div class="card h-100">
-                     <span class="certificate-badge badge bg-success">Terminé</span>
-                     <img src="https://images.unsplash.com/photo-1590172205845-2441aae4bad4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                         class="card-img-top" alt="Irrigation">
-                     <div class="card-body">
-                         <h5 class="card-title">Gestion de l'eau au jardin</h5>
-                         <p class="card-text">Techniques pour économiser l'eau et optimiser son utilisation
-                             au potager.</p>
-                         <div class="mb-3">
-                             <div class="d-flex justify-content-between mb-1">
-                                 <small>Progression</small>
-                                 <small>100%</small>
-                             </div>
-                             <div class="progress course-progress">
-                                 <div class="progress-bar" style="width: 100%;"></div>
-                             </div>
-                         </div>
-                         <div class="d-flex justify-content-between align-items-center">
-                             <small class="text-muted">Terminé le 10/06/2023</small>
-                             <a href="#" class="btn btn-sm btn-outline-primary continue-btn">Voir
-                                 certificat</a>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
- </div>
+<!-- Formations terminées -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="section-title">Formations terminées</h3>
 
- <!-- Activité récente -->
- <div class="card">
-     <div class="card-body">
-         <h3 class="section-title">Activité récente</h3>
+        <div class="row">
+            @forelse($formationsTerminees as $userFormation)
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <span class="certificate-badge badge bg-success">Terminé</span>
+                        <img src="/storage/{{ $userFormation->formation->image_path ?? 'default-image.jpg' }}"
+                            class="card-img-top" alt="{{ $userFormation->formation->titre }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $userFormation->formation->titre }}</h5>
+                            <p class="card-text">{{ $userFormation->formation->description }}</p>
 
-         <div class="list-group">
-             <div class="list-group-item border-0">
-                 <div class="d-flex w-100 justify-content-between">
-                     <h6 class="mb-1">Leçon "Planification des rotations culturales" terminée</h6>
-                     <small class="text-muted">Aujourd'hui, 14:32</small>
-                 </div>
-                 <p class="mb-1">Maraîchage biologique intensif</p>
-             </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small>Progression</small>
+                                    <small>100%</small>
+                                </div>
+                                <div class="progress course-progress">
+                                    <div class="progress-bar" style="width: 100%;"></div>
+                                </div>
+                            </div>
 
-             <div class="list-group-item border-0">
-                 <div class="d-flex w-100 justify-content-between">
-                     <h6 class="mb-1">Quiz "Techniques de compostage" réussi</h6>
-                     <small class="text-muted">Hier, 18:15</small>
-                 </div>
-                 <p class="mb-1">Maîtriser l'art du compostage</p>
-                 <small class="text-muted">Score: 85%</small>
-             </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    Terminé le {{ $userFormation->updated_at->format('d/m/Y') }}
+                                </small>
+                                @if ($userFormation->path_attestation)
+                                    <a href="" class="btn btn-sm btn-outline-primary continue-btn"
+                                        target="_blank">
+                                        Voir certificat
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="text-center fw-bold">Aucune formation déjà terminée</p>
+            @endforelse
+        </div>
+    </div>
+</div>
 
-             <div class="list-group-item border-0">
-                 <div class="d-flex w-100 justify-content-between">
-                     <h6 class="mb-1">Certificat obtenu</h6>
-                     <small class="text-muted">15 juin 2023</small>
-                 </div>
-                 <p class="mb-1">Initiation à l'apiculture</p>
-                 <small class="text-muted">Félicitations !</small>
-             </div>
+<div class="card">
+    <div class="card-body">
+        <h3 class="section-title">Activité récente</h3>
 
-             <div class="list-group-item border-0">
-                 <div class="d-flex w-100 justify-content-between">
-                     <h6 class="mb-1">Nouvelle formation commencée</h6>
-                     <small class="text-muted">12 juin 2023</small>
-                 </div>
-                 <p class="mb-1">Maîtriser l'art du compostage</p>
-             </div>
-         </div>
-     </div>
- </div>
+        <div class="list-group">
+            {{-- Leçon terminée --}}
+            @if($activity['lesson'])
+                <div class="list-group-item border-0">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">Leçon "{{ $activity['lesson']->titre }}" terminée</h6>
+                        <small class="text-muted">{{ \Carbon\Carbon::parse($activity['lesson']->pivot->completed_at)->diffForHumans() }}</small>
+                    </div>
+                    <p class="mb-1">{{ $activity['lesson']->module->formation->titre ?? '' }}</p>
+                </div>
+            @endif
+
+            {{-- Quiz réussi --}}
+            @if($activity['quiz'])
+                <div class="list-group-item border-0">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">Quiz "{{ $activity['quiz']->titre }}" réussi</h6>
+                        <small class="text-muted">{{ $activity['quiz']->pivot->created_at->diffForHumans() }}</small>
+                    </div>
+                    <p class="mb-1">{{ $activity['quiz']->module->formation->titre ?? '' }}</p>
+                    <small class="text-muted">Score : {{ $activity['quiz']->pivot->score }}%</small>
+                </div>
+            @endif
+
+            {{-- Formation terminée --}}
+            @if($activity['formation'])
+                <div class="list-group-item border-0">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">Formation terminée</h6>
+                        <small class="text-muted">{{ $activity['formation']->pivot->updated_at->diffForHumans() }}</small>
+                    </div>
+                    <p class="mb-1">{{ $activity['formation']->titre }}</p>
+                    @if($activity['formation']->pivot->path_attestation)
+                        <a href="{{ asset($activity['formation']->pivot->path_attestation) }}" class="btn btn-sm btn-outline-primary">Voir certificat</a>
+                    @endif
+                </div>
+            @endif
+
+            {{-- Si aucune activité --}}
+            @if(!$activity['lesson'] && !$activity['quiz'] && !$activity['formation'])
+                <p class="text-center fw-bold">Aucune activité récente</p>
+            @endif
+        </div>
+    </div>
+</div>
