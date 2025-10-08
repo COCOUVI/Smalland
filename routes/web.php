@@ -27,6 +27,8 @@ Route::prefix('espace-etudiant')->group(function () {
     Route::get('/facturations', [StudentController::class, 'ShowFacturations'])->name('facturations.index');
     Route::get('/help', [StudentController::class, 'Showhelp'])->name('help.index');
     Route::post('/help', [StudentController::class, 'sendMail'])->name('help.send');
+    Route::get('/parametres', [StudentController::class, 'ShowSettings'])->name('parametres.index');
+    Route::post('/parametres/update', [StudentController::class, 'update'])->name('parametres.update');
 })->middleware(['auth']);
 
 

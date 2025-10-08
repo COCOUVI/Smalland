@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -172,5 +173,34 @@ class StudentController extends Controller
         });
 
         return response()->json(['success' => 'Votre message a été envoyé avec succès ✅']);
+    }
+
+    public function ShowSettings(Request $request){
+
+        $user = Auth::user();
+
+        if ($request->ajax()) {
+            return view('space-etudiant.layout.parametre-section', compact('user'));
+        }
+
+        return view('space-etudiant.layout.parametre', compact('user'));
+    }
+
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = Auth::user();
+        $user->update($request->only('nom', 'prenom', 'email'));
+
+        return response()->json(['success' => 'Vos informations ont été mises à jour avec succès ✅']);
     }
 }
