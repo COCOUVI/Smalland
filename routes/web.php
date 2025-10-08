@@ -20,8 +20,13 @@ Route::get('/test', fn() => view("admin.layout.formations.index"));
 
 //Route pour l'espace etudiant
 Route::prefix('espace-etudiant')->group(function () {
-    Route::get('/',[StudentController::class,"index"])->name('espace.etudiant');
-    Route::get('/mes-formations',[StudentController::class,"ShowTranings"])->name('trainings.paid');
+    Route::get('/', [StudentController::class, "index"])->name('espace.etudiant');
+    Route::get('/mes-formations', [StudentController::class, "ShowTranings"])->name('trainings.paid');
+    Route::get('/mes-certificats', [StudentController::class, 'Showcertfication'])
+        ->name('certificats.index');
+    Route::get('/facturations', [StudentController::class, 'ShowFacturations'])->name('facturations.index');
+    Route::get('/help', [StudentController::class, 'Showhelp'])->name('help.index');
+    Route::post('/help', [StudentController::class, 'sendMail'])->name('help.send');
 })->middleware(['auth']);
 
 
@@ -37,16 +42,14 @@ Route::prefix('paiement')->group(function () {
         ->name('paiement.callback');
 
     Route::post('/initier/{formation}', [PaymentController::class, 'initierAjax'])
-     ->name('paiement.initier.ajax')
-     ->middleware('auth')
-     ;
-    
-
+        ->name('paiement.initier.ajax')
+        ->middleware('auth')
+    ;
 });
- Route::any('/api/webhook', [PaymentController::class, 'webhook'])
+Route::any('/api/webhook', [PaymentController::class, 'webhook'])
     ->name('paiement.webhook')
     ->withoutMiddleware(VerifyCsrfToken::class)
-    ;
+;
 
 
 

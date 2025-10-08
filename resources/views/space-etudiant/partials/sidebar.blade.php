@@ -30,16 +30,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-url="" <i class="bi bi-award"></i> Certificats
+                    <a class="nav-link {{ request()->routeIs('certificats.index') ? 'active' : '' }}" href="{{route('certificats.index')}}" data-url="{{route('certificats.index')}}" <i class="bi bi-award"></i> Certificats
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-url="">
-                        <i class="bi bi-bookmark"></i> Favoris
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-url="">
+                    <a class="nav-link {{ request()->routeIs('facturations.index') ? 'active' : '' }}" href="{{route('facturations.index')}}" data-url="{{route('facturations.index')}}">
                         <i class="bi bi-credit-card"></i> Facturation
                     </a>
                 </li>
@@ -49,7 +44,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-url="">
+                    <a class="nav-link {{ request()->routeIs('help.index') ? 'active' : '' }}" href="{{route('help.index')}}" data-url="{{route('help.index')}}">
                         <i class="bi bi-question-circle"></i> Aide
                     </a>
                 </li>

@@ -15,4 +15,14 @@ class Paiement extends Model
         'status',
         'transaction_id'
     ];
+
+    public function formation()
+    {
+        return $this->belongsTo(\App\Models\Formation::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
 }

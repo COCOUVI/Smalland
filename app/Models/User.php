@@ -84,4 +84,9 @@ class User extends Authenticatable
             ->withPivot(['score'])
             ->withTimestamps();
     }
+
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
+    }
 }

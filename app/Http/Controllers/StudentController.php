@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Paiement;
 use App\Models\user_formation;
 use App\Models\UserLesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class StudentController extends Controller
 {
@@ -45,7 +47,7 @@ class StudentController extends Controller
 
         $user = Auth::user();
 
-          // 🟢 Dernière leçon terminée
+        // 🟢 Dernière leçon terminée
         $lastLesson = $user->lessons()
             ->wherePivot('terminee', true)
             ->orderByDesc('user_lessons.terminee_at')
@@ -111,5 +113,64 @@ class StudentController extends Controller
 
         // Sinon, page complète
         return view('space-etudiant.layout.list-formation-cours', compact('formations'));
+    }
+
+    public function Showcertfication(Request $request)
+    {
+        $user = Auth::user();
+
+        $certificats = $user->formationsAchetees()
+            ->wherePivotNotNull('path_attestation')
+            ->select('formations.id', 'formations.titre', 'formations.image', 'formations.created_at')
+            ->withPivot('path_attestation', 'updated_at')
+            ->orderByDesc('user_formations.updated_at')
+            ->paginate(6);
+
+        if ($request->ajax()) {
+            return view('space-etudiant.layout.certificat-section', compact('certificats'));
+        }
+
+        return view('space-etudiant.layout.certificat-list', compact('certificats'));
+    }
+
+    public function ShowFacturations(Request $request)
+    {
+
+        $user = Auth::user();
+
+        // Récupérer les paiements réussis avec formation
+        $paiements = Paiement::where('user_id', $user->id)
+            ->where('status', 'success')
+            ->with('formation') // Assurez-vous que la relation est définie
+            ->paginate(6);
+
+        if ($request->ajax()) {
+            return view('space-etudiant.layout.list-paiements-section', compact('paiements'));
+        }
+
+        return view('space-etudiant.layout.list-paiements', compact('paiements'));
+    }
+
+    public function Showhelp(Request $request){
+
+        if ($request->ajax()) {
+            return view('space-etudiant.layout.help-section'); // section partielle
+        }
+
+        return view('space-etudiant.layout.help'); // page com
+    }
+
+    public function sendMail(Request $request)
+    {
+         $request->validate([
+            'message' => 'required|string|min:5',
+        ]);
+
+        Mail::raw($request->message, function ($msg) {
+            $msg->to('cocouvilaeaxndro74@gmail.com')
+                ->subject('Nouveau message d’aide');
+        });
+
+        return response()->json(['success' => 'Votre message a été envoyé avec succès ✅']);
     }
 }
