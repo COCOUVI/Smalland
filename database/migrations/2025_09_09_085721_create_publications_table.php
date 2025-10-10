@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('publications', function (Blueprint $table) {
-            $table->id();
-            $table->string("titre");
-            $table->longText("content");
-            $table->string("image_path");
-            $table->foreignId('pub_category_id')->constrained()->onDelete('cascade');
-            $table->string("author");
-            $table->timestamps();
-        });
+       Schema::create('publications', function (Blueprint $table) {
+        $table->id();
+        $table->string("titre");
+        $table->longText("content");
+        $table->string("image_path")->nullable();
+        $table->foreignId('pub_category_id')->constrained()->onDelete('cascade');
+        $table->string("author");
+        $table->string("tags")->nullable(); // pour stocker les tags sous forme de string séparés par virgule
+        $table->enum("status", ["Publish", "Draft", "Pending"])->default("Draft");
+        $table->timestamps();
+    });
     }
 
     /**

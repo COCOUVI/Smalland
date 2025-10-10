@@ -63,9 +63,9 @@
                 <i data-feather="file-text"></i><span>Articles</span>
             </a>
             <ul class="dropdown-menu">
-                <li><a class="nav-link" href="articles-index.html">Liste des Articles</a></li>
-                <li><a class="nav-link" href="articles-create.html">Créer Article</a></li>
-                <li><a class="nav-link" href="categories-blog.html">Catégories</a></li>
+                <li><a class="nav-link" href="{{ route('publications.index') }}">Liste des Articles</a></li>
+                <li><a class="nav-link" href="{{ route('publications.create') }}">Créer Article</a></li>
+                <li><a class="nav-link" href="{{ route('admin.listCategories') }}">Catégories</a></li>
             </ul>
         </li>
 
