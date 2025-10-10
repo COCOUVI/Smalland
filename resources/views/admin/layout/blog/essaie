@@ -1,0 +1,27 @@
+<form action="{{ route('publications.store') }}" method="POST" enctype="multipart/form-data">
+  @csrf
+  <!-- tes champs ici -->
+  <input type="text" name="titre" class="form-control">
+
+  <select name="pub_category_id" class="form-control">
+    @foreach($categories as $cat)
+      <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+    @endforeach
+  </select>
+
+  <textarea name="content" id="editor" class="form-control"></textarea>
+
+  <input type="file" name="image">
+
+  <input type="text" name="tags" class="form-control">
+
+  <select name="status" class="form-control">
+    <option value="Publish">Publier</option>
+    <option value="Draft">Brouillon</option>
+    <option value="Pending">En attente</option>
+  </select>
+
+  <input type="text" name="author" class="form-control" value="Admin">
+
+  <button type="submit" class="btn btn-primary">Create Post</button>
+</form>
