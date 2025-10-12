@@ -6,9 +6,12 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuizzController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\FormationController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AvisController;
 
 // === ROUTES PUBLIQUES ===
 Route::get('/', [HomeController::class, 'index'])->name('accueil');
@@ -40,7 +43,7 @@ Route::prefix('paiement')->group(function () {
      ->name('paiement.initier.ajax')
      ->middleware('auth')
      ;
-    
+
 
 });
  Route::any('/api/webhook', [PaymentController::class, 'webhook'])
@@ -101,6 +104,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+
+//Mes routes
+Route::middleware(['auth'])->group(function () {
+    // Formations
+    Route::get('/formations', [FormationController::class, 'index'])->name('formations.index');
+    Route::get('/formations/{id}', [FormationController::class, 'show'])->name('formations.show');
+
+    // Modules
+    Route::get('/formations/{formation}/modules/{module}', [ModuleController::class, 'show'])->name('modules.show');
+    Route::post('/lessons/{lesson}/complete', [ModuleController::class, 'completeLesson'])->name('lessons.complete');
+
+    // Quizz
+     // Afficher le quiz
+    Route::get('/quizz/{quizz}', [QuizzController::class, 'show'])->name('quizz.show');
+
+    // Soumettre les réponses du quiz
+    Route::post('/quizz/{quizz}/submit', [QuizzController::class, 'submit'])->name('quizz.submit');
+
+    //Donner un avis
+     Route::post('/formations/{formation}/avis', [AvisController::class, 'store'])->name('avis.store');
+    Route::get('/formations/{formation}/avis/edit', [AvisController::class, 'edit'])->name('avis.edit');
+    Route::put('/formations/{formation}/avis', [AvisController::class, 'update'])->name('avis.update');
+    Route::delete('/formations/{formation}/avis', [AvisController::class, 'destroy'])->name('avis.destroy');
 });
 
 // AUTHENTIFICATION (LARAVEL BREEZE / FORTIFY / JETSTREAM)

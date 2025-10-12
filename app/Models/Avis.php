@@ -2,25 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Avis extends Model
 {
-    //
+    use HasFactory;
+
+    protected $table = 'avis';
+
     protected $fillable = [
+        'content_avis',
+        'note',
         'formation_id',
         'user_id',
-        'note',
-        'content'
     ];
-    
-     // Relation avec la formation
+
     public function formation()
     {
         return $this->belongsTo(Formation::class);
     }
 
-     public function user()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }

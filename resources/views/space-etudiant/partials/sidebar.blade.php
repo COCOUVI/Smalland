@@ -25,12 +25,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('trainings.paid') ? 'active' : '' }}"
-                        href="{{ route('trainings.paid') }}" data-url="{{ route('trainings.paid') }}">
+                        href="{{ route('formations.index') }}" data-url="{{ route('formations.index') }}">
                         <i class="bi bi-collection-play"></i> Mes formations
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-url="" <i class="bi bi-award"></i> Certificats
+                    <a class="nav-link" href="#" data-url=""> <i class="bi bi-award"></i> Certificats
                     </a>
                 </li>
                 <li class="nav-item">

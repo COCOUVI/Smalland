@@ -17,19 +17,19 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
-       
+
     }
 
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        //
-        if (config('app.env') === 'local') {
-            URL::forceScheme('https');
-        }
-
-         View::composer('space-etudiant.master', MasterComposer::class);
+public function boot(): void
+{
+    if (config('app.env') !== 'local') {
+        URL::forceScheme('https');
     }
+
+    View::composer('space-etudiant.master', MasterComposer::class);
+}
+
 }
