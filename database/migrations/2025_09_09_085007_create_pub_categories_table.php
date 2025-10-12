@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('pub_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
+            $table->string('name'); // Nom de la catégorie (ex: Tech, News...)
+            $table->text('description')->nullable(); // description optionnelle
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
