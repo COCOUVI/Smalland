@@ -12,6 +12,8 @@ class AdminSeeder extends Seeder
     /**
      * Run the database seeds.
      */
+
+    //OINCoinc123%%
     public function run(): void
     {
         //

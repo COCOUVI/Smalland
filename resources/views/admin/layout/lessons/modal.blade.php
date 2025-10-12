@@ -38,13 +38,13 @@
                      <div class="mb-3">
                          <label class="form-label">Vidéo actuelle</label>
                          <div id="currentVideoPreview" class="mb-2"></div>
-                         <input type="file" name="video_file" class="form-control">
+                         <input type="file" name="video_url" class="form-control">
                      </div>
                    
                      <div class="mb-3">
                          <label class="form-label">PDF actuel</label>
                          <div id="currentPdfPreview" class="mb-2"></div>
-                         <input type="file" name="pdf_file" class="form-control">
+                         <input type="file" name="pdf_url" class="form-control">
                      </div>
 
                      <button type="submit" class="btn btn-warning">Mettre à jour</button>

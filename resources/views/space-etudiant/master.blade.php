@@ -1,4 +1,4 @@
-@extends('master')
+@extends('Master')
 
 @section('content')
     @include('space-etudiant.partials.header')
@@ -62,11 +62,11 @@ $(document).ready(function() {
     // Gestion des clics sur la sidebar
     $('.sidebar .nav-link').on('click', function(e) {
         e.preventDefault();
-        
+
         // Retirer la classe active de tous les liens
         $('.sidebar .nav-link').removeClass('active');
         $(this).addClass('active');
-        
+
         const url = $(this).data('url');
         if (url) {
             loadSection(url, true);

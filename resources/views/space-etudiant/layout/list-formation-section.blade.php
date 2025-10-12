@@ -49,11 +49,11 @@
                                 {{-- Bouton dynamique --}}
                                 <div>
                                     @if ($progression == 0)
-                                        <a href="" class="btn btn-primary btn-sm">Commencer</a>
+                                        <a href="{{route('formations.show',$formation->id)}}" class="btn btn-primary btn-sm">Commencer</a>
                                     @elseif($progression < 100)
-                                        <a href="" class="btn btn-warning btn-sm">Continuer</a>
+                                        <a href="{{route('formations.show',$formation->id)}}" class="btn btn-warning btn-sm">Continuer</a>
                                     @else
-                                        <a href="" class="btn btn-success btn-sm">Voir attestation</a>
+                                        <a href="{{route('formations.show',$formation->id)}}" class="btn btn-success btn-sm">Voir attestation</a>
                                     @endif
                                 </div>
                             </div>

@@ -13,8 +13,13 @@ class Lesson extends Model
         'titre',
         'video_url',
         'pdf_url',
-        'module_id'
-        
+        'module_id',
+          'duree'
+
+    ];
+
+       protected $casts = [
+        'duree' => 'integer',
     ];
 
     /**
@@ -54,5 +59,12 @@ class Lesson extends Model
     public function scopeForModule($query, $moduleId)
     {
         return $query->where('module_id', $moduleId);
+    }
+
+        public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_lessons')
+                    ->withPivot('terminee', 'terminee_at')
+                    ->withTimestamps();
     }
 }

@@ -51,7 +51,7 @@
                                                     data-bs-toggle="modal" data-bs-target="#lessonModal"
                                                     data-lesson-title="{{ $lesson->titre }}"
                                                     data-lesson-video="/storage/{{ $lesson->video_url }}"
-                                                    data-lesson-pdf="/storage/{{ $lesson->pdf_url ? '/storage/'.$lesson->pdf_url : ''}}">
+                                                    data-lesson-pdf="/storage/{{ $lesson->pdf_url ? $lesson->pdf_url : ''}}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                 <!-- Modifier -->
@@ -60,7 +60,7 @@
                                                     data-lesson-id="{{ $lesson->id }}"
                                                     data-lesson-title="{{ $lesson->titre }}"
                                                     data-lesson-video="/storage/{{ $lesson->video_url }}"
-                                                    data-lesson-pdf="/storage/{{ $lesson->pdf_url ? '/storage/'.$lesson->pdf_url : ''}}">
+                                                    data-lesson-pdf="/storage/{{ $lesson->pdf_url ? $lesson->pdf_url : ''}}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <!-- Supprimer -->

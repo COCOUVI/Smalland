@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('modules', function (Blueprint $table) {
-            $table->integer('ordre')->nullable()->after('id'); // ou après un autre champ pertinent
+            $table->integer('ordre')->nullable()->after('id'); 
         });
     }
 

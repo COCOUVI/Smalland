@@ -428,9 +428,30 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de la suppression de la leçon.');
         }
     }
-    public function updateLesson(UpdateLessonRequest $request, Lesson $lesson)
+    public function updateLesson(UpdateLessonRequest $request, $lessonId)
     {
-        $lesson->update($request->validated());
+        $lesson = Lesson::findOrFail($lessonId);
+
+        $data = $request->validated();
+
+        // ⚡ Gestion de la vidéo (champ video_url)
+        if ($request->hasFile('video_url')) {
+            $videoPath = $request->file('video_url')->store('lessons/videos', 'public');
+            $data['video_url'] = $videoPath;
+
+            // Récupérer la durée si nécessaire
+            $fullPath = storage_path("app/public/" . $videoPath);
+            $lesson->duree = VideoService::getVideoDuration($fullPath);
+        }
+
+        // ⚡ Gestion du PDF (champ pdf_url)
+        if ($request->hasFile('pdf_url')) {
+            $pdfPath = $request->file('pdf_url')->store('lessons/pdfs', 'public');
+            $data['pdf_url'] = $pdfPath;
+        }
+
+        // Mise à jour de la leçon
+        $lesson->update($data);
 
         return response()->json([
             'success' => true,
@@ -438,8 +459,11 @@ class AdminController extends Controller
             'lesson' => $lesson
         ]);
     }
-    public function destroyLesson(Lesson $lesson)
+
+
+    public function destroyLesson($lessonId)
     {
+        $lesson = Lesson::find($lessonId);
         $lesson->delete();
 
         return response()->json([
@@ -475,18 +499,18 @@ class AdminController extends Controller
 
         $paiements = Paiement::with(['user', 'formation'])
             ->paginate(10);
-            
-        return view('admin.layout.formations.list_paiements',compact("paiements"));
-        
+
+        return view('admin.layout.formations.list_paiements', compact("paiements"));
     }
 
-    public function ShowCertifications(){
-        
-        $certifications = user_formation::with(['user', 'formation'])
-        ->whereNotNull('path_attestation') // on affiche seulement celles qui ont une attestation générée
-        ->latest()
-        ->get();
+    public function ShowCertifications()
+    {
 
-    return view('admin.layout.formations.certifications', compact('certifications'));
+        $certifications = user_formation::with(['user', 'formation'])
+            ->whereNotNull('path_attestation') // on affiche seulement celles qui ont une attestation générée
+            ->latest()
+            ->get();
+
+        return view('admin.layout.formations.certifications', compact('certifications'));
     }
 }

@@ -28,4 +28,11 @@ class Quizz extends Model
     {
         return $this->hasMany(Question::class, 'quizz_id');
     }
+
+        public function users()
+    {
+        return $this->belongsToMany(User::class, 'user__quizzs')
+                    ->withPivot('score')
+                    ->withTimestamps();
+    }
 }

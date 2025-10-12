@@ -21,9 +21,10 @@
         }
     </style>
 </head>
-@include('partials.navbar')
+
 
 <body class="bg-gray-50">
+    <!-- Navigation -->
 
 
     <!-- Contenu principal -->
@@ -58,7 +59,7 @@
 </html>
 
 
-<!-- 2eme layout -->
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -267,14 +268,13 @@
             top: 15px;
             right: 15px;
         }
-
-        a{
-            text-decoration: none;
-        }
     </style>
 </head>
 
 <body>
+
+    <!-- Navigation principale -->
+
 
 
     @stack('scripts')
@@ -282,4 +282,4 @@
 </body>
 
 </html>
-@include('partials.footer')
+

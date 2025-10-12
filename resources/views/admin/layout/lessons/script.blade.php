@@ -18,7 +18,8 @@
                 </video>` :
                     `<p class="text-muted">Aucune vidéo disponible.</p>`;
 
-                lessonModal.querySelector('#lessonPdfContainer').innerHTML = (pdf && pdf !== '/storage/') ?
+                lessonModal.querySelector('#lessonPdfContainer').innerHTML = (pdf && pdf !==
+                        '/storage/') ?
                     `<a href="${pdf}" target="_blank" class="btn btn-outline-danger">
                     <i class="fas fa-file-pdf me-1"></i> Voir PDF
                 </a>` :
@@ -61,6 +62,14 @@
                 const formData = new FormData(editForm);
                 formData.append('_method', 'PUT');
 
+                const submitBtn = editForm.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+
+                // ⚡ Afficher spinner
+                submitBtn.disabled = true;
+                submitBtn.innerHTML =
+                    `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Chargement...`;
+
                 fetch(`/dashboard/lessons/${lessonId}`, {
                         method: 'POST',
                         headers: {
@@ -71,15 +80,34 @@
                     .then(res => res.json())
                     .then(data => {
                         if (!alertBox) return;
+
                         if (data.success) {
                             alertBox.className = 'alert alert-success';
                             alertBox.textContent = data.message;
                             alertBox.classList.remove('d-none');
 
+                            // Mettre à jour le titre dans le tableau
                             const row = document.querySelector(
                                 `button[data-lesson-id="${lessonId}"]`)?.closest('tr');
                             if (row) row.querySelector('td:nth-child(2)').textContent = data.lesson
                                 .titre;
+
+                            // Mettre à jour la vidéo et le PDF dans le modal
+                            const videoContainer = document.getElementById('currentVideoPreview');
+                            const pdfContainer = document.getElementById('currentPdfPreview');
+
+                            videoContainer.innerHTML = data.lesson.video_url ?
+                                `<video width="100%" height="200" controls>
+                        <source src="/storage/${data.lesson.video_url}" type="video/mp4">
+                       </video>` :
+                                `<p class="text-muted">Aucune vidéo disponible</p>`;
+
+                            pdfContainer.innerHTML = data.lesson.pdf_url ?
+                                `<a href="/storage/${data.lesson.pdf_url}" target="_blank" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf me-1"></i> Voir PDF
+                       </a>` :
+                                `<p class="text-muted">Aucun PDF disponible</p>`;
+
                         } else {
                             alertBox.className = 'alert alert-danger';
                             alertBox.textContent = 'Erreur lors de la mise à jour';
@@ -91,8 +119,14 @@
                         alertBox.className = 'alert alert-danger';
                         alertBox.textContent = 'Erreur réseau';
                         alertBox.classList.remove('d-none');
+                    })
+                    .finally(() => {
+                        // ⚡ Réinitialiser le bouton
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
                     });
             });
+
         }
 
         // ===================== SUPPRESSION LEÇON =====================
@@ -195,7 +229,7 @@
                         const deleteAlert = getDeleteAlert();
                         if (deleteAlert) {
                             deleteAlert.className =
-                            'alert alert-danger alert-dismissible fade show';
+                                'alert alert-danger alert-dismissible fade show';
                             deleteAlert.innerHTML =
                                 `Erreur réseau.<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
                             deleteAlert.classList.remove('d-none');

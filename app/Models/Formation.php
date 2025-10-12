@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Formation extends Model
 {
-    protected $fillable = ['titre', 'description', 'prix', 'duree'];
+    protected $fillable = ['titre', 'description', 'prix', 'duree',   'niveau',
+        'price',
+        'image_path'];
+
+            protected $casts = [
+        'price' => 'integer',
+    ];
+
     // Une formation a plusieurs modules
     public function modules()
     {
@@ -40,6 +47,12 @@ class Formation extends Model
     {
         return $this->hasMany(Avis::class);
     }
+
+        public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
+    }
+    
     public function averageRating()
     {
         return $this->avis()->avg('note'); // moyenne des notes
