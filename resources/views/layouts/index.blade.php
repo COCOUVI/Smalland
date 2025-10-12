@@ -173,6 +173,11 @@
                 <h2 class="section-title">Formations populaires</h2>
                 <div class="row">
                     @forelse($formations as $formation)
+                        @php
+                            $averageRating = round($formation->averageRating(), 1); // arrondi à 1 décimale
+                            $totalAvis = $formation->totalAvis(); // nombre total d'avis
+                        @endphp
+
                         <div class="col-md-4 mb-4">
                             <div class="card h-100">
                                 <!-- Image -->
@@ -183,32 +188,37 @@
                                     <!-- Titre -->
                                     <h5 class="card-title">{{ $formation->titre }}</h5>
 
-                                    <!-- Niveau avec couleur dynamique -->
+                                    <!-- Niveau -->
                                     @php
                                         $levelColors = [
-                                            'debutant' => 'success', // vert
-                                            'intermediaire' => 'warning', // orange
-                                            'expert' => 'danger', // rouge
+                                            'debutant' => 'success',
+                                            'intermediaire' => 'warning',
+                                            'expert' => 'danger',
                                         ];
                                     @endphp
-
                                     <p class="badge bg-{{ $levelColors[$formation->niveau] ?? 'secondary' }} mb-2">
                                         Niveau : {{ ucfirst($formation->niveau) }}
                                     </p>
 
-                                    <!-- Description courte -->
+                                    <!-- Description -->
                                     <p class="card-text">
                                         {{ Str::limit($formation->description, 100) }}
                                     </p>
 
-                                    <!-- Rating fictif ou dynamique -->
+                                    <!-- Note moyenne dynamique -->
                                     <div class="rating mb-2">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-half"></i>
-                                        <span class="ms-1">(12)</span>
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= floor($averageRating))
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            @elseif ($i - $averageRating < 1)
+                                                <i class="bi bi-star-half text-warning"></i>
+                                            @else
+                                                <i class="bi bi-star text-warning"></i>
+                                            @endif
+                                        @endfor
+                                        <span class="ms-1">
+                                            ({{ $totalAvis }} avis{{ $totalAvis > 1 ? '' : '' }})
+                                        </span>
                                     </div>
 
                                     <!-- Prix + lien -->
@@ -233,6 +243,7 @@
                 </div>
             </div>
         </section>
+
 
         <!-- Produits populaires -->
         <section class="py-5 bg-light">

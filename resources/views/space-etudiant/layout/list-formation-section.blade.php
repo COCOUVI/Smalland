@@ -69,6 +69,32 @@
         {{ $formations->links() }}
     </div>
 </div>
+@if (session('success'))
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="success-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-bold">
+                {{ session('success') }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let toastEl = document.getElementById('success-toast');
+        let toast = new bootstrap.Toast(toastEl);
+        toast.show();
+
+        // 🔥 Supprimer le message de la session dans l'historique navigateur
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    });
+</script>
+@endif
+
 
 {{-- Styles additionnels pour UX --}}
 @push('styles')

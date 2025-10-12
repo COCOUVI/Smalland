@@ -8,8 +8,8 @@
 
     <ul class="sidebar-menu">
         <li class="menu-header">Tableau de bord</li>
-        <li class="dropdown active">
-            <a href="dashboard.html" class="nav-link">
+        <li class="dropdown {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <a href="{{route('dashboard')}}" class="nav-link">
                 <i data-feather="monitor"></i><span>Dashboard</span>
             </a>
         </li>
@@ -31,20 +31,41 @@
 
         <!-- Gestion Formations -->
         <li class="menu-header">Formations</li>
-        <li class="dropdown">
-            <a href="#" class="menu-toggle nav-link has-dropdown">
+        @php
+            $isFormationActive =
+                request()->routeIs('certif-list') ||
+                request()->routeIs('lists_formation') ||
+                request()->routeIs('modules.list') ||
+                request()->routeIs('lessons.list') ||
+                request()->routeIs('admin.paiements.index');
+        @endphp
+
+        <li class="dropdown {{ $isFormationActive ? 'active' : '' }}">
+            <a href="#" class="menu-toggle nav-link has-dropdown {{ $isFormationActive ? 'toggled' : '' }}">
                 <i data-feather="book-open"></i><span>Formations</span>
             </a>
-            <ul class="dropdown-menu">
-                <li class="{{request()->routeIs('lists_formation') ? 'active':''}}"><a class="nav-link" href="{{route('lists_formation')}}">Liste des Formations</a></li>
-                {{-- <li class="{{request()->routeIs('add_formation_page') ? 'active':''}}"><a class="nav-link" href="{{route('add_formation_page')}}">Ajouter Formation</a></li> --}}
-                <li><a class="nav-link" href="{{ route("modules.list") }}">Modules</a></li>
-                <li><a class="nav-link" href="{{ route("lessons.list") }}">Lecons</a></li>
-                <li><a class="nav-link" href="modules.html">Quizz</a></li>
-                <li><a class="nav-link" href="attestations.html">Attestations</a></li>
-                <li><a class="nav-link" href="modules.html">Paiments-formations</a></li>
+            <ul class="dropdown-menu {{ $isFormationActive ? 'show' : '' }}">
+                <li class="{{ request()->routeIs('lists_formation') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('lists_formation') }}">Liste des Formations</a>
+                </li>
+
+                <li class="{{ request()->routeIs('modules.list') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('modules.list') }}">Modules</a>
+                </li>
+
+                <li class="{{ request()->routeIs('lessons.list') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('lessons.list') }}">Leçons</a>
+                </li>
+
+                <li class="{{ request()->routeIs('admin.paiements.index') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('admin.paiements.index') }}">Paiements-formations</a>
+                </li>
+                <li class="{{ request()->routeIs('certif-list') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('certif-list') }}">certifications</a>
+                </li>
             </ul>
         </li>
+
 
         <!-- Gestion Quiz -->
         <li class="menu-header">Quiz</li>

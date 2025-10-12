@@ -228,7 +228,7 @@
                                     S'inscrire maintenant
                                 </a> --}}
                                     @if ($isEnrolled)
-                                        <a href="{{ route('espace.etudiant') }}" class="btn btn-success btn-lg w-100 mb-3">
+                                        <a href="{{ route('trainings.paid') }}" class="btn btn-success btn-lg w-100 mb-3">
                                             <i class="bi bi-check-circle me-2"></i>Déjà inscrit - Accéder au cours
                                         </a>
                                     @else

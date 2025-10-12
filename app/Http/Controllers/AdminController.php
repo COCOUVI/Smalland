@@ -14,8 +14,11 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UpdateModuleRequest;
 use App\Http\Requests\UpdateFormationRequest;
 use App\Http\Requests\UpdateLessonRequest;
+use App\Models\Paiement;
+use App\Models\user_formation;
 use Illuminate\Support\Facades\DB;
 use App\Services\VideoService;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -92,7 +95,7 @@ class AdminController extends Controller
 
     public function ShowFormations()
     {
-        $formations = Formation::paginate(5);
+        $formations = Formation::paginate(1);
         return view('admin.layout.formations.list_formations', compact('formations'));
     }
 
@@ -465,5 +468,25 @@ class AdminController extends Controller
             Log::error('Erreur récupération objectifs: ' . $e->getMessage());
             return response()->json([], 500);
         }
+    }
+
+    public function Showpaiements()
+    {
+
+        $paiements = Paiement::with(['user', 'formation'])
+            ->paginate(10);
+            
+        return view('admin.layout.formations.list_paiements',compact("paiements"));
+        
+    }
+
+    public function ShowCertifications(){
+        
+        $certifications = user_formation::with(['user', 'formation'])
+        ->whereNotNull('path_attestation') // on affiche seulement celles qui ont une attestation générée
+        ->latest()
+        ->get();
+
+    return view('admin.layout.formations.certifications', compact('certifications'));
     }
 }

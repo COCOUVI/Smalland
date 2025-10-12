@@ -32,6 +32,7 @@ Route::prefix('espace-etudiant')->group(function () {
 })->middleware(['auth']);
 
 
+
 //ROUTE FOR THE PAIEMENTS
 Route::prefix('paiement')->group(function () {
     // Initier le paiement (utilisateur connecté)
@@ -99,6 +100,8 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::delete('/questions/{questionId}', [QuizzController::class, 'deleteQuestion'])->name('questions.delete');
     Route::put('/quizz/{quizz}/update-title', [QuizzController::class, 'updateTitle'])->name('quizz.updateTitle');
     Route::delete('/quizz/{quizz}', [QuizzController::class, 'destroy'])->name('quizz.destroy');
+    Route::get('/listes-paiments',[AdminController::class,"Showpaiements"])->name('admin.paiements.index');
+    Route::get('/certification-list',[AdminController::class,"ShowCertifications"])->name("certif-list");
 });
 
 // === PROFIL UTILISATEUR (AUTH) ===

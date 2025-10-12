@@ -2,48 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Formation;
+use App\Models\Paiement;
+use App\Models\Product;
+use App\Models\Quizz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class UserController extends Controller
 {
     //
     public function index()
     {
         $user = Auth::user();
+
+        if ($user->role !== "admin") {
+            return redirect()->route("accueil");
+        }
+
+        // 📊 Récupération dynamique des données
+        $nbProduits = Product::count();
+        $nbFormations = Formation::count();
+        $nbQuiz = Quizz::count();
+        $totalPaiements = Paiement::sum('montant_payé'); // Assure-toi que la colonne montant existe
+
         $cards = [
             [
                 'title' => 'Produits',
-                'value' => '120',
-                'percent' => '+10%',
+                'value' => $nbProduits,
+                'percent' => '+10%', // tu peux aussi le calculer dynamiquement si tu veux
                 'percentColor' => 'col-green',
                 'img' => 'assets/img/banner/shop.png',
             ],
             [
                 'title' => 'Formations',
-                'value' => '45',
+                'value' => $nbFormations,
                 'percent' => '-5%',
                 'percentColor' => 'col-orange',
                 'img' => 'assets/img/banner/formations.png',
             ],
             [
                 'title' => 'Quiz',
-                'value' => '18',
+                'value' => $nbQuiz,
                 'percent' => '+12%',
                 'percentColor' => 'col-green',
                 'img' => 'assets/img/banner/quizz.png',
             ],
             [
                 'title' => 'Paiements',
-                'value' => '1 250 000 CFA',
+                'value' => number_format($totalPaiements, 0, ',', ' ') . ' CFA',
                 'percent' => '+42%',
                 'percentColor' => 'col-green',
                 'img' => 'assets/img/banner/paiements.png',
             ],
         ];
-        if ($user->role === "admin") {
-            return view('admin.layout.formations.index', compact('cards'));
-        } else {
-            return redirect()->route("accueil");
-        }
+
+        return view('admin.layout.index', compact('cards'));
     }
 }

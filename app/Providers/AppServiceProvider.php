@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use App\Http\View\Composers\MasterComposer; //
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,10 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        if (config('app.env') === 'local') {
-            URL::forceScheme('https');
-        }
-
+         Paginator::useBootstrapFive(); // 
          View::composer('space-etudiant.master', MasterComposer::class);
     }
 }

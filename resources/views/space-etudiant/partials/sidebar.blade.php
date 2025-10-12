@@ -39,7 +39,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-url="">
+                    <a class="nav-link{{ request()->routeIs('parametres.index') ? 'active' : '' }}" href="{{route('parametres.index')}}" data-url="{{route('parametres.index')}}">
                         <i class="bi bi-gear"></i> Paramètres
                     </a>
                 </li>

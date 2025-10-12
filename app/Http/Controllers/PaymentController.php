@@ -2,120 +2,86 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Formation;
-use App\Models\Paiement;
-use App\Models\user_formation;
 use App\Services\PaymentService;
-use FedaPay\FedaPay;
-use FedaPay\Transaction;
+use App\Services\EnrollmentService;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class PaymentController extends Controller
 {
-    //
-    protected $paymentService;
-
-    public function __construct(PaymentService $paymentService)
-    {
-        $this->paymentService = $paymentService;
-    }
-
-
-
-
+    public function __construct(
+        private PaymentService $paymentService,
+        private EnrollmentService $enrollmentService,
+        private NotificationService $notificationService
+    ) {}
 
     public function callback(Request $request)
     {
         $transactionId = $request->get('id');
         $formationId = $request->get('formation_id');
+        $user = auth()->user();
 
-        // Log les erreurs côté serveur pour le debug
-        if (!$transactionId || !$formationId) {
-            Log::warning('Callback paiement: données manquantes', [
-                'transaction_id' => $transactionId,
-                'formation_id' => $formationId,
-                'user_id' => auth()->id(),
-                'ip' => $request->ip()
-            ]);
-
-            // Message générique pour l'utilisateur
-            return back()->with('error', 'Une erreur est survenue lors du traitement de votre paiement. Veuillez contacter le support.');
+        if (!$this->isValidRequest($transactionId, $formationId)) {
+            return back()->with('error', 'Données de paiement manquantes.');
         }
 
         try {
-            $transaction = $this->paymentService->getTransaction($transactionId);
+            // 1. Récupération transaction via VOTRE PaymentService
+            $transaction = $this->getTransaction($transactionId);
 
-            if ($transaction->status !== 'approved') {
-                Log::info('Paiement non approuvé', [
-                    'transaction_id' => $transactionId,
-                    'status' => $transaction->status,
-                    'user_id' => auth()->id()
-                ]);
-
-                // Message clair et utile pour l'utilisateur
-                return back()->with('error', 'Votre paiement n\'a pas été validé. Aucun montant n\'a été débité.');
+            // 2. Validation statut
+            if (!$this->isPaymentApproved($transaction)) {
+                return back()->with('error', 'Votre paiement n\'a pas été validé.');
             }
 
-            $userId = auth()->id();
-            $formation = Formation::findOrFail($formationId);
+            // 3. Traitement inscription
+            $result = $this->enrollmentService->processEnrollment(
+                $transaction, 
+                $formationId, 
+                $user->id
+            );
 
-            $existingUserFormation = user_formation::where('user_id', $userId)
-                ->where('formation_id', $formationId)
-                ->first();
+            // 4. Notification
+            $this->notificationService->sendPaymentConfirmation($user, $result['formation']);
 
-            if ($existingUserFormation) {
-                return redirect()->route('espace.etudiant')
-                    ->with('info', 'Vous êtes déjà inscrit à cette formation');
-            }
+            return redirect()->route('trainings.paid')
+                ->with('success', 'Félicitations ! Votre inscription a été confirmée.');
 
-            DB::beginTransaction();
-
-            try {
-                Paiement::create([
-                    'montant_payé' => $transaction->amount,
-                    'moyen_de_paiment' => $transaction->mode ?? 'fedapay',
-                    'status' => 'success',
-                    'user_id' => $userId,
-                    'formation_id' => $formationId,
-                    'transaction_id' => $transaction->id
-                ]);
-
-                user_formation::create([
-                    'user_id' => $userId,
-                    'formation_id' => $formationId,
-                    'progression' => 0,
-                    'path_attestation' => null,
-                ]);
-
-                DB::commit();
-
-                return redirect()->route('espace.etudiant')
-                    ->with('success', 'Félicitations ! Votre inscription a été confirmée.');
-            } catch (\Exception $e) {
-                DB::rollBack();
-
-                Log::error('Erreur insertion paiement/formation', [
-                    'error' => $e->getMessage(),
-                    'transaction_id' => $transactionId,
-                    'user_id' => $userId
-                ]);
-
-                // Message générique
-                return back()->with('error', 'Une erreur technique est survenue. Votre paiement sera vérifié par notre équipe.');
-            }
         } catch (\Exception $e) {
-            Log::error('Erreur récupération transaction FedaPay', [
-                'error' => $e->getMessage(),
-                'transaction_id' => $transactionId,
-                'user_id' => auth()->id()
-            ]);
-
-            return back()->with('error', 'Impossible de vérifier votre paiement. Veuillez contacter le support si le problème persiste.');
+            return $this->handleApplicationError($e);
         }
     }
-  
+
+    private function isValidRequest(?string $transactionId, ?int $formationId): bool
+    {
+        return !empty($transactionId) && !empty($formationId);
+    }
+
+    private function getTransaction(string $transactionId)
+    {
+        return Cache::remember(
+            "fedapay_transaction_{$transactionId}",
+            300,
+            fn() => $this->paymentService->getTransaction($transactionId)
+        );
+    }
+
+    private function isPaymentApproved($transaction): bool
+    {
+        return $transaction->status === 'approved';
+    }
+
+    private function handleApplicationError(\Exception $e)
+    {
+        return match ($e->getMessage()) {
+            'USER_ALREADY_ENROLLED' => redirect()->route('espace.etudiant')
+                ->with('info', 'Vous êtes déjà inscrit à cette formation'),
+                
+            'TRANSACTION_ALREADY_PROCESSED' => redirect()->route('espace.etudiant')
+                ->with('info', 'Ce paiement a déjà été traité'),
+                
+            default => back()->with('error', 'Une erreur technique est survenue.')
+        };
+    }
 }
