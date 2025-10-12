@@ -21,9 +21,9 @@
                 <i data-feather="shopping-cart"></i><span>Produits</span>
             </a>
             <ul class="dropdown-menu">
-                <li><a class="nav-link" href="produits-index.html">Liste des Produits</a></li>
-                <li><a class="nav-link" href="produits-create.html">Ajouter Produit</a></li>
-                <li><a class="nav-link" href="categories.html">Catégories</a></li>
+                <li><a class="nav-link" href="{{ route('products.index') }}">Liste des Produits</a></li>
+                <li><a class="nav-link" href="{{ route('products.create') }}">Ajouter Produit</a></li>
+                <li><a class="nav-link" href="{{ route('admin.categories.index') }}">Catégories</a></li>
                 <li><a class="nav-link" href="commandes.html">Commandes</a></li>
                 <li><a class="nav-link" href="paiements.html">Paiements</a></li>
             </ul>

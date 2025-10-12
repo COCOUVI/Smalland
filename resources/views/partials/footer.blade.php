@@ -2,7 +2,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-3 mb-4">
-                    <h5>Small Land</h5>
+                    <h5><a class="navbar-brand d-flex align-items-center" href="{{ route('accueil') }}">
+                    <img src="storage/logo/small_land.png" 
+                        class="img-fluid" 
+                        style="height: 100px;
+                        width:150px" 
+                        alt="Logo smalland">  </a></h5>
                     <p>Votre destination pour l'agronomie moderne, les formations de qualité et les produits spécialisés.</p>
                     <div class="d-flex">
                         <a href="#" class="me-3 text-white"><i class="bi bi-facebook"></i></a>

@@ -5,10 +5,10 @@
 <!-- Hero Section -->
     <section class="hero-section text-center">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-4">Bienvenue à Small Land</h1>
+            <h1 class="display-4 fw-bold mb-5">Bienvenue à Smalland </h1>
             <p class="lead mb-4">La première plateforme béninoise dédiée à l’innovation, à la formation et à la fourniture d’équipements et intrants dans les domaines de l’élevage et de l’agriculture.</p>
             <a href="#about" class="btn btn-primary btn-lg me-2">Notre Histoire </a>
-            <a href="#feature" class="btn btn-light btn-lg">Nos activités</a>
+            <a href="#featureS" class="btn btn-light btn-lg">Nos activités</a>
         </div>
     </section>
 
@@ -25,36 +25,6 @@
                     <p>Toute la famille participe aux activités : les enfants adorent nourrir les lapins et ramasser les œufs frais chaque matin. Nous avons également développé un incubateur artisanal pour faire naître nos poussins.</p>
                     <p>Notre philosophie : une agriculture respectueuse des animaux et de l'environnement, dans la joie et la simplicité.</p>
                     <a href="#" class="btn btn-primary mt-3">En savoir plus sur nous</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Values Section -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title text-center">Nos valeurs</h2>
-            <div class="row text-center mt-4">
-                <div class="col-md-4 mb-4">
-                    <div class="p-4 bg-white rounded shadow-sm">
-                        <i class="bi bi-heart-fill text-primary fs-1 mb-3"></i>
-                        <h4>Amour des animaux</h4>
-                        <p>Nos animaux sont élevés en plein air avec beaucoup d'attention et de soins.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="p-4 bg-white rounded shadow-sm">
-                        <i class="bi bi-tree-fill text-primary fs-1 mb-3"></i>
-                        <h4>Respect de la nature</h4>
-                        <p>Nous pratiquons une agriculture durable qui préserve l'environnement.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="p-4 bg-white rounded shadow-sm">
-                        <i class="bi bi-people-fill text-primary fs-1 mb-3"></i>
-                        <h4>Partage familial</h4>
-                        <p>Toute la famille participe avec joie aux activités de la ferme.</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -99,57 +69,47 @@
         <div class="container">
             <h2 class="section-title">Derniers articles du blog</h2>
             <div class="row">
-                <!-- Article 1 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <span class="category-badge badge bg-primary">Permaculture</span>
-                        <img src="https://images.unsplash.com/photo-1597848212624-e9d2c1e7a50d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Permaculture">
-                        <div class="card-body">
-                            <h5 class="card-title">Introduction à la permaculture</h5>
-                            <p class="card-text">Découvrez les principes de base de la permaculture et comment les appliquer dans votre jardin.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">15 juin 2023</small>
-                                <a href="blog-article.html" class="btn btn-sm btn-primary">Lire la suite</a>
+                @forelse ($latestPublications as $publication)
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <span class="category-badge badge bg-primary">
+                                {{ $publication->category->name ?? 'Catégorie inconnue' }}
+                            </span>
+
+                            @if($publication->image_path)
+                                <img src="{{ asset('storage/'.$publication->image_path) }}"
+                                    class="card-img-top"
+                                    alt="{{ $publication->title }}">
+                            @else
+                                <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Image par défaut">
+                            @endif
+
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $publication->title }}</h5>
+                                <p class="card-text">
+                                    {{ Str::limit(strip_tags($publication->content), 100) }}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">{{ $publication->created_at->format('d M Y') }}</small>
+                                    <a href="{{ route('publications.show', $publication->id) }}"
+                                    class="btn btn-sm btn-primary">
+                                    Lire la suite
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Article 2 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <span class="category-badge badge bg-success">Agriculture Bio</span>
-                        <img src="https://images.unsplash.com/photo-1625246335525-8b5e7e723b64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Agriculture Bio">
-                        <div class="card-body">
-                            <h5 class="card-title">Les bienfaits de l'agriculture biologique</h5>
-                            <p class="card-text">Pourquoi et comment passer à une agriculture respectueuse de l'environnement.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">10 juin 2023</small>
-                                <a href="blog-article.html" class="btn btn-sm btn-primary">Lire la suite</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Article 3 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <span class="category-badge badge bg-info">Techniques</span>
-                        <img src="https://images.unsplash.com/photo-1590172205845-2441aae4bad4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Techniques agricoles">
-                        <div class="card-body">
-                            <h5 class="card-title">Nouvelles techniques d'irrigation</h5>
-                            <p class="card-text">Optimisez votre consommation d'eau avec ces méthodes d'irrigation modernes et efficaces.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">5 juin 2023</small>
-                                <a href="blog-article.html" class="btn btn-sm btn-primary">Lire la suite</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @empty
+                    <p class="text-center">Aucune publication disponible pour le moment.</p>
+                @endforelse
             </div>
+
             <div class="text-center mt-4">
-                <a href="blog-list.html" class="btn btn-primary">Voir tous les articles</a>
+                <a href="{{ route('blog.list') }}" class="btn btn-primary">Voir tous les articles</a>
             </div>
         </div>
     </section>
+
 
     <!-- Formations populaires -->
     <section class="py-5">
@@ -332,7 +292,7 @@
                 </div>
             </div>
             <div class="text-center mt-4">
-                <a href="products-catalog.html" class="btn btn-primary">Voir tous les produits</a>
+                <a href="{{ route('products.list') }}" class="btn btn-primary">Voir tous les produits</a>
             </div>
         </div>
     </section>

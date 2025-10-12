@@ -6,9 +6,13 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('layouts.index');
-})->name('accueil');
+use App\Http\Controllers\HomeController;
+
+Route::get('/', [HomeController::class, 'index'])->name('accueil');
+
+
+
+
 Route::get('/espace-etudiant', function () {
     return view('layouts.space-etudiant.dashboard');
 })->name('espace');
@@ -17,23 +21,34 @@ Route::get('/formation-detail', function () {
 })->name('formation-detail');
 Route::get('/formation-list', function () {
     return view('layouts.formation.formation-catalog');
-})->name('formation-list');
+})->name('formations.catalog');
+Route::get('/cart-index', function () {
+    return view('layouts.boutique.cart');
+})->name('cart.index');
+
+
+
+Route::get('/order', function () {
+    return view('layouts.boutique.order-tracking');
+})->name('order.tracking');
 Route::get('/cart', function () {
     return view('layouts.boutique.cart');
 })->name('cart');
-Route::get('/cart', function () {
-    return view('layouts.boutique.cart');
-})->name('cart');
-Route::get('/cart', function () {
-    return view('layouts.boutique.cart');
-})->name('cart');
-Route::get('/cart', function () {
-    return view('layouts.boutique.cart');
-})->name('cart');
+Route::get('/products-list', function () {
+    return view('layouts.boutique.product-list');
+})->name('products.list');
 
 use App\Http\Controllers\PublicationController;
 //BLOG
 Route::resource('publications', PublicationController::class);
+
+
+Route::get('/blog-list', [PublicationController::class, 'index'])->name('blog.list');
+Route::get('/blog/{id}', [PublicationController::class, 'show'])->name('blog.show');
+Route::get('/blog-category', [PublicationController::class, 'categories'])->name('blog.category');
+Route::get('/blog/category/{id}', [PublicationController::class, 'articles'])->name('blog.articles');
+
+
 // Gestion des catégories
 Route::get('/admin/categories', [PublicationController::class, 'listCategories'])->name('admin.listCategories');
 Route::get('/admin/categories/add', [PublicationController::class, 'createCategory'])->name('admin.createCategory');
@@ -46,8 +61,6 @@ Route::put('/admin/categories/{id}', [PublicationController::class, 'updateCateg
 use App\Http\Controllers\ProductController;
 
 Route::resource('products', ProductController::class);
-
-
 Route::get('/test',function(){
     return view("admin.layout.index");
 });
@@ -78,8 +91,6 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-
-use App\Http\Controllers\AdminController;
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommandeController;
