@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('montant_payé');
             $table->string('moyen_de_paiment');
-            $table->enum('status',['failed','success']);
+            $table->enum('status',['failed','success','pending']);
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('formation_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();

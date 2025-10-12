@@ -17,14 +17,17 @@ class UpdateFormationRequest extends FormRequest
     /**
      * Règles de validation.
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             'titre' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            // l’image est optionnelle lors de la MAJ
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'level' => 'nullable|string|max:255',
+            'objectives_existing' => 'nullable|array',
+            'objectives_new' => 'nullable|array',
+            'objectives_to_delete' => 'nullable|array',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ];
     }
 

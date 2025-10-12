@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{route('accueil')}}">
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('accueil') }}">
             <i class="bi bi-tree-fill me-2"></i>Small Land
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -13,7 +13,8 @@
                     <a class="nav-link active" href="index.html">Accueil</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="blogDropdown" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="blogDropdown" role="button"
+                        data-bs-toggle="dropdown">
                         Blog Agronomie
                     </a>
                     <ul class="dropdown-menu">
@@ -22,18 +23,20 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="formationsDropdown" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="formationsDropdown" role="button"
+                        data-bs-toggle="dropdown">
                         Formations
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="formations-catalog.html">Catalogue</a></li>
-                       @auth
-                        <li><a class="dropdown-item" href="student-dashboard.html">Espace étudiant</a></li>
-                       @endauth
+                        @auth
+                            <li><a class="dropdown-item" href="{{route('espace.etudiant')}}">Espace étudiant</a></li>
+                        @endauth
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="shopDropdown" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="shopDropdown" role="button"
+                        data-bs-toggle="dropdown">
                         Boutique
                     </a>
                     <ul class="dropdown-menu">
@@ -56,31 +59,41 @@
 
                 <!-- Espace client connecté -->
                 @auth
-                <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle me-2"></i> {{ auth()->user()->nom  }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="student-dashboard.html">Mon espace</a></li>
-                        <li><a class="dropdown-item" href="#">Mon profil</a></li>
-                        <li><a class="dropdown-item" href="#">Paramètres</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                               Déconnexion
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-2"></i> {{ auth()->user()->nom }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            @if (auth()->user()->role === 'client')
+                                <li><a class="dropdown-item" href="{{route('espace.etudiant')}}">Mon espace étudiant</a></li>
+                                <li><a class="dropdown-item" href="">Mon espace client</a></li>
+                                <li><a class="dropdown-item" href="#">Mon profil</a></li>
+                                <li><a class="dropdown-item" href="#">Paramètres</a></li>
+
+                            @else
+                                 <li><a class="dropdown-item" href="{{route('dashboard')}}">Mon espace Administrateur</a></li>
+                            @endif
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    Déconnexion
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 @endauth
                 @guest
-                <!-- Connexion / Inscription -->
-                <a href="{{ route('login') }}" class="btn btn-outline-light ms-2">Connexion</a>
-                <a href="{{ route('register') }}" class="btn btn-light ms-2">Inscription</a>
+                    <!-- Connexion / Inscription -->
+                    <a href="{{ route('login') }}" class="btn btn-outline-light ms-2">Connexion</a>
+                    <a href="{{ route('register') }}" class="btn btn-light ms-2">Inscription</a>
                 @endguest
             </div>
         </div>

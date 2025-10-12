@@ -109,9 +109,6 @@
                          alt="{{ $formation->titre }}" 
                          class="img-fluid rounded shadow-sm" 
                          style="max-width: 500px;">
-                    <div class="mt-2">
-                        <small class="text-muted">{{ $formation->image_path }}</small>
-                    </div>
                 </div>
             </div>
             @endif
