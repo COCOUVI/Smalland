@@ -1,6 +1,24 @@
 @extends('admin.master')
 
 @section('content')
+{{-- Message de succès --}}
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+{{-- Affichage des erreurs --}}
+@if($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+                <li>- {{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="container py-4">
     <h4 class="fw-bold mb-3">Ajouter un produit</h4>
 
@@ -39,8 +57,8 @@
         <div class="col-md-6">
             <label class="form-label">Statut du stock</label>
             <select name="statut_stock" class="form-select" required>
-                <option value="disponible">Disponible</option>
-                <option value="rupture">Rupture</option>
+                <option value="en_stock">Disponible</option>
+                <option value="rupture_de_stock">Rupture</option>
             </select>
         </div>
 
