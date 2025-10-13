@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('admin', [
             IsAdmin::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/*',
+            // ou spécifiquement :
+            // 'webhooks/kkiapay',
+        ]);
 
         //
     })

@@ -2,7 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\user_formation;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
+use App\Http\View\Composers\MasterComposer; //
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+
     }
 
     /**
@@ -20,5 +27,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+         Paginator::useBootstrapFive(); // 
+         View::composer('space-etudiant.master', MasterComposer::class);
     }
+
+
 }
+

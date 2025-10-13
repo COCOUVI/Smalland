@@ -1,9 +1,15 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\QuizzController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\FormationController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\UserController;
-use App\Http\Middleware\IsAdmin;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
@@ -65,30 +71,108 @@ Route::get('/test',function(){
 });
 Route::get('/create-article',function(){
     return view("admin.layout.blog.create-article");
+use App\Http\Controllers\AvisController;
+
+// === ROUTES PUBLIQUES ===
+Route::get('/', [HomeController::class, 'index'])->name('accueil');
+Route::get('/formation-detail/{formation}', [HomeController::class, 'ShowOneFormation'])->name('formation-detail');
+Route::get('/formation-list', [HomeController::class, 'showFormations'])->name('formation-list');
+Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
+Route::get('/test', fn() => view("admin.layout.formations.index"));
+
+
+//Route pour l'espace etudiant
+Route::prefix('espace-etudiant')->group(function () {
+    Route::get('/', [StudentController::class, "index"])->name('espace.etudiant');
+    Route::get('/mes-formations', [StudentController::class, "ShowTranings"])->name('trainings.paid');
+    Route::get('/mes-certificats', [StudentController::class, 'Showcertfication'])
+        ->name('certificats.index');
+    Route::get('/facturations', [StudentController::class, 'ShowFacturations'])->name('facturations.index');
+    Route::get('/help', [StudentController::class, 'Showhelp'])->name('help.index');
+    Route::post('/help', [StudentController::class, 'sendMail'])->name('help.send');
+    Route::get('/parametres', [StudentController::class, 'ShowSettings'])->name('parametres.index');
+    Route::post('/parametres/update', [StudentController::class, 'update'])->name('parametres.update');
+})->middleware(['auth']);
+
+
+
+//ROUTE FOR THE PAIEMENTS
+Route::prefix('paiement')->group(function () {
+    // Initier le paiement (utilisateur connecté)
+    // Route::get('/{formation}', [PaymentController::class, 'initier'])
+    //     ->name('paiement.initier')
+    //     ->middleware('auth');
+
+    // Callback KKiaPay (publique)
+    Route::any('/api/callback', [PaymentController::class, 'callback'])
+        ->name('paiement.callback');
+
+    Route::post('/initier/{formation}', [PaymentController::class, 'initierAjax'])
+        ->name('paiement.initier.ajax')
+        ->middleware('auth')
+    ;
+});
+Route::any('/api/webhook', [PaymentController::class, 'webhook'])
+    ->name('paiement.webhook')
+    ->withoutMiddleware(VerifyCsrfToken::class)
+;
+
+
+
+
+
+// === DASHBOARD UTILISATEUR (ACCÈS AUTH) ===
+Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+// === ZONE ADMIN (PROTÉGÉE PAR MIDDLEWARE auth + admin) ===
+Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
+
+    // FORMATIONS CRUD
+    Route::get('/add-formation', [AdminController::class, "AddFormationPage"])->name('add_formation_page');
+    Route::post('/submit-formation', [AdminController::class, "AddFormation"])->name("store_formation");
+    Route::get('/list_formation', [AdminController::class, "ShowFormations"])->name('lists_formation');
+    Route::get('/details/{formation}', [AdminController::class, "GetOneFormation"])->name("details.formation");
+    Route::get('/page_modify_formation/{formation}', [AdminController::class, "Put_Page_Formation"])->name('put_page.formation');
+    Route::put('/modify_formation/{formation}', [AdminController::class, 'PutFormation'])->name('admin.formations.update');
+    Route::delete('/delete_formation/{formation}', [AdminController::class, "DeleteFormation"])->name('delete.formation');
+    Route::get('/formations/{formation}/objectives', [AdminController::class, 'getObjectives'])->name('objectives.get');
+
+    Route::get('/formations/{formation}/objectives', [AdminController::class, 'getObjectives'])->name('formations.objectives');
+
+    // MODULES
+    Route::get('/formations/{formation}/modules', [AdminController::class, 'getModules'])->name('modules.get');
+    Route::get('/modules', [AdminController::class, 'listModules'])->name('modules.list'); // Nouvelle route pour la liste
+    Route::post('/formations/{formation}/modules', [AdminController::class, 'AddModule'])->name('modules.store');
+    Route::put('/modules/{module}', [AdminController::class, 'updateModule'])->name('modules.update'); // Nouvelle route pour modifier
+    Route::delete('/modules/{module}', [AdminController::class, 'deleteModule'])->name('modules.delete');
+
+
+    // LESSONS (nouvelles routes)
+    Route::post('/modules/{moduleId}/lessons', [AdminController::class, 'addLesson'])->name('lessons.store');
+    Route::get('/modules/{moduleId}/lessons', [AdminController::class, 'getLessons'])->name('lessons.get');
+    Route::put('/lessons/{lessonId}', [AdminController::class, 'updateLesson'])->name('lessons.update');
+    Route::delete('/lessons/{lessonId}', [AdminController::class, 'destroyLesson'])->name('lessons.delete');
+
+    Route::get('/lessons', [AdminController::class, 'listLessons'])->name('lessons.list');
+
+
+    //Quiz
+    Route::get('/modules/{module}/quizz', [QuizzController::class, 'manage'])->name('quizz.manage');
+    Route::post('/modules/{module}/quizz/store', [QuizzController::class, 'storeOrUpdate'])->name('quizz.storeOrUpdate');
+    Route::put('/questions/{questionId}', [QuizzController::class, 'updateQuestion'])->name('questions.update');
+    Route::delete('/questions/{questionId}', [QuizzController::class, 'deleteQuestion'])->name('questions.delete');
+    Route::put('/quizz/{quizz}/update-title', [QuizzController::class, 'updateTitle'])->name('quizz.updateTitle');
+    Route::delete('/quizz/{quizz}', [QuizzController::class, 'destroy'])->name('quizz.destroy');
+    Route::get('/listes-paiments',[AdminController::class,"Showpaiements"])->name('admin.paiements.index');
+    Route::get('/certification-list',[AdminController::class,"ShowCertifications"])->name("certif-list");
 });
 
-Route::get('/dashboard', [UserController::class,'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
-//admin route 
-Route::prefix('dashboard')->group(function(){
-
-    Route::get('/add-formation',[AdminController::class,"AddFormationPage"])->name('add_formation_page');
-    Route::post('/submit-formation',[AdminController::class,"AddFormation"])->name("store_formation");
-    Route::get('/list_formation',[AdminController::class,"ShowFormations"])->name('lists_formation');
-    Route::get('/details/{formation}',[AdminController::class,"GetOneFormation"])->name("details.formation");
-    Route::get('/page_modify_formation/{formation}',[AdminController::class,"Put_Page_Formation"])->name('put_page.formation');
-    Route::put('/modify_formation/{formation}',[AdminController::class,'PutFormation'])->name('admin.formations.update');
-    Route::delete('/delete_formation/{formation}', [AdminController::class,"DeleteFormation"])->name('delete.formation');
-    Route::post('/ajouter-module',[AdminController::class,"AddModule"])->name('modules.store');
-})->middleware(["auth",'admin']);
-
+// === PROFIL UTILISATEUR (AUTH) ===
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-require __DIR__.'/auth.php';
 
 
 use App\Http\Controllers\CategoryController;
@@ -123,9 +207,29 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/categoriesA', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::get('/categoriesA/create', [CategoryController::class, 'create'])->name('admin.categories.create');
     Route::post('/categoriesA', [CategoryController::class, 'store'])->name('admin.categories.store');
+//Mes routes
+Route::middleware(['auth'])->group(function () {
+    // Formations
+    Route::get('/formations', [FormationController::class, 'index'])->name('formations.index');
+    Route::get('/formations/{id}', [FormationController::class, 'show'])->name('formations.show');
 
-    // Commandes
-    Route::get('/commandes', [CommandeController::class, 'index'])->name('admin.commandes.index');
+    // Modules
+    Route::get('/formations/{formation}/modules/{module}', [ModuleController::class, 'show'])->name('modules.show');
+    Route::post('/lessons/{lesson}/complete', [ModuleController::class, 'completeLesson'])->name('lessons.complete');
+
+    // Quizz
+     // Afficher le quiz
+    Route::get('/quizz/{quizz}', [QuizzController::class, 'show'])->name('quizz.show');
+
+    // Soumettre les réponses du quiz
+    Route::post('/quizz/{quizz}/submit', [QuizzController::class, 'submit'])->name('quizz.submit');
+
+    //Donner un avis
+     Route::post('/formations/{formation}/avis', [AvisController::class, 'store'])->name('avis.store');
+    Route::get('/formations/{formation}/avis/edit', [AvisController::class, 'edit'])->name('avis.edit');
+    Route::put('/formations/{formation}/avis', [AvisController::class, 'update'])->name('avis.update');
+    Route::delete('/formations/{formation}/avis', [AvisController::class, 'destroy'])->name('avis.destroy');
+});
 
     // Paiements
     Route::get('/paiements', [PaiementController::class, 'index'])->name('admin.paiements.index');
@@ -137,3 +241,5 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 Route::get('/product-list', [ProductController::class, 'shop'])->name('shop');
 
 Route::get('/produits/{product}', [ProductController::class, 'voir'])->name('admin.produits.voir');
+// AUTHENTIFICATION (LARAVEL BREEZE / FORTIFY / JETSTREAM)
+require __DIR__ . '/auth.php';

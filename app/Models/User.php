@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     // variables pour les roles des users
-    
+
 
     /**
      * The attributes that are mass assignable.
@@ -49,5 +49,44 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    public function formations()
+    {
+        return $this->belongsToMany(Formation::class, 'user_formations')
+            ->withPivot(['progression', 'path_attestation'])
+            ->withTimestamps();
+    }
+
+
+    public function avis()
+    {
+        return $this->hasMany(Avis::class);
+    }
+    public function formationsAchetees()
+    {
+        return $this->belongsToMany(Formation::class, 'user_formations')
+            ->withPivot('progression', 'path_attestation')
+            ->withTimestamps();
+    }
+
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class, 'user_lessons')
+            ->withPivot(['terminee', 'terminee_at'])
+            ->withTimestamps();
+    }
+
+    public function quizzs()
+    {
+        return $this->belongsToMany(Quizz::class, 'user__quizzs')
+            ->withPivot(['score'])
+            ->withTimestamps();
+    }
+
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
     }
 }

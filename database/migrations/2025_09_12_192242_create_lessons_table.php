@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("titre");
             $table->string('video_url')->nullable();
+            $table->integer('duree')->unsigned();
             $table->foreignId('module_id')->constrained()->onDelete('cascade');
             $table->string('pdf_url')->nullable();
             $table->timestamps();

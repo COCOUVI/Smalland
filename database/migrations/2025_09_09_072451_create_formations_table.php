@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('titre');
             $table->text("description");
+            $table->enum("niveau",['debutant','intermediaire','expert']);
             $table->integer("price"); 
             $table->string('image_path');
             $table->timestamps();
