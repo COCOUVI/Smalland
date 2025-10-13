@@ -1,8 +1,11 @@
 <aside id="sidebar-wrapper">
     <div class="sidebar-brand">
         <a class="navbar-brand text-success" href="index.html">
-            <i class="bi bi-tree-fill me-2"></i>
-            <span class="logo-name">Small Land</span>
+            <span class="logo-name"><img src="storage/logo/small_land.png" 
+                        class="img-fluid" 
+                        style="height: 80px;
+                        width:120px" 
+                        alt="Logo smalland"> </span>
         </a>
     </div>
 

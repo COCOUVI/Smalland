@@ -1,6 +1,15 @@
 @extends('master')
 
 @section('content')
+<style>
+.card-img-top {
+    height: 220px; /* tu peux ajuster ici */
+    object-fit: cover;
+    width: 100%;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+</style>
 <div>
 <!-- Hero Section -->
     <section class="hero-section text-center">
@@ -194,108 +203,41 @@
         <div class="container">
             <h2 class="section-title">Produits populaires</h2>
             <div class="row">
-                <!-- Produit 1 -->
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div class="card h-100">
-                        <img src="https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Kit jardinage">
-                        <div class="card-body">
-                            <h5 class="card-title">Kit de jardinage débutant</h5>
-                            <p class="card-text">Tout le nécessaire pour commencer votre potager.</p>
-                            <div class="rating mb-2">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <span class="ms-1">(35)</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0 product-price">39,90€</span>
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Produit 2 -->
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div class="card h-100">
-                        <img src="https://images.unsplash.com/photo-1589923188937-cb64779f4abe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Serre">
-                        <div class="card-body">
-                            <h5 class="card-title">Serre de balcon</h5>
-                            <p class="card-text">Idéale pour cultiver en ville toute l'année.</p>
-                            <div class="rating mb-2">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star"></i>
-                                <span class="ms-1">(22)</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0 product-price">79,90€</span>
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-cart-plus"></i>
-                                </button>
+                @forelse($produitsPopulaires as $produit)
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100">
+                            <img src="{{ asset('storage/' . $produit->path_img) }}" class="card-img-top" alt="{{ $produit->nom }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $produit->nom }}</h5>
+                                <p class="card-text">{{ Str::limit($produit->description, 60) }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0 product-price">
+                                        {{ number_format($produit->prix, 0, ',', ' ') }} FCFA
+                                    </span>
+                                    <td>
+                                        <a href="{{ route('admin.produits.voir', $produit->id) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-eye"> </i>  Voir
+                                        </a>
+                                    </td>
+
+                                    <a href="" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-cart-plus"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Produit 3 -->
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div class="card h-100">
-                        <img src="https://images.unsplash.com/photo-1471194402529-8e0f5a675de6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Graines bio">
-                        <div class="card-body">
-                            <h5 class="card-title">Coffret graines bio</h5>
-                            <p class="card-text">15 variétés de légumes et herbes aromatiques biologiques.</p>
-                            <div class="rating mb-2">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <span class="ms-1">(47)</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0 product-price">24,90€</span>
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Produit 4 -->
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div class="card h-100">
-                        <img src="https://images.unsplash.com/photo-1596461404969-9b70b3e2a60d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Arrosoir">
-                        <div class="card-body">
-                            <h5 class="card-title">Arrosoir écologique</h5>
-                            <p class="card-text">Fabriqué à partir de matériaux recyclés, capacité 10L.</p>
-                            <div class="rating mb-2">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <i class="bi bi-star"></i>
-                                <span class="ms-1">(18)</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0 product-price">32,50€</span>
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @empty
+                    <p class="text-muted">Aucun produit disponible pour le moment.</p>
+                @endforelse
             </div>
+
             <div class="text-center mt-4">
-                <a href="{{ route('products.list') }}" class="btn btn-primary">Voir tous les produits</a>
+                <a href="{{ route('shop') }}" class="btn btn-primary">Voir tous les produits</a>
             </div>
         </div>
     </section>
+
      <!-- Farm Gallery Section -->
     <section class="py-5">
         <div class="container">

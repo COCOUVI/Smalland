@@ -15,7 +15,7 @@ Route::get('/', [HomeController::class, 'index'])->name('accueil');
 
 Route::get('/espace-etudiant', function () {
     return view('layouts.space-etudiant.dashboard');
-})->name('espace');
+})->name('student.dashboard');
 Route::get('/formation-detail', function () {
     return view('layouts.formation.formation-detail');
 })->name('formation-detail');
@@ -28,21 +28,20 @@ Route::get('/cart-index', function () {
 
 
 
+
 Route::get('/order', function () {
     return view('layouts.boutique.order-tracking');
 })->name('order.tracking');
 Route::get('/cart', function () {
     return view('layouts.boutique.cart');
 })->name('cart');
-Route::get('/products-list', function () {
-    return view('layouts.boutique.product-list');
-})->name('products.list');
+
 
 use App\Http\Controllers\PublicationController;
+
+
 //BLOG
 Route::resource('publications', PublicationController::class);
-
-
 Route::get('/blog-list', [PublicationController::class, 'index'])->name('blog.list');
 Route::get('/blog/{id}', [PublicationController::class, 'show'])->name('blog.show');
 Route::get('/blog-category', [PublicationController::class, 'categories'])->name('blog.category');
@@ -96,13 +95,31 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\PaiementController;
 
-//Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
+
+
+Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     // Produits
+  
+
+
     Route::get('/produits', [ProductController::class, 'index'])->name('admin.produits.index');
     Route::get('/produits/create', [ProductController::class, 'create'])->name('admin.produits.create');
     Route::post('/produits', [ProductController::class, 'store'])->name('admin.produits.store');
+    Route::put('/produits/{product}', [ProductController::class, 'update'])->name('admin.produits.update');
+    Route::delete('/produits/{product}', [ProductController::class, 'destroy'])->name('admin.produits.destroy');
 
+});
     // Catégories
+   
+Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
+   
+    
+    // Routes pour update & delete
+    Route::get('categoriesA/{id}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
+    Route::put('categoriesA/{id}', [CategoryController::class, 'update'])->name('admin.categories.update');
+    Route::delete('categoriesA/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+;
+
     Route::get('/categoriesA', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::get('/categoriesA/create', [CategoryController::class, 'create'])->name('admin.categories.create');
     Route::post('/categoriesA', [CategoryController::class, 'store'])->name('admin.categories.store');
@@ -112,4 +129,11 @@ use App\Http\Controllers\PaiementController;
 
     // Paiements
     Route::get('/paiements', [PaiementController::class, 'index'])->name('admin.paiements.index');
-//});
+});
+
+//AFICHAGE PRODUITS
+
+
+Route::get('/product-list', [ProductController::class, 'shop'])->name('shop');
+
+Route::get('/produits/{product}', [ProductController::class, 'voir'])->name('admin.produits.voir');
