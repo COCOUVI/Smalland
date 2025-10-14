@@ -12,6 +12,10 @@ class Reponse extends Model
     protected $table = 'reponses';
     protected $fillable = ['content', 'is_correct', 'question_id'];
 
+        protected $casts = [
+        'is_correct' => 'boolean',
+    ];
+
     // Une réponse appartient à une question
     public function question()
     {
