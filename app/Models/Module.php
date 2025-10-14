@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Module extends Model
-
 {
     protected $fillable = ['titre', 'formation_id', 'ordre'];
 
@@ -14,7 +13,6 @@ class Module extends Model
     {
         return $this->belongsTo(Formation::class);
     }
-
 
     public function lessons()
     {

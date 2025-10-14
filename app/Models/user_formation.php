@@ -11,10 +11,11 @@ class user_formation extends Model
         'user_id',
         'formation_id',
         'progression',
-        'path_attestation'
+        'path_attestation',
+        'status'
     ];
 
-    
+
     // Relation vers Formation
     public function formation()
     {
@@ -27,5 +28,5 @@ class user_formation extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    
+
 }

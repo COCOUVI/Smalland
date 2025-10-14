@@ -22,6 +22,7 @@
 
                                 <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $formation->description }}</p>
 
+                                <!-- Progression -->
                                 <div class="mb-4">
                                     <div class="flex justify-between text-sm text-gray-600 mb-1">
                                         <span>Progression</span>
@@ -33,7 +34,7 @@
                                     </div>
                                 </div>
 
-
+                                <!-- Actions -->
                                 <div class="flex flex-wrap gap-2 justify-between items-center mt-4">
                                     <span class="text-very-green font-bold">{{ $formation->price }} €</span>
 
@@ -50,11 +51,14 @@
                                     @endphp
 
                                     @if ($userAvis)
+                                        <!-- Modifier avis -->
                                         <a href="{{ route('avis.edit', $formation->id) }}"
-                                            class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors w-100" style="text-decoration: none;">
+                                            class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors w-100"
+                                            style="text-decoration: none;">
                                             Modifier mon avis
                                         </a>
 
+                                        <!-- Supprimer avis -->
                                         <form action="{{ route('avis.destroy', $formation->id) }}" method="POST"
                                             onsubmit="return confirm('Voulez-vous vraiment supprimer votre avis ?');"
                                             class="inline">
@@ -65,8 +69,8 @@
                                                 Supprimer mon avis
                                             </button>
                                         </form>
-                                    @else
-                                        <!-- Button to open modal -->
+                                    @elseif ($formation->calculated_progress == 100)
+                                        <!-- Donner avis (uniquement si progression 100%) -->
                                         <button
                                             onclick="document.getElementById('addAvisModal-{{ $formation->id }}').classList.remove('hidden')"
                                             class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-100">
@@ -86,19 +90,16 @@
                                 <form action="{{ route('avis.store', $formation->id) }}" method="POST">
                                     @csrf
 
-                                    <label for="note-{{ $formation->id }}" class="block font-semibold mb-1">Note (1 à
-                                        5)</label>
+                                    <label for="note-{{ $formation->id }}" class="block font-semibold mb-1">Note (1 à 5)</label>
                                     <select name="note" id="note-{{ $formation->id }}"
                                         class="w-full border rounded p-2 mb-4" required>
                                         <option value="">-- Choisir une note --</option>
                                         @for ($i = 1; $i <= 5; $i++)
-                                            <option value="{{ $i }}">{{ $i }}
-                                                étoile{{ $i > 1 ? 's' : '' }}</option>
+                                            <option value="{{ $i }}">{{ $i }} étoile{{ $i > 1 ? 's' : '' }}</option>
                                         @endfor
                                     </select>
 
-                                    <label for="content_avis-{{ $formation->id }}" class="block font-semibold mb-1">Votre
-                                        avis</label>
+                                    <label for="content_avis-{{ $formation->id }}" class="block font-semibold mb-1">Votre avis</label>
                                     <textarea name="content_avis" id="content_avis-{{ $formation->id }}" rows="4"
                                         class="w-full border rounded p-2 mb-4" required></textarea>
 
@@ -112,7 +113,7 @@
                                     </div>
                                 </form>
 
-                                <!-- Bouton de fermeture  -->
+                                <!-- Bouton de fermeture -->
                                 <button
                                     onclick="document.getElementById('addAvisModal-{{ $formation->id }}').classList.add('hidden')"
                                     class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl">

@@ -1,4 +1,4 @@
-@extends('layouts.App')
+@extends('Master')
 
 @section('content')
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -26,7 +26,7 @@
                         <div class="mb-4">
                             <div class="flex justify-between text-sm text-gray-600 mb-1">
                                 <span>{{ $globalProgress }}%</span>
-                             
+
 
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-3">
