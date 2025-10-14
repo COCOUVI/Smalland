@@ -11,66 +11,6 @@ use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\HomeController;
-
-Route::get('/', [HomeController::class, 'index'])->name('accueil');
-
-
-
-
-Route::get('/espace-etudiant', function () {
-    return view('layouts.space-etudiant.dashboard');
-})->name('student.dashboard');
-Route::get('/formation-detail', function () {
-    return view('layouts.formation.formation-detail');
-})->name('formation-detail');
-Route::get('/formation-list', function () {
-    return view('layouts.formation.formation-catalog');
-})->name('formations.catalog');
-Route::get('/cart-index', function () {
-    return view('layouts.boutique.cart');
-})->name('cart.index');
-
-
-
-
-Route::get('/order', function () {
-    return view('layouts.boutique.order-tracking');
-})->name('order.tracking');
-Route::get('/cart', function () {
-    return view('layouts.boutique.cart');
-})->name('cart');
-
-
-use App\Http\Controllers\PublicationController;
-
-
-//BLOG
-Route::resource('publications', PublicationController::class);
-Route::get('/blog-list', [PublicationController::class, 'index'])->name('blog.list');
-Route::get('/blog/{id}', [PublicationController::class, 'show'])->name('blog.show');
-Route::get('/blog-category', [PublicationController::class, 'categories'])->name('blog.category');
-Route::get('/blog/category/{id}', [PublicationController::class, 'articles'])->name('blog.articles');
-
-
-// Gestion des catégories
-Route::get('/admin/categories', [PublicationController::class, 'listCategories'])->name('admin.listCategories');
-Route::get('/admin/categories/add', [PublicationController::class, 'createCategory'])->name('admin.createCategory');
-Route::post('/admin/categories/store', [PublicationController::class, 'storeCategory'])->name('admin.storeCategory');
-Route::delete('/admin/categories/{id}', [PublicationController::class, 'deleteCategory'])->name('admin.deleteCategory');
-Route::put('/admin/categories/{id}', [PublicationController::class, 'updateCategory'])->name('admin.updateCategory');
-
-//Boutique 
-//Produit
-use App\Http\Controllers\ProductController;
-
-Route::resource('products', ProductController::class);
-Route::get('/test',function(){
-    return view("admin.layout.index");
-});
-Route::get('/create-article',function(){
-    return view("admin.layout.blog.create-article");
 use App\Http\Controllers\AvisController;
 
 // === ROUTES PUBLIQUES ===
@@ -175,38 +115,6 @@ Route::middleware('auth')->group(function () {
 });
 
 
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\CommandeController;
-use App\Http\Controllers\PaiementController;
-
-
-
-Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
-    // Produits
-  
-
-
-    Route::get('/produits', [ProductController::class, 'index'])->name('admin.produits.index');
-    Route::get('/produits/create', [ProductController::class, 'create'])->name('admin.produits.create');
-    Route::post('/produits', [ProductController::class, 'store'])->name('admin.produits.store');
-    Route::put('/produits/{product}', [ProductController::class, 'update'])->name('admin.produits.update');
-    Route::delete('/produits/{product}', [ProductController::class, 'destroy'])->name('admin.produits.destroy');
-
-});
-    // Catégories
-   
-Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
-   
-    
-    // Routes pour update & delete
-    Route::get('categoriesA/{id}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
-    Route::put('categoriesA/{id}', [CategoryController::class, 'update'])->name('admin.categories.update');
-    Route::delete('categoriesA/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
-;
-
-    Route::get('/categoriesA', [CategoryController::class, 'index'])->name('admin.categories.index');
-    Route::get('/categoriesA/create', [CategoryController::class, 'create'])->name('admin.categories.create');
-    Route::post('/categoriesA', [CategoryController::class, 'store'])->name('admin.categories.store');
 //Mes routes
 Route::middleware(['auth'])->group(function () {
     // Formations
@@ -231,15 +139,5 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/formations/{formation}/avis', [AvisController::class, 'destroy'])->name('avis.destroy');
 });
 
-    // Paiements
-    Route::get('/paiements', [PaiementController::class, 'index'])->name('admin.paiements.index');
-});
-
-//AFICHAGE PRODUITS
-
-
-Route::get('/product-list', [ProductController::class, 'shop'])->name('shop');
-
-Route::get('/produits/{product}', [ProductController::class, 'voir'])->name('admin.produits.voir');
 // AUTHENTIFICATION (LARAVEL BREEZE / FORTIFY / JETSTREAM)
 require __DIR__ . '/auth.php';

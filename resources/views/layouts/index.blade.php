@@ -1,40 +1,6 @@
 @extends('Master')
 
 @section('content')
-<style>
-.card-img-top {
-    height: 220px; /* tu peux ajuster ici */
-    object-fit: cover;
-    width: 100%;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-}
-</style>
-<div>
-<!-- Hero Section -->
-    <section class="hero-section text-center">
-        <div class="container">
-            <h1 class="display-4 fw-bold mb-5">Bienvenue à Smalland </h1>
-            <p class="lead mb-4">La première plateforme béninoise dédiée à l’innovation, à la formation et à la fourniture d’équipements et intrants dans les domaines de l’élevage et de l’agriculture.</p>
-            <a href="#about" class="btn btn-primary btn-lg me-2">Notre Histoire </a>
-            <a href="#featureS" class="btn btn-light btn-lg">Nos activités</a>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-5">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6 mb-4">
-                    <img src="/assets/img/3.jpg" class="img-fluid rounded shadow" alt="Ferme familiale">
-                </div>
-                <div class="col-md-6">
-                    <h2 class="section-title">Notre histoire</h2>
-                    <p>Small Land est une petite ferme familiale créée en 2010 par la famille Dupont. Installés en pleine campagne, nous avons développé avec passion une ferme pédagogique où nous élevons des lapins et des poules en liberté.</p>
-                    <p>Toute la famille participe aux activités : les enfants adorent nourrir les lapins et ramasser les œufs frais chaque matin. Nous avons également développé un incubateur artisanal pour faire naître nos poussins.</p>
-                    <p>Notre philosophie : une agriculture respectueuse des animaux et de l'environnement, dans la joie et la simplicité.</p>
-                    <a href="#" class="btn btn-primary mt-3">En savoir plus sur nous</a>
-                </div>
     <div>
         <!-- Hero Section -->
         <section class="hero-section text-center">
@@ -47,15 +13,6 @@
             </div>
         </section>
 
-    <!-- Activities Section -->
-    <section id="features" class="py-5">
-        <div class="container">
-            <h2 class="section-title text-center">Nos activités</h2>
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-4 mb-4">
-                    <div class="module-icon">
-                        <i class="bi bi-journal-text"></i>
         <!-- About Section -->
         <section id="about" class="py-5">
             <div class="container">
@@ -109,38 +66,6 @@
             </div>
         </section>
 
-    <!-- Derniers articles du blog -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title">Derniers articles du blog</h2>
-            <div class="row">
-                @forelse ($latestPublications as $publication)
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            <span class="category-badge badge bg-primary">
-                                {{ $publication->category->name ?? 'Catégorie inconnue' }}
-                            </span>
-
-                            @if($publication->image_path)
-                                <img src="{{ asset('storage/'.$publication->image_path) }}"
-                                    class="card-img-top"
-                                    alt="{{ $publication->title }}">
-                            @else
-                                <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Image par défaut">
-                            @endif
-
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $publication->title }}</h5>
-                                <p class="card-text">
-                                    {{ Str::limit(strip_tags($publication->content), 100) }}
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">{{ $publication->created_at->format('d M Y') }}</small>
-                                    <a href="{{ route('publications.show', $publication->id) }}"
-                                    class="btn btn-sm btn-primary">
-                                    Lire la suite
-                                    </a>
-                                </div>
         <!-- Activities Section -->
         <section id="features" class="py-5">
             <div class="container">
@@ -175,41 +100,6 @@
                             <a href="products-catalog.html" class="btn btn-outline-primary">Visiter la boutique</a>
                         </div>
                     </div>
-                @empty
-                    <p class="text-center">Aucune publication disponible pour le moment.</p>
-                @endforelse
-            </div>
-
-            <div class="text-center mt-4">
-                <a href="{{ route('blog.list') }}" class="btn btn-primary">Voir tous les articles</a>
-            </div>
-        </div>
-    </section>
-
-
-    <!-- Formations populaires -->
-    <section class="py-5">
-        <div class="container">
-            <h2 class="section-title">Formations populaires</h2>
-            <div class="row">
-                <!-- Formation 1 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Maraîchage">
-                        <div class="card-body">
-                            <h5 class="card-title">Maraîchage biologique intensif</h5>
-                            <p class="card-text">Apprenez à maximiser votre production sur de petites surfaces avec des techniques écologiques.</p>
-                            <div class="rating mb-2">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <span class="ms-1">(42)</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0 text-primary">89€</span>
-                                <a href="formation-details.html" class="btn btn-primary">Voir détails</a>
                 </div>
         </section>
 
@@ -276,31 +166,6 @@
             </div>
         </section>
 
-    <!-- Produits populaires -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title">Produits populaires</h2>
-            <div class="row">
-                @forelse($produitsPopulaires as $produit)
-                    <div class="col-md-3 col-sm-6 mb-4">
-                        <div class="card h-100">
-                            <img src="{{ asset('storage/' . $produit->path_img) }}" class="card-img-top" alt="{{ $produit->nom }}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $produit->nom }}</h5>
-                                <p class="card-text">{{ Str::limit($produit->description, 60) }}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="h5 mb-0 product-price">
-                                        {{ number_format($produit->prix, 0, ',', ' ') }} FCFA
-                                    </span>
-                                    <td>
-                                        <a href="{{ route('admin.produits.voir', $produit->id) }}" class="btn btn-outline-primary btn-sm">
-                                            <i class="bi bi-eye"> </i>  Voir
-                                        </a>
-                                    </td>
-
-                                    <a href="" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-cart-plus"></i>
-                                    </a>
         <!-- Formations populaires -->
         <!-- Formations populaires -->
         <section class="py-5">
@@ -485,24 +350,6 @@
                             </div>
                         </div>
                     </div>
-                @empty
-                    <p class="text-muted">Aucun produit disponible pour le moment.</p>
-                @endforelse
-            </div>
-
-            <div class="text-center mt-4">
-                <a href="{{ route('shop') }}" class="btn btn-primary">Voir tous les produits</a>
-            </div>
-        </div>
-    </section>
-
-     <!-- Farm Gallery Section -->
-    <section class="py-5">
-        <div class="container">
-            <h2 class="section-title text-center">Notre Portfolio</h2>
-            <div class="row g-3 mt-4">
-                <div class="col-md-4">
-                    <img src="http://static.photos/agriculture/320x240/1" class="img-fluid rounded shadow" alt="Enfants nourrissant les lapins">
                 </div>
                 <div class="text-center mt-4">
                     <a href="products-catalog.html" class="btn btn-primary">Voir tous les produits</a>

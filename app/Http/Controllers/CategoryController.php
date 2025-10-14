@@ -24,30 +24,4 @@ class CategoryController extends Controller
         Category::create(['nom' => $request->nom]);
         return redirect()->route('admin.categories.index')->with('success', 'Catégorie ajoutée avec succès');
     }
-    public function edit($id)
-{
-    $category = Category::findOrFail($id);
-    return response()->json($category);
-}
-
-public function update(Request $request, $id)
-{
-    $request->validate([
-        'nom' => 'required|string|max:255'
-    ]);
-
-    $category = Category::findOrFail($id);
-    $category->update(['nom' => $request->nom]);
-
-    return response()->json(['success' => 'Catégorie mise à jour']);
-}
-
-
-public function destroy($id)
-{
-    $category = Category::findOrFail($id);
-    $category->delete();
-    return redirect()->route('admin.categories.index')->with('success', 'Catégorie supprimée avec succès');
-}
-
 }
