@@ -428,9 +428,30 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de la suppression de la leçon.');
         }
     }
-    public function updateLesson(UpdateLessonRequest $request, Lesson $lesson)
+     public function updateLesson(UpdateLessonRequest $request, $lessonId)
     {
-        $lesson->update($request->validated());
+        $lesson = Lesson::findOrFail($lessonId);
+
+        $data = $request->validated();
+
+        // ⚡ Gestion de la vidéo (champ video_url)
+        if ($request->hasFile('video_url')) {
+            $videoPath = $request->file('video_url')->store('lessons/videos', 'public');
+            $data['video_url'] = $videoPath;
+
+            // Récupérer la durée si nécessaire
+            $fullPath = storage_path("app/public/" . $videoPath);
+            $lesson->duree = VideoService::getVideoDuration($fullPath);
+        }
+
+        // ⚡ Gestion du PDF (champ pdf_url)
+        if ($request->hasFile('pdf_url')) {
+            $pdfPath = $request->file('pdf_url')->store('lessons/pdfs', 'public');
+            $data['pdf_url'] = $pdfPath;
+        }
+
+        // Mise à jour de la leçon
+        $lesson->update($data);
 
         return response()->json([
             'success' => true,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Formation;
 use App\Models\Paiement;
 use App\Models\user_formation;
 use App\Models\UserLesson;
@@ -99,20 +100,37 @@ class StudentController extends Controller
     }
     public function ShowTranings(Request $request)
     {
+        $userId = Auth::id();
 
+        // Récupération des formations de l'utilisateur connecté avec modules et leçons
+        $formations = Formation::with(['modules.lessons'])
+            ->whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->paginate(6); // 👈 Pagination ici (6 formations par page)
 
-        $user = Auth::user();
+        // Calcul de la progression pour chaque formation
+        foreach ($formations as $formation) {
+            $lessonIds = $formation->modules->flatMap(fn($m) => $m->lessons->pluck('id'));
 
-        $formations = $user->formationsAchetees()
-            ->with('modules.lessons') // pour calcul durée ou leçons
-            ->paginate(6);
+            $totalLessons = $lessonIds->count();
 
-        // Si requête AJAX, on ne renvoie que le contenu de la section
+            $completedLessons = UserLesson::where('user_id', $userId)
+                ->whereIn('lesson_id', $lessonIds)
+                ->where('terminee', true)
+                ->count();
+
+            $formation->calculated_progress = $totalLessons > 0
+                ? round(($completedLessons / $totalLessons) * 100, 2)
+                : 0;
+        }
+
+        // Si c'est une requête AJAX (par ex: pagination dynamique)
         if ($request->ajax()) {
             return view('space-etudiant.layout.list-formation-section', compact('formations'));
         }
 
-        // Sinon, page complète
+        // Sinon on renvoie la page complète
         return view('space-etudiant.layout.list-formation-cours', compact('formations'));
     }
 
@@ -152,7 +170,8 @@ class StudentController extends Controller
         return view('space-etudiant.layout.list-paiements', compact('paiements'));
     }
 
-    public function Showhelp(Request $request){
+    public function Showhelp(Request $request)
+    {
 
         if ($request->ajax()) {
             return view('space-etudiant.layout.help-section'); // section partielle
@@ -163,7 +182,7 @@ class StudentController extends Controller
 
     public function sendMail(Request $request)
     {
-         $request->validate([
+        $request->validate([
             'message' => 'required|string|min:5',
         ]);
 
@@ -175,7 +194,8 @@ class StudentController extends Controller
         return response()->json(['success' => 'Votre message a été envoyé avec succès ✅']);
     }
 
-    public function ShowSettings(Request $request){
+    public function ShowSettings(Request $request)
+    {
 
         $user = Auth::user();
 

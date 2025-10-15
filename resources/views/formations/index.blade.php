@@ -1,4 +1,4 @@
-@extends('layouts.Appindex')
+@extends('space-etudiant.master')
 
 @section('content')
 

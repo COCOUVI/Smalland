@@ -25,7 +25,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('trainings.paid') ? 'active' : '' }}"
-                        href="{{ route('formations.index') }}" data-url="{{ route('formations.index') }}">
+                        href="{{ route('trainings.paid') }}" data-url="{{ route('trainings.paid') }}">
                         <i class="bi bi-collection-play"></i> Mes formations
                     </a>
                 </li>
