@@ -23,8 +23,21 @@ class UpdateLessonRequest extends FormRequest
     {
         return [
             'titre' => 'required|string|max:255',
-            'video_url' => 'nullable|url',
-            'pdf_url' => 'nullable|url',
+            'video_url' => 'nullable|file|mimes:mp4,avi,mov,wmv|max:102400', // 100MB max
+            'pdf_url' => 'nullable|file|mimes:pdf|max:51200', // 50MB max   // Gardez si vous voulez aussi accepter des URLs
+        ];
+    }
+
+    /**
+     * Messages de validation personnalisés
+     */
+    public function messages(): array
+    {
+        return [
+            'video_file.mimes' => 'Le fichier vidéo doit être de type: mp4, avi, mov, wmv',
+            'video_file.max' => 'La vidéo ne doit pas dépasser 100MB',
+            'pdf_file.mimes' => 'Le fichier PDF doit être au format PDF',
+            'pdf_file.max' => 'Le PDF ne doit pas dépasser 50MB',
         ];
     }
 }
