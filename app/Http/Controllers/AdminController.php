@@ -428,7 +428,7 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de la suppression de la leçon.');
         }
     }
-     public function updateLesson(UpdateLessonRequest $request, $lessonId)
+    public function updateLesson(UpdateLessonRequest $request, $lessonId)
     {
         $lesson = Lesson::findOrFail($lessonId);
 
@@ -459,6 +459,7 @@ class AdminController extends Controller
             'lesson' => $lesson
         ]);
     }
+
     public function destroyLesson(Lesson $lesson)
     {
         $lesson->delete();
@@ -496,18 +497,18 @@ class AdminController extends Controller
 
         $paiements = Paiement::with(['user', 'formation'])
             ->paginate(10);
-            
-        return view('admin.layout.formations.list_paiements',compact("paiements"));
-        
+
+        return view('admin.layout.formations.list_paiements', compact("paiements"));
     }
 
-    public function ShowCertifications(){
-        
-        $certifications = user_formation::with(['user', 'formation'])
-        ->whereNotNull('path_attestation') // on affiche seulement celles qui ont une attestation générée
-        ->latest()
-        ->get();
+    public function ShowCertifications()
+    {
 
-    return view('admin.layout.formations.certifications', compact('certifications'));
+        $certifications = user_formation::with(['user', 'formation'])
+            ->whereNotNull('path_attestation') // on affiche seulement celles qui ont une attestation générée
+            ->latest()
+            ->get();
+
+        return view('admin.layout.formations.certifications', compact('certifications'));
     }
 }

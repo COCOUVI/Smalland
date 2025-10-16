@@ -24,7 +24,7 @@
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between small mb-1">
                                     <span>Progression</span>
-                                    <span>{{ $formation->calculated_progress }}%</span>
+                                    <span>{{ $formation->progression  ?? 0}}%</span>
                                 </div>
                                 <div class="progress" style="height: 6px;">
                                     <div class="progress-bar bg-success" 

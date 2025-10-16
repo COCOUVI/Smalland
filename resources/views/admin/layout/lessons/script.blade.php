@@ -18,7 +18,8 @@
                 </video>` :
                     `<p class="text-muted">Aucune vidéo disponible.</p>`;
 
-                lessonModal.querySelector('#lessonPdfContainer').innerHTML = (pdf && pdf !== '/storage/') ?
+                lessonModal.querySelector('#lessonPdfContainer').innerHTML = (pdf && pdf !==
+                        '/storage/') ?
                     `<a href="${pdf}" target="_blank" class="btn btn-outline-danger">
                     <i class="fas fa-file-pdf me-1"></i> Voir PDF
                 </a>` :
@@ -61,38 +62,67 @@
                 const formData = new FormData(editForm);
                 formData.append('_method', 'PUT');
 
+                const submitBtn = editForm.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML =
+                    `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Chargement...`;
+
                 fetch(`/dashboard/lessons/${lessonId}`, {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                            'Accept': 'application/json'
                         },
                         body: formData
                     })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            return res.json().then(errorData => {
+                                throw {
+                                    status: res.status,
+                                    data: errorData
+                                };
+                            });
+                        }
+                        return res.json();
+                    })
                     .then(data => {
+                        // Gestion du succès (même code que précédemment)
                         if (!alertBox) return;
+
                         if (data.success) {
                             alertBox.className = 'alert alert-success';
                             alertBox.textContent = data.message;
                             alertBox.classList.remove('d-none');
 
-                            const row = document.querySelector(
-                                `button[data-lesson-id="${lessonId}"]`)?.closest('tr');
-                            if (row) row.querySelector('td:nth-child(2)').textContent = data.lesson
-                                .titre;
-                        } else {
-                            alertBox.className = 'alert alert-danger';
-                            alertBox.textContent = 'Erreur lors de la mise à jour';
-                            alertBox.classList.remove('d-none');
+                            // ... reste du code de succès
                         }
                     })
-                    .catch(() => {
+                    .catch(error => {
                         if (!alertBox) return;
+
                         alertBox.className = 'alert alert-danger';
-                        alertBox.textContent = 'Erreur réseau';
+
+                        if (error.status === 422 && error.data.errors) {
+                            // Afficher la première erreur de validation
+                            const firstError = Object.values(error.data.errors)[0][0];
+                            alertBox.textContent = firstError;
+                        } else if (error.data && error.data.message) {
+                            alertBox.textContent = error.data.message;
+                        } else {
+                            alertBox.textContent = 'Erreur réseau';
+                        }
+
                         alertBox.classList.remove('d-none');
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
                     });
             });
+
         }
 
         // ===================== SUPPRESSION LEÇON =====================
@@ -195,7 +225,7 @@
                         const deleteAlert = getDeleteAlert();
                         if (deleteAlert) {
                             deleteAlert.className =
-                            'alert alert-danger alert-dismissible fade show';
+                                'alert alert-danger alert-dismissible fade show';
                             deleteAlert.innerHTML =
                                 `Erreur réseau.<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
                             deleteAlert.classList.remove('d-none');

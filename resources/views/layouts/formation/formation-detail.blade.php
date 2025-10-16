@@ -227,33 +227,32 @@
                                     class="btn btn-primary btn-lg w-100 mb-3">
                                     S'inscrire maintenant
                                 </a> --}}
-                                    @if ($isEnrolled)
-                                        <a href="{{ route('trainings.paid') }}" class="btn btn-success btn-lg w-100 mb-3">
-                                            <i class="bi bi-check-circle me-2"></i>Déjà inscrit - Accéder au cours
-                                        </a>
-                                    @else
-                                        <button id="btn-pay" class="btn btn-primary">S'inscrire maintenant</button>
-
-                                    @endif
-                                @else
-                                    <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100 mb-3">
-                                        Connectez-vous pour vous inscrire
+                                @if ($isEnrolled)
+                                    <a href="{{ route('trainings.paid') }}" class="btn btn-success btn-lg w-100 mb-3">
+                                        <i class="bi bi-check-circle me-2"></i>Déjà inscrit - Accéder au cours
                                     </a>
-                                @endauth
+                                @else
+                                    <button id="btn-pay" class="btn btn-primary">S'inscrire maintenant</button>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                                    Connectez-vous pour vous inscrire
+                                </a>
+                            @endauth
 
-                                <div class="text-muted small">Garantie satisfait ou remboursé 30 jours</div>
-                                <hr>
-                                <ul class="list-unstyled text-start">
-                                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Accès à vie</li>
-                                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>
-                                        {{ $formation->total_lessons }} leçons vidéo</li>
-                                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Certificat de
-                                        completion</li>
-                                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Accès sur mobile
-                                        et
-                                        TV</li>
-                                    <li><i class="bi bi-check-circle text-success me-2"></i> Support formateur</li>
-                                </ul>
+                            <div class="text-muted small">Garantie satisfait ou remboursé 30 jours</div>
+                            <hr>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Accès à vie</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>
+                                    {{ $formation->total_lessons }} leçons vidéo</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Certificat de
+                                    completion</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Accès sur mobile
+                                    et
+                                    TV</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i> Support formateur</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -405,13 +404,23 @@
 
                         <!-- Liste des avis -->
                         @foreach ($formation->avis as $avis)
-                            <div class="border-bottom pb-3 mb-3">
+                            @php
+                                $initials = strtoupper(
+                                    substr($avis->user->prenom, 0, 1) . substr($avis->user->nom, 0, 1),
+                                );
+                            @endphp
+                            <div class="border-bottom pb-3 mb-4">
                                 <div class="d-flex align-items-center mb-2">
-                                    <img src="{{ $avis->user->avatar ?? 'https://via.placeholder.com/40' }}"
-                                        alt="Avatar" class="rounded-circle me-2" width="40">
+                                    <!-- Avatar cercle -->
+                                    <div class="rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-3"
+                                        style="width: 50px; height: 50px; font-weight: 600; font-size: 1.2rem;">
+                                        {{ $initials }}
+                                    </div>
+
+                                    <!-- Nom + étoiles -->
                                     <div>
-                                        <div>{{ $avis->user->name }}</div>
-                                        <div class="rating small">
+                                        <div class="fw-bold">{{ $avis->user->prenom }} {{ $avis->user->nom }}</div>
+                                        <div class="rating small text-warning">
                                             @for ($i = 0; $i < floor($avis->note); $i++)
                                                 <i class="bi bi-star-fill"></i>
                                             @endfor
@@ -424,10 +433,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <p>{{ $avis->content }}</p>
-                                <small class="text-muted">Publié le {{ $avis->created_at->diffForHumans() }}</small>
+
+                                <!-- Contenu de l'avis -->
+                                <p class="mb-1">{{ $avis->content_avis }}</p>
+                                <small class="text-muted">Publié {{ $avis->created_at->diffForHumans() }}</small>
                             </div>
                         @endforeach
+
 
                         <a href="#" class="btn btn-outline-primary">Voir tous les avis</a>
                     </div>
@@ -449,7 +461,7 @@
                         <h5 class="card-title">Cette formation comprend</h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item"><i class="bi bi-play-btn me-2 text-primary"></i>
-                                {{ $formation->total_duration }}  de vidéo</li>
+                                {{ $formation->total_duration }} de vidéo</li>
                             <li class="list-group-item"><i class="bi bi-file-text me-2 text-primary"></i>
                                 {{ $formation->total_lessons }} leçons</li>
                             <li class="list-group-item"><i class="bi bi-phone me-2 text-primary"></i> Accès mobile & TV

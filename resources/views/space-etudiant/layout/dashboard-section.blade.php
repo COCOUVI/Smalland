@@ -122,21 +122,27 @@
 
         <div class="list-group">
             {{-- Leçon terminée --}}
-            @if($activity['lesson'])
+            @if ($activity['lesson'])
                 <div class="list-group-item border-0">
                     <div class="d-flex w-100 justify-content-between">
                         <h6 class="mb-1">Leçon "{{ $activity['lesson']->titre }}" terminée</h6>
-                        <small class="text-muted">{{ \Carbon\Carbon::parse($activity['lesson']->pivot->completed_at)->diffForHumans() }}</small>
+                        <small
+                            class="text-muted">{{ \Carbon\Carbon::parse($activity['lesson']->pivot->completed_at)->diffForHumans() }}</small>
                     </div>
                     <p class="mb-1">{{ $activity['lesson']->module->formation->titre ?? '' }}</p>
                 </div>
             @endif
 
             {{-- Quiz réussi --}}
-            @if($activity['quiz'])
+            @if ($activity['quiz'])
                 <div class="list-group-item border-0">
                     <div class="d-flex w-100 justify-content-between">
-                        <h6 class="mb-1">Quiz "{{ $activity['quiz']->titre }}" réussi</h6>
+
+                        @if ($activity['quiz']->pivot->score == 100)
+                            <h6 class="mb-1">Quiz "{{ $activity['quiz']->titre }}" réussi</h6>
+                        @else
+                            <h6 class="mb-1">Quiz "{{ $activity['quiz']->titre }}" non réussi</h6>
+                        @endif
                         <small class="text-muted">{{ $activity['quiz']->pivot->created_at->diffForHumans() }}</small>
                     </div>
                     <p class="mb-1">{{ $activity['quiz']->module->formation->titre ?? '' }}</p>
@@ -145,21 +151,23 @@
             @endif
 
             {{-- Formation terminée --}}
-            @if($activity['formation'])
+            @if ($activity['formation'])
                 <div class="list-group-item border-0">
                     <div class="d-flex w-100 justify-content-between">
                         <h6 class="mb-1">Formation terminée</h6>
-                        <small class="text-muted">{{ $activity['formation']->pivot->updated_at->diffForHumans() }}</small>
+                        <small
+                            class="text-muted">{{ $activity['formation']->pivot->updated_at->diffForHumans() }}</small>
                     </div>
                     <p class="mb-1">{{ $activity['formation']->titre }}</p>
-                    @if($activity['formation']->pivot->path_attestation)
-                        <a href="{{ asset($activity['formation']->pivot->path_attestation) }}" class="btn btn-sm btn-outline-primary">Voir certificat</a>
+                    @if ($activity['formation']->pivot->path_attestation)
+                        <a href="{{ asset($activity['formation']->pivot->path_attestation) }}"
+                            class="btn btn-sm btn-outline-primary">Voir certificat</a>
                     @endif
                 </div>
             @endif
 
             {{-- Si aucune activité --}}
-            @if(!$activity['lesson'] && !$activity['quiz'] && !$activity['formation'])
+            @if (!$activity['lesson'] && !$activity['quiz'] && !$activity['formation'])
                 <p class="text-center fw-bold">Aucune activité récente</p>
             @endif
         </div>

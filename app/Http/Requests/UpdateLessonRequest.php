@@ -19,7 +19,7 @@ class UpdateLessonRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+   public function rules(): array
     {
         return [
             'titre' => 'required|string|max:255',
@@ -34,10 +34,10 @@ class UpdateLessonRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'video_file.mimes' => 'Le fichier vidéo doit être de type: mp4, avi, mov, wmv',
-            'video_file.max' => 'La vidéo ne doit pas dépasser 100MB',
-            'pdf_file.mimes' => 'Le fichier PDF doit être au format PDF',
-            'pdf_file.max' => 'Le PDF ne doit pas dépasser 50MB',
+            'video_url.mimes' => 'Le fichier vidéo doit être de type: mp4, avi, mov, wmv',
+            'video_url.max' => 'La vidéo ne doit pas dépasser 100MB',
+            'pdf_url.mimes' => 'Le fichier PDF doit être au format PDF',
+            'pdf_url.max' => 'Le PDF ne doit pas dépasser 50MB',
         ];
     }
 }
