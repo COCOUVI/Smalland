@@ -1,71 +1,218 @@
 @extends('Master')
 
 @section('content')
-    <div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $quizz->titre }}</h1>
-                <p class="text-gray-600 mb-6">Répondez aux questions suivantes pour tester vos connaissances.</p>
+    <style>
+        /* Container principal */
+        .quiz-container {
+            max-width: 700px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem 3rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
 
-                @if (session('success'))
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span class="text-green-800">{{ session('success') }}</span>
-                        </div>
-                    </div>
-                @endif
+        /* Titre principal */
+        .quiz-container h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            text-align: center;
+            letter-spacing: 1px;
+        }
 
-                @if (session('error'))
-                    <div class="bg-red-100 border border-red-300 text-red-800 rounded-lg p-4 mb-6">
-                        {{ session('error') }}
-                    </div>
-                @endif
+        /* Description */
+        .quiz-container p.description {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
 
-                @if ($canResubmit)
-                    <form method="POST" action="{{ route('quizz.submit', $quizz->id) }}">
-                        @csrf
+        /* Message success */
+        .alert-success {
+            background-color: #e6f9ec;
+            border: 1.5px solid #2ecc71;
+            color: #27ae60;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
 
-                        <div class="space-y-8">
-                            @foreach ($quizz->questions as $index => $question)
-                                <div class="border border-gray-200 rounded-lg p-6">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                                        Question {{ $index + 1 }}: {{ $question->content }}
-                                    </h3>
+        /* Message erreur */
+        .alert-error {
+            background-color: #ffe6e6;
+            border: 1.5px solid #e74c3c;
+            color: #c0392b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
 
-                                    <div class="space-y-3">
-                                        @foreach ($question->reponses as $reponse)
-                                            <label
-                                                class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-very-green cursor-pointer transition-colors">
-                                                <input type="radio" name="question_{{ $question->id }}"
-                                                    value="{{ $reponse->id }}"
-                                                    class="text-very-green focus:ring-very-green" required>
-                                                <span class="text-gray-700">{{ $reponse->content }}</span>
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+        /* Bloc question */
+        .question-block {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 1.8rem 2rem;
+            margin-bottom: 1.8rem;
+            background-color: #fafafa;
+            transition: box-shadow 0.3s ease;
+        }
 
-                        <div class="mt-8 flex justify-end">
-                            <button type="submit"
-                                class="bg-very-green text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold">
-                                Soumettre le quiz
-                            </button>
-                        </div>
-                    </form>
-                @else
-                    <br><br><br>
-                    <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg p-4 mb-4">
-                        Vous avez déjà répondu à ce quiz. Vous pourrez le refaire après 24 heures.
-                    </div>
-                    <br><br><br><br><br>
-                @endif
+        .question-block:hover {
+            box-shadow: 0 0 12px rgba(46, 204, 113, 0.4);
+            border-color: #2ecc71;
+        }
+
+        /* Texte de la question */
+        .question-block h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #34495e;
+        }
+
+        /* Réponses */
+        .answer-label {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            border: 1.5px solid #ccc;
+            margin-bottom: 0.7rem;
+            cursor: pointer;
+            background-color: white;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+
+        /* Hover sur réponse */
+        .answer-label:hover {
+            border-color: #2ecc71;
+            background-color: #e6f9ec;
+            color: #27ae60;
+        }
+
+        /* Input radio */
+        .answer-label input[type="radio"] {
+            accent-color: #2ecc71;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Focus accessible */
+        .answer-label input[type="radio"]:focus + span {
+            outline: 2px solid #27ae60;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Bouton soumettre */
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 1.2rem 0;
+            background-color: #27ae60;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            letter-spacing: 0.05em;
+            margin-top: 1.5rem;
+        }
+
+        .btn-submit:hover {
+            background-color: #219150;
+        }
+
+        /* Message d’info (ex : quiz déjà fait) */
+        .alert-info {
+            background-color: #fff8dc;
+            border: 1.5px solid #f1c40f;
+            color: #b7950b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 2rem;
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .quiz-container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .btn-submit {
+                font-size: 1rem;
+                padding: 1rem 0;
+            }
+        }
+    </style>
+
+    <div class="quiz-container">
+        <h1>{{ $quizz->titre }}</h1>
+        <p class="description">Répondez aux questions suivantes pour tester vos connaissances.</p>
+
+        @if (session('success'))
+            <div class="alert-success" role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ session('success') }}</span>
             </div>
-        </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert-error" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if ($canResubmit)
+            <form method="POST" action="{{ route('quizz.submit', $quizz->id) }}">
+                @csrf
+
+                @foreach ($quizz->questions as $index => $question)
+                    <div class="question-block">
+                        <h3>Question {{ $index + 1 }}: {{ $question->content }}</h3>
+
+                        @foreach ($question->reponses as $reponse)
+                            <label class="answer-label" for="answer_{{ $reponse->id }}">
+                                <input type="radio" id="answer_{{ $reponse->id }}" name="question_{{ $question->id }}" value="{{ $reponse->id }}" required>
+                                <span>{{ $reponse->content }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                @endforeach
+
+                <button type="submit" class="btn-submit">Soumettre le quiz</button>
+            </form>
+        @else
+            <div class="alert-info" role="alert">
+                Vous avez déjà répondu à ce quiz. Vous pourrez le refaire après 24 heures.
+            </div>
+            <br><br><br><br><br><br>
+        @endif
     </div>
 @endsection

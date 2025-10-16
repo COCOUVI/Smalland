@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container py-5">
+
     <!-- En-tête du module -->
     <div class="card mb-4">
         <div class="card-body d-flex justify-content-between align-items-start">
@@ -48,8 +49,13 @@
                         @if ($lesson->video_url || $lesson->pdf_url)
                         <button onclick="openLessonModal({{ $lesson }})" class="btn btn-success btn-sm">Voir le contenu</button>
                         @endif
+
                         @if (!$userProgress[$lesson->id])
-                        <button onclick="completeLesson({{ $lesson->id }})" class="btn btn-secondary btn-sm">Terminer</button>
+                        <!-- FORMULAIRE CLASSIQUE -->
+                        <form method="POST" action="{{ url('/lessons/' . $lesson->id . '/complete') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary btn-sm">Terminer</button>
+                        </form>
                         @endif
                     </div>
                 </div>
@@ -94,9 +100,6 @@
                 <button type="button" class="btn-close" onclick="closeLessonModal()"></button>
             </div>
             <div class="modal-body" id="modalContent"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="completeCurrentLesson()">Marquer comme terminé</button>
-            </div>
         </div>
     </div>
 </div>
@@ -133,15 +136,8 @@
     }
 
     function closeLessonModal() {
-        bootstrap.Modal.getInstance(document.getElementById('lessonModal')).hide();
-        currentLessonId = null;
-    }
-
-    function completeCurrentLesson() {
-        if (currentLessonId) {
-            completeLesson(currentLessonId);
-            closeLessonModal();
-        }
+        const modal = bootstrap.Modal.getInstance(document.getElementById('lessonModal'));
+        if (modal) modal.hide();
     }
 </script>
 @endsection

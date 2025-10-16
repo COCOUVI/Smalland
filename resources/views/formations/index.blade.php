@@ -27,11 +27,10 @@
                                     <div class="flex justify-between text-sm text-gray-600 mb-1">
                                         <span>Progression</span>
                                         <span>{{ $formation->calculated_progress }}%</span>
+<div class="bg-very-green h-2 rounded-full" style="width: {{ $formation->calculated_progress }}%"></div>
+
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-very-green h-2 rounded-full"
-                                            style="width: {{ $formation->calculated_progress }}%"></div>
-                                    </div>
+                               
                                 </div>
 
                                 <!-- Actions -->

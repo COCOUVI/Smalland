@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class user_formation extends Model
 {
     //
+     protected $table = 'user_formations';
      protected $fillable = [
         'user_id',
         'formation_id',
