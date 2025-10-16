@@ -122,8 +122,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/formations/{id}', [FormationController::class, 'show'])->name('formations.show');
 
     // Modules
-    Route::get('/formations/{formation}/modules/{module}', [ModuleController::class, 'show'])->name('modules.show');
-    Route::post('/lessons/{lesson}/complete', [ModuleController::class, 'completeLesson'])->name('lessons.complete');
+    Route::get('/formations/{formationId}/modules/{moduleId}', [ModuleController::class, 'show'])->name('modules.show');
+    Route::post('/lessons/{lessonId}/complete', [ModuleController::class, 'completeLesson']);
 
     // Quizz
      // Afficher le quiz

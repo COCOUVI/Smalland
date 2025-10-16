@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Module;
 use App\Models\User_Quizz;
 use App\Models\UserLesson;
+use App\Models\user_formation;
+use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +25,6 @@ class ModuleController extends Controller
             $userLesson = UserLesson::where('user_id', Auth::id())
                 ->where('lesson_id', $lesson->id)
                 ->first();
-
             $userProgress[$lesson->id] = $userLesson ? $userLesson->terminee : false;
         }
 
@@ -47,32 +48,49 @@ class ModuleController extends Controller
                 'terminee_at' => now(),
             ]);
 
-            // Mettre à jour la progression globale de la formation
             $this->updateFormationProgress($lessonId);
         }
 
-        return response()->json(['success' => true]);
+        return redirect()->back();
     }
 
     private function updateFormationProgress($lessonId)
     {
-        $lesson = \App\Models\Lesson::with('module.formation')->find($lessonId);
-        $formation = $lesson->module->formation;
+        $lesson = Lesson::with('module.formation.modules.lessons')->find($lessonId);
+        $module = $lesson->module;
+        $formation = $module->formation;
 
-        $totalLessons = $formation->modules->flatMap->lessons->count();
+        $allLessons = $formation->modules->flatMap->lessons;
+        $totalLessons = $allLessons->count();
+
         $completedLessons = UserLesson::where('user_id', Auth::id())
-            ->whereIn('lesson_id', $formation->modules->flatMap->lessons->pluck('id'))
+            ->whereIn('lesson_id', $allLessons->pluck('id'))
             ->where('terminee', true)
             ->count();
 
         $progress = $totalLessons > 0 ? ($completedLessons / $totalLessons) * 100 : 0;
+        $progress = round($progress, 2);
 
-        $userFormation = \App\Models\UserFormation::where('user_id', Auth::id())
-            ->where('formation_id', $formation->id)
-            ->first();
+        $userFormation = user_formation::firstOrCreate([
+            'user_id' => Auth::id(),
+            'formation_id' => $formation->id,
+        ]);
 
-        if ($userFormation) {
-            $userFormation->update(['progression' => $progress]);
+        $userFormation->progression = $progress;
+
+        // Statut logique : si quiz existe et score 100 et progression 100 → terminé
+        $statut = 'en_attente';
+        $quizz = $module->quizz;
+        if ($quizz) {
+            $userQuizz = User_Quizz::where('user_id', Auth::id())
+                ->where('quizz_id', $quizz->id)
+                ->first();
+            if ($userQuizz && round($userQuizz->score) == 100 && $progress == 100) {
+                $statut = 'terminé';
+            }
         }
+        $userFormation->status = $statut;
+
+        $userFormation->save();
     }
 }

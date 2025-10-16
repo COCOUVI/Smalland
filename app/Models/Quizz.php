@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +12,7 @@ class Quizz extends Model
     use HasFactory;
 
     protected $table = 'quizzs';
+
     protected $fillable = ['titre', 'module_id'];
 
     // Un quizz appartient à un module
@@ -29,10 +27,12 @@ class Quizz extends Model
         return $this->hasMany(Question::class, 'quizz_id');
     }
 
-        public function users()
+    public function users()
     {
         return $this->belongsToMany(User::class, 'user__quizzs')
-                    ->withPivot('score')
-                    ->withTimestamps();
+            ->withPivot('score')
+            ->withTimestamps();
     }
+
+  
 }

@@ -6,11 +6,10 @@ use App\Models\Module;
 use App\Models\Question;
 use App\Models\Quizz;
 use App\Models\User_Quizz;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
-
 
 class QuizzController extends Controller
 {
@@ -387,9 +386,11 @@ class QuizzController extends Controller
 
     public function submit(Request $request, $quizzId)
     {
-        $quizz = Quizz::with('questions.reponses')->findOrFail($quizzId);
+        $userId = Auth::id();
 
-        $userQuizz = User_Quizz::where('user_id', Auth::id())
+        $quizz = Quizz::with('questions.reponses', 'module.formation')->findOrFail($quizzId);
+
+        $userQuizz = User_Quizz::where('user_id', $userId)
             ->where('quizz_id', $quizzId)
             ->first();
 
@@ -412,13 +413,47 @@ class QuizzController extends Controller
 
         $finalScore = $totalQuestions > 0 ? ($score / $totalQuestions) * 100 : 0;
 
+        // Met à jour ou crée l'entrée dans user_quizz
         User_Quizz::updateOrCreate(
             [
-                'user_id' => Auth::id(),
+                'user_id' => $userId,
                 'quizz_id' => $quizzId,
             ],
             [
                 'score' => $finalScore,
+                'updated_at' => now(),
+            ]
+        );
+
+        // Maintenant on met à jour la progression et le statut dans user_formations
+        $formationId = $quizz->module->formation->id;
+
+        // Récupérer tous les quizzes liés à la formation pour l'utilisateur
+        $quizzIds = Quizz::whereHas('module', function ($query) use ($formationId) {
+            $query->where('formation_id', $formationId);
+        })->pluck('id');
+
+        $userQuizzScores = User_Quizz::where('user_id', $userId)
+            ->whereIn('quizz_id', $quizzIds)
+            ->pluck('score');
+
+        // Vérifier si tous les scores sont à 100%
+        $allQuizzesPerfect = $userQuizzScores->count() === $quizzIds->count() && $userQuizzScores->every(fn ($score) => $score == 100);
+
+        $progression = $allQuizzesPerfect ? 100 : ($userQuizzScores->avg() ?? 0);
+
+        $status = $allQuizzesPerfect ? 'terminé' : 'en attente';
+
+        // Mettre à jour ou créer la progression dans user_formations
+        User_Formation::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'formation_id' => $formationId,
+            ],
+            [
+                'progression' => $progression,
+                'status' => $status,
+                'updated_at' => now(),
             ]
         );
 
