@@ -102,38 +102,19 @@ class StudentController extends Controller
     {
         $userId = Auth::id();
 
-        // Récupération des formations de l'utilisateur connecté avec modules et leçons
-        $formations = Formation::with(['modules.lessons'])
-            ->whereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-            ->paginate(6); // 👈 Pagination ici (6 formations par page)
+        // Récupère directement les user_formations avec les formations et leurs relations
+        $userFormations = user_formation::with(['formation.modules.lessons'])
+            ->where('user_id', $userId)
+            ->paginate(6);
 
-        // Calcul de la progression pour chaque formation
-        foreach ($formations as $formation) {
-            $lessonIds = $formation->modules->flatMap(fn($m) => $m->lessons->pluck('id'));
-
-            $totalLessons = $lessonIds->count();
-
-            $completedLessons = UserLesson::where('user_id', $userId)
-                ->whereIn('lesson_id', $lessonIds)
-                ->where('terminee', true)
-                ->count();
-
-            $formation->calculated_progress = $totalLessons > 0
-                ? round(($completedLessons / $totalLessons) * 100, 2)
-                : 0;
-        }
-
-        // Si c'est une requête AJAX (par ex: pagination dynamique)
+        // Si c'est une requête AJAX
         if ($request->ajax()) {
-            return view('space-etudiant.layout.list-formation-section', compact('formations'));
+            return view('space-etudiant.layout.list-formation-section', compact('userFormations'));
         }
 
         // Sinon on renvoie la page complète
-        return view('space-etudiant.layout.list-formation-cours', compact('formations'));
+        return view('space-etudiant.layout.list-formation-cours', compact('userFormations'));
     }
-
     public function Showcertfication(Request $request)
     {
         $user = Auth::user();

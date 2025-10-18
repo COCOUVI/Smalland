@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Module;
 use App\Models\Question;
 use App\Models\Quizz;
+use App\Models\user_formation;
 use App\Models\User_Quizz;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -54,9 +55,8 @@ class QuizzController extends Controller
 
             return redirect()->route('quizz.manage', $module->id)
                 ->with('success', 'Quiz créé avec succès.');
-
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Erreur lors de la création: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Erreur lors de la création: ' . $e->getMessage());
         }
     }
 
@@ -106,7 +106,7 @@ class QuizzController extends Controller
                 // S'assurer que le quiz existe
                 $quizz = $module->quizz ?? Quizz::create([
                     'module_id' => $module->id,
-                    'titre' => 'Quizz du module '.$module->titre,
+                    'titre' => 'Quizz du module ' . $module->titre,
                 ]);
 
                 // Créer la question
@@ -146,20 +146,18 @@ class QuizzController extends Controller
                 'success' => false,
                 'message' => 'Données manquantes',
             ], 400);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur de validation',
                 'errors' => $e->errors(),
             ], 422);
-
         } catch (\Exception $e) {
-            Log::error('Erreur AJAX: '.$e->getMessage());
+            Log::error('Erreur AJAX: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur interne du serveur: '.$e->getMessage(),
+                'message' => 'Erreur interne du serveur: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -214,7 +212,6 @@ class QuizzController extends Controller
                 'reponses' => $updatedReponses,
                 'correct_reponses' => $correctReponses,
             ], 200);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -222,11 +219,11 @@ class QuizzController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la modification de question: '.$e->getMessage());
+            Log::error('Erreur lors de la modification de question: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur interne: '.$e->getMessage(),
+                'message' => 'Erreur interne: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -247,13 +244,12 @@ class QuizzController extends Controller
                 'success' => true,
                 'message' => 'Question supprimée avec succès',
             ], 200);
-
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la suppression de question: '.$e->getMessage());
+            Log::error('Erreur lors de la suppression de question: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la suppression: '.$e->getMessage(),
+                'message' => 'Erreur lors de la suppression: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -290,7 +286,6 @@ class QuizzController extends Controller
 
             return redirect()->route('quizz.manage', $quizz->module_id)
                 ->with('success', 'Titre du quizz modifié avec succès.');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -303,19 +298,18 @@ class QuizzController extends Controller
             return redirect()->back()
                 ->withErrors($e->errors())
                 ->withInput();
-
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la modification du titre du quizz: '.$e->getMessage());
+            Log::error('Erreur lors de la modification du titre du quizz: ' . $e->getMessage());
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Erreur interne: '.$e->getMessage(),
+                    'message' => 'Erreur interne: ' . $e->getMessage(),
                 ], 500);
             }
 
             return redirect()->back()
-                ->with('error', 'Erreur lors de la modification: '.$e->getMessage());
+                ->with('error', 'Erreur lors de la modification: ' . $e->getMessage());
         }
     }
 
@@ -349,19 +343,18 @@ class QuizzController extends Controller
 
             return redirect()->route('quizz.manage', $moduleId)
                 ->with('success', 'Quizz supprimé avec succès.');
-
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la suppression du quizz: '.$e->getMessage());
+            Log::error('Erreur lors de la suppression du quizz: ' . $e->getMessage());
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Erreur lors de la suppression: '.$e->getMessage(),
+                    'message' => 'Erreur lors de la suppression: ' . $e->getMessage(),
                 ], 500);
             }
 
             return redirect()->back()
-                ->with('error', 'Erreur lors de la suppression: '.$e->getMessage());
+                ->with('error', 'Erreur lors de la suppression: ' . $e->getMessage());
         }
     }
 
@@ -378,12 +371,17 @@ class QuizzController extends Controller
         $canResubmit = true;
 
         if ($userQuizz && $userQuizz->updated_at) {
-            $canResubmit = Carbon::now()->diffInHours($userQuizz->updated_at) >= 24;
+            $now = Carbon::now();
+            $lastAttempt = Carbon::parse($userQuizz->updated_at)->setTimezone('Africa/Porto-Novo');
+
+            // ORDRE CORRECT : dernière tentative -> maintenant
+            $hoursPassed = $lastAttempt->diffInHours($now);
+
+            $canResubmit = $hoursPassed >= 24;
         }
 
         return view('quizz.show', compact('quizz', 'userQuizz', 'canResubmit'));
     }
-
     public function submit(Request $request, $quizzId)
     {
         $userId = Auth::id();
@@ -395,15 +393,23 @@ class QuizzController extends Controller
             ->first();
 
         // Vérifie que l'utilisateur n'a pas soumis le quiz il y a moins de 24h
-        if ($userQuizz && $userQuizz->updated_at && now()->diffInHours($userQuizz->updated_at) < 24) {
-            return redirect()->back()->with('error', 'Vous devez attendre 24 heures avant de pouvoir refaire ce quiz.');
+        if ($userQuizz && $userQuizz->updated_at) {
+            $now = Carbon::now();
+            $lastAttempt = Carbon::parse($userQuizz->updated_at)->setTimezone('Africa/Porto-Novo');
+
+            // ORDRE CORRECT
+            $hoursPassed = $lastAttempt->diffInHours($now);
+
+            if ($hoursPassed < 24) {
+                return redirect()->back()->with('error', 'Vous devez attendre 24 heures avant de pouvoir refaire ce quiz.');
+            }
         }
 
         $score = 0;
         $totalQuestions = $quizz->questions->count();
 
         foreach ($quizz->questions as $question) {
-            $userAnswer = $request->input('question_'.$question->id);
+            $userAnswer = $request->input('question_' . $question->id);
             $correctAnswer = $question->reponses->where('is_correct', true)->first();
 
             if ($correctAnswer && $userAnswer == $correctAnswer->id) {
@@ -438,14 +444,14 @@ class QuizzController extends Controller
             ->pluck('score');
 
         // Vérifier si tous les scores sont à 100%
-        $allQuizzesPerfect = $userQuizzScores->count() === $quizzIds->count() && $userQuizzScores->every(fn ($score) => $score == 100);
+        $allQuizzesPerfect = $userQuizzScores->count() === $quizzIds->count() && $userQuizzScores->every(fn($score) => $score == 100);
 
         $progression = $allQuizzesPerfect ? 100 : ($userQuizzScores->avg() ?? 0);
 
-        $status = $allQuizzesPerfect ? 'terminé' : 'en attente';
+        $status = $allQuizzesPerfect ? 'terminé' : 'en_attente';
 
         // Mettre à jour ou créer la progression dans user_formations
-        User_Formation::updateOrCreate(
+        user_formation::updateOrCreate(
             [
                 'user_id' => $userId,
                 'formation_id' => $formationId,
@@ -458,7 +464,7 @@ class QuizzController extends Controller
         );
 
         return redirect()->back()->with([
-            'success' => 'Quiz terminé ! Votre score : '.round($finalScore).'%',
+            'success' => 'Quiz terminé ! Votre score : ' . round($finalScore) . '%',
             'score' => $finalScore,
         ]);
     }

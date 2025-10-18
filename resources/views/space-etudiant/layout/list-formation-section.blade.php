@@ -1,9 +1,15 @@
 <div class="container py-5">
     <h1 class="mb-5 fw-bold" style="color:#558B2F;">Mes Formations</h1>
 
-    @if ($formations->count() > 0)
+    @if ($userFormations->count() > 0)
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach ($formations as $formation)
+            @foreach ($userFormations as $userFormation)
+                @php
+                    $formation = $userFormation->formation;
+                    $userAvis = \App\Models\Avis::where('formation_id', $formation->id)
+                        ->where('user_id', auth()->id())
+                        ->first();
+                @endphp
                 <div class="col">
                     <div class="card h-100 shadow-sm border-0">
                         <img src="/storage/{{$formation->image_path}}" 
@@ -24,13 +30,13 @@
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between small mb-1">
                                     <span>Progression</span>
-                                    <span>{{ $formation->progression  ?? 0}}%</span>
+                                    <span>{{ $userFormation->progression }}%</span>
                                 </div>
                                 <div class="progress" style="height: 6px;">
                                     <div class="progress-bar bg-success" 
                                          role="progressbar" 
-                                         style="width: {{ $formation->calculated_progress }}%;" 
-                                         aria-valuenow="{{ $formation->calculated_progress }}" 
+                                         style="width: {{ $userFormation->progression }}%;" 
+                                         aria-valuenow="{{ $userFormation->progression }}" 
                                          aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
@@ -45,29 +51,21 @@
                                     </a>
                                 </div>
 
-                                @php
-                                    $userAvis = \App\Models\Avis::where('formation_id', $formation->id)
-                                        ->where('user_id', auth()->id())
-                                        ->first();
-                                @endphp
-
                                 @if ($userAvis)
                                     <div class="d-flex flex-column gap-2">
-                                        <a href="{{ route('avis.edit', $formation->id) }}" 
-                                           class="btn btn-warning btn-sm w-100">
+                                        <button class="btn btn-warning btn-sm w-100" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editAvisModal-{{ $formation->id }}">
                                             Modifier mon avis
-                                        </a>
+                                        </button>
 
-                                        <form action="{{ route('avis.destroy', $formation->id) }}" method="POST"
-                                              onsubmit="return confirm('Voulez-vous vraiment supprimer votre avis ?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm w-100">
-                                                Supprimer mon avis
-                                            </button>
-                                        </form>
+                                        <button class="btn btn-danger btn-sm w-100" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteAvisModal-{{ $formation->id }}">
+                                            Supprimer mon avis
+                                        </button>
                                     </div>
-                                @elseif ($formation->calculated_progress == 100)
+                                @elseif ($userFormation->progression == 100)
                                     <button class="btn btn-primary btn-sm w-100" 
                                             data-bs-toggle="modal" 
                                             data-bs-target="#addAvisModal-{{ $formation->id }}">
@@ -79,7 +77,7 @@
                     </div>
                 </div>
 
-                <!-- Modal donner avis -->
+                <!-- Modal Ajouter Avis -->
                 <div class="modal fade" id="addAvisModal-{{ $formation->id }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content border-0 shadow">
@@ -123,6 +121,82 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal Modifier Avis -->
+                @if ($userAvis)
+                <div class="modal fade" id="editAvisModal-{{ $formation->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Modifier votre avis</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ route('avis.update', $formation->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-3">
+                                        <label for="edit-note-{{ $formation->id }}" class="form-label fw-semibold">
+                                            Note (1 à 5)
+                                        </label>
+                                        <select name="note" id="edit-note-{{ $formation->id }}" class="form-select" required>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <option value="{{ $i }}" {{ $userAvis->note == $i ? 'selected' : '' }}>
+                                                    {{ $i }} étoile{{ $i > 1 ? 's' : '' }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="edit-content_avis-{{ $formation->id }}" class="form-label fw-semibold">
+                                            Votre avis
+                                        </label>
+                                        <textarea name="content_avis" id="edit-content_avis-{{ $formation->id }}" 
+                                                  class="form-control" rows="4" required>{{ $userAvis->content_avis }}</textarea>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Annuler
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            Modifier
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Supprimer Avis -->
+                <div class="modal fade" id="deleteAvisModal-{{ $formation->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Supprimer votre avis</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Êtes-vous sûr de vouloir supprimer votre avis ? Cette action est irréversible.</p>
+                                <form action="{{ route('avis.destroy', $formation->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Annuler
+                                        </button>
+                                        <button type="submit" class="btn btn-danger">
+                                            Supprimer
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
             @endforeach
         </div>
     @else

@@ -66,6 +66,7 @@ class Formation extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'user_formations')
+              ->withPivot('progression') 
             ->withTimestamps();
     }
 
@@ -84,4 +85,6 @@ class Formation extends Model
     {
         return $this->lessons()->count();
     }
+
+    // Dans le modèle Formation
 }
