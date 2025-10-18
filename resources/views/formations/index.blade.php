@@ -27,10 +27,11 @@
                                     <div class="flex justify-between text-sm text-gray-600 mb-1">
                                         <span>Progression</span>
                                         <span>{{ $formation->calculated_progress }}%</span>
-<div class="bg-very-green h-2 rounded-full" style="width: {{ $formation->calculated_progress }}%"></div>
+                                        <div class="bg-very-green h-2 rounded-full"
+                                            style="width: {{ $formation->calculated_progress }}%"></div>
 
                                     </div>
-                               
+
                                 </div>
 
                                 <!-- Actions -->
@@ -76,6 +77,19 @@
                                             Donner son avis
                                         </button>
                                     @endif
+
+
+                                    <!-- Certificat (uniquement si progression 100%) -->
+                                    @if ($formation->calculated_progress == 100)
+                                        <a href="{{ route('formations.attestation', $formation->id) }}"
+                                            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors w-100">
+                                            Télécharger mon certificat
+                                        </a>
+                                    @else
+                                        <span class="text-sm text-gray-500 italic">Attestation non disponible</span>
+                                    @endif
+
+
                                 </div>
                             </div>
                         </div>
@@ -89,16 +103,19 @@
                                 <form action="{{ route('avis.store', $formation->id) }}" method="POST">
                                     @csrf
 
-                                    <label for="note-{{ $formation->id }}" class="block font-semibold mb-1">Note (1 à 5)</label>
+                                    <label for="note-{{ $formation->id }}" class="block font-semibold mb-1">Note (1 à
+                                        5)</label>
                                     <select name="note" id="note-{{ $formation->id }}"
                                         class="w-full border rounded p-2 mb-4" required>
                                         <option value="">-- Choisir une note --</option>
                                         @for ($i = 1; $i <= 5; $i++)
-                                            <option value="{{ $i }}">{{ $i }} étoile{{ $i > 1 ? 's' : '' }}</option>
+                                            <option value="{{ $i }}">{{ $i }}
+                                                étoile{{ $i > 1 ? 's' : '' }}</option>
                                         @endfor
                                     </select>
 
-                                    <label for="content_avis-{{ $formation->id }}" class="block font-semibold mb-1">Votre avis</label>
+                                    <label for="content_avis-{{ $formation->id }}" class="block font-semibold mb-1">Votre
+                                        avis</label>
                                     <textarea name="content_avis" id="content_avis-{{ $formation->id }}" rows="4"
                                         class="w-full border rounded p-2 mb-4" required></textarea>
 
