@@ -11,6 +11,7 @@ use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AttestationController;
 use App\Http\Controllers\AvisController;
 
 // === ROUTES PUBLIQUES ===
@@ -137,6 +138,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/formations/{formation}/avis/edit', [AvisController::class, 'edit'])->name('avis.edit');
     Route::put('/formations/{formation}/avis', [AvisController::class, 'update'])->name('avis.update');
     Route::delete('/formations/{formation}/avis', [AvisController::class, 'destroy'])->name('avis.destroy');
+
+    //Certificat
+    Route::get('/formations/{id}/attestation', [AttestationController::class, 'download'])
+    ->name('formations.attestation')
+    ->middleware('auth');
 });
 
 // AUTHENTIFICATION (LARAVEL BREEZE / FORTIFY / JETSTREAM)
