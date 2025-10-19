@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Module;
 use App\Models\Question;
 use App\Models\Quizz;
+use App\Models\user_formation;
 use App\Models\User_Quizz;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -369,7 +370,7 @@ class QuizzController extends Controller
 
     public function show($quizzId)
     {
-        $quizz = Quizz::with('questions.reponses')->findOrFail($quizzId);
+        $quizz = Quizz::with('questions.reponses', 'module.formation')->findOrFail($quizzId);
 
         $userQuizz = User_Quizz::where('user_id', Auth::id())
             ->where('quizz_id', $quizzId)
@@ -378,7 +379,13 @@ class QuizzController extends Controller
         $canResubmit = true;
 
         if ($userQuizz && $userQuizz->updated_at) {
-            $canResubmit = Carbon::now()->diffInHours($userQuizz->updated_at) >= 24;
+            $hoursSinceLastAttempt = Carbon::now()->diffInHours($userQuizz->updated_at);
+
+            // Si score < 100 et moins de 24h, pas possible de resoumettre
+            if ($userQuizz->score < 100 && $hoursSinceLastAttempt < 24) {
+                $canResubmit = false;
+            }
+            // Si score == 100, peut toujours resoumettre (donc $canResubmit reste true)
         }
 
         return view('quizz.show', compact('quizz', 'userQuizz', 'canResubmit'));
@@ -394,9 +401,12 @@ class QuizzController extends Controller
             ->where('quizz_id', $quizzId)
             ->first();
 
-        // Vérifie que l'utilisateur n'a pas soumis le quiz il y a moins de 24h
-        if ($userQuizz && $userQuizz->updated_at && now()->diffInHours($userQuizz->updated_at) < 24) {
-            return redirect()->back()->with('error', 'Vous devez attendre 24 heures avant de pouvoir refaire ce quiz.');
+        // Vérifie si utilisateur a moins de 24h depuis dernière tentative ET score < 100
+        if ($userQuizz && $userQuizz->updated_at) {
+            $hoursSinceLastAttempt = now()->diffInHours($userQuizz->updated_at);
+            if ($userQuizz->score < 100 && $hoursSinceLastAttempt < 24) {
+                return redirect()->back()->with('error', 'Vous devez attendre 24 heures avant de pouvoir refaire ce quiz.');
+            }
         }
 
         $score = 0;
@@ -413,6 +423,9 @@ class QuizzController extends Controller
 
         $finalScore = $totalQuestions > 0 ? ($score / $totalQuestions) * 100 : 0;
 
+        // Termine = 1 si score 100%, sinon 0
+        $termine = ($finalScore == 100) ? 1 : 0;
+
         // Met à jour ou crée l'entrée dans user_quizz
         User_Quizz::updateOrCreate(
             [
@@ -421,14 +434,14 @@ class QuizzController extends Controller
             ],
             [
                 'score' => $finalScore,
+                'termine' => $termine,
                 'updated_at' => now(),
             ]
         );
 
-        // Maintenant on met à jour la progression et le statut dans user_formations
+        // Mise à jour progression user_formation
         $formationId = $quizz->module->formation->id;
 
-        // Récupérer tous les quizzes liés à la formation pour l'utilisateur
         $quizzIds = Quizz::whereHas('module', function ($query) use ($formationId) {
             $query->where('formation_id', $formationId);
         })->pluck('id');
@@ -437,15 +450,12 @@ class QuizzController extends Controller
             ->whereIn('quizz_id', $quizzIds)
             ->pluck('score');
 
-        // Vérifier si tous les scores sont à 100%
         $allQuizzesPerfect = $userQuizzScores->count() === $quizzIds->count() && $userQuizzScores->every(fn ($score) => $score == 100);
 
         $progression = $allQuizzesPerfect ? 100 : ($userQuizzScores->avg() ?? 0);
+        $status = $allQuizzesPerfect ? 'terminé' : 'en_attente';
 
-        $status = $allQuizzesPerfect ? 'terminé' : 'en attente';
-
-        // Mettre à jour ou créer la progression dans user_formations
-        User_Formation::updateOrCreate(
+        user_formation::updateOrCreate(
             [
                 'user_id' => $userId,
                 'formation_id' => $formationId,
@@ -459,7 +469,7 @@ class QuizzController extends Controller
 
         return redirect()->back()->with([
             'success' => 'Quiz terminé ! Votre score : '.round($finalScore).'%',
-            'score' => $finalScore,
+            'score' => round($finalScore),
         ]);
     }
 }

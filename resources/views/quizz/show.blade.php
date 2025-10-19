@@ -2,6 +2,48 @@
 
 @section('content')
     <style>
+  
+
+        /* Success message vert */
+        .alert-success {
+            background-color: #e6f9ec;
+            border: 1.5px solid #2ecc71;
+            color: #27ae60;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Message rouge (échec) */
+        .alert-fail {
+            background-color: #ffe6e6;
+            border: 1.5px solid #e74c3c;
+            color: #c0392b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Message erreur */
+        .alert-error {
+            background-color: #ffe6e6;
+            border: 1.5px solid #e74c3c;
+            color: #c0392b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
         /* Container principal */
         .quiz-container {
             max-width: 700px;
@@ -32,7 +74,7 @@
             text-align: center;
         }
 
-        /* Message success */
+        /* Message success - vert */
         .alert-success {
             background-color: #e6f9ec;
             border: 1.5px solid #2ecc71;
@@ -46,8 +88,9 @@
             font-weight: 600;
         }
 
-        /* Message erreur */
-        .alert-error {
+        /* Message d’erreur - rouge */
+        .alert-error,
+        .alert-danger {
             background-color: #ffe6e6;
             border: 1.5px solid #e74c3c;
             color: #c0392b;
@@ -113,7 +156,7 @@
         }
 
         /* Focus accessible */
-        .answer-label input[type="radio"]:focus + span {
+        .answer-label input[type="radio"]:focus+span {
             outline: 2px solid #27ae60;
             outline-offset: 2px;
             border-radius: 4px;
@@ -152,7 +195,7 @@
             margin-top: 2rem;
         }
 
-        a{
+        a {
             text-decoration: none;
         }
 
@@ -174,13 +217,26 @@
         <h1>{{ $quizz->titre }}</h1>
         <p class="description">Répondez aux questions suivantes pour tester vos connaissances.</p>
 
-        @if (session('success'))
-            <div class="alert-success" role="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>{{ session('success') }}</span>
-            </div>
+        {{-- Message succès/échec après soumission --}}
+        @if (session('success') && session('score') !== null)
+            @if (session('score') >= 70)
+                <div class="alert-success" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-success" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" width="24" height="24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @else
+                <div class="alert-fail" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-fail" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" width="24" height="24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
         @endif
 
         @if (session('error'))
@@ -199,7 +255,8 @@
 
                         @foreach ($question->reponses as $reponse)
                             <label class="answer-label" for="answer_{{ $reponse->id }}">
-                                <input type="radio" id="answer_{{ $reponse->id }}" name="question_{{ $question->id }}" value="{{ $reponse->id }}" required>
+                                <input type="radio" id="answer_{{ $reponse->id }}" name="question_{{ $question->id }}"
+                                    value="{{ $reponse->id }}" required>
                                 <span>{{ $reponse->content }}</span>
                             </label>
                         @endforeach
@@ -210,7 +267,8 @@
             </form>
         @else
             <div class="alert-info" role="alert">
-                Vous avez déjà répondu à ce quiz. Vous pourrez le refaire après 24 heures.
+                Vous avez déjà répondu à ce quiz. Vous pourrez le refaire après 24 heures si votre score est inférieur à
+                100%.
             </div>
             <br><br><br><br><br><br>
         @endif
