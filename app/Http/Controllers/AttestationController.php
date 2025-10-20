@@ -23,12 +23,30 @@ class AttestationController extends Controller
             abort(403, 'Certificat non disponible. Formation non terminée.');
         }
 
+        // Créer le dossier si inexistant
+        $directory = public_path('attestations');
+        if (!file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Chemin du fichier PDF
+        $fileName = "attestation_{$formation->id}_{$user->id}.pdf";
+        $filePath = $directory . DIRECTORY_SEPARATOR . $fileName;
+
+        // Créer le PDF et l'enregistrer
         $pdf = Pdf::loadView('attestation.pdf', [
             'user' => $user,
             'formation' => $formation,
             'date' => now()->format('d/m/Y'),
         ]);
+        $pdf->save($filePath);
 
-        return $pdf->download("attestation_{$formation->id}_{$user->id}.pdf");
+        // Mettre à jour path_attestation si c'est null
+        if (is_null($userFormation->path_attestation)) {
+            $userFormation->path_attestation = "attestations/{$fileName}";
+            $userFormation->save();
+        }
+
+        return response()->download($filePath);
     }
 }

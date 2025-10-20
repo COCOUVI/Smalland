@@ -44,7 +44,7 @@
                             <!-- Actions -->
                             <div class="mt-auto d-flex flex-column gap-2">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold text-success">{{ $formation->price }} €</span>
+                                    <span class="fw-bold text-success">{{ $formation->price }} FCFA</span>
                                     <a href="{{ route('formations.show', $formation->id) }}" 
                                        class="btn btn-success btn-sm">
                                         Continuer

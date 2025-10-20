@@ -63,7 +63,7 @@
                     </div>
                 </div>
             @empty
-                <p class="text-center fw-bold">Aucune formation déjà terminée</p>
+                <p class="text-center fw-bold">Aucune formation en cours</p>
             @endforelse
         </div>
     </div>
@@ -100,11 +100,12 @@
                                     Terminé le {{ $userFormation->updated_at->format('d/m/Y') }}
                                 </small>
                                 @if ($userFormation->path_attestation)
-                                    <a href="" class="btn btn-sm btn-outline-primary continue-btn"
-                                        target="_blank">
+                                    <a href="{{ asset($userFormation->path_attestation) }}"
+                                        class="btn btn-sm btn-outline-primary continue-btn" target="_blank">
                                         Voir certificat
                                     </a>
                                 @endif
+
                             </div>
                         </div>
                     </div>

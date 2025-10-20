@@ -13,6 +13,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttestationController;
 use App\Http\Controllers\AvisController;
+use App\Http\Middleware\EnsureUserIsClient;
 
 // === ROUTES PUBLIQUES ===
 Route::get('/', [HomeController::class, 'index'])->name('accueil');
@@ -20,10 +21,11 @@ Route::get('/formation-detail/{formation}', [HomeController::class, 'ShowOneForm
 Route::get('/formation-list', [HomeController::class, 'showFormations'])->name('formation-list');
 Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
 Route::get('/test', fn() => view("admin.layout.formations.index"));
-
+Route::get('/formations/{formation}/avis', [HomeController::class, 'AfficherTousLesAvis'])
+    ->name('formations.avis');
 
 //Route pour l'espace etudiant
-Route::prefix('espace-etudiant')->group(function () {
+Route::prefix('espace-etudiant')->middleware(['auth',EnsureUserIsClient::class])->group(function () {
     Route::get('/', [StudentController::class, "index"])->name('espace.etudiant');
     Route::get('/mes-formations', [StudentController::class, "ShowTranings"])->name('trainings.paid');
     Route::get('/mes-certificats', [StudentController::class, 'Showcertfication'])
@@ -33,7 +35,7 @@ Route::prefix('espace-etudiant')->group(function () {
     Route::post('/help', [StudentController::class, 'sendMail'])->name('help.send');
     Route::get('/parametres', [StudentController::class, 'ShowSettings'])->name('parametres.index');
     Route::post('/parametres/update', [StudentController::class, 'update'])->name('parametres.update');
-})->middleware(['auth']);
+});
 
 
 

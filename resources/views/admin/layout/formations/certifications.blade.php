@@ -6,22 +6,22 @@
 
     <table class="table table-bordered table-striped text-center">
         <thead class="bg-success text-white">
-            <tr>
-                <th>#</th>
-                <th>Utilisateur</th>
-                <th>Formation</th>
-                <th>Date</th>
-                <th>Progression</th>
-                <th>Attestation</th>
+            <tr >
+                <th class="text-white">#</th>
+                <th class="text-white">Utilisateur</th>
+                <th class="text-white">Formation</th>
+                <th class="text-white">Date</th>
+                <th class="text-white">Progression</th>
+                <th class="text-white">Attestation</th>
             </tr>
         </thead>
         <tbody>
             @forelse($certifications as $certification)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $certification->user->name ?? 'Inconnu' }}</td>
+                    <td>{{ $certification->user->nom}} {{ $certification->user->prenom}}</td>
                     <td>{{ $certification->formation->titre ?? 'Inconnue' }}</td>
-                    <td>{{ $certification->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $certification->created_at->format('d/m/Y') }}</td>
                     <td>{{ $certification->progression }}%</td>
                     <td>
                         @if($certification->path_attestation)

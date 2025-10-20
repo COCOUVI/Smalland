@@ -121,7 +121,7 @@ class StudentController extends Controller
 
         $certificats = $user->formationsAchetees()
             ->wherePivotNotNull('path_attestation')
-            ->select('formations.id', 'formations.titre', 'formations.image', 'formations.created_at')
+            ->select('formations.id', 'formations.titre', 'formations.image_path', 'formations.created_at')
             ->withPivot('path_attestation', 'updated_at')
             ->orderByDesc('user_formations.updated_at')
             ->paginate(6);

@@ -8,7 +8,7 @@
             <table class="table table-hover align-middle text-center border">
                 <thead class="bg-success text-white">
                     <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">N°</th>
                         <th scope="col">Titre de la formation</th>
                         <th scope="col">Date d’obtention</th>
                         <th scope="col">Attestation</th>
@@ -23,11 +23,14 @@
                             <td>{{ $certificat->titre }}</td>
                             <td>{{ $certificat->pivot->updated_at->format('d/m/Y') }}</td>
                             <td>
-                                <a href="{{ asset('storage/' . $certificat->pivot->path_attestation) }}" 
-                                   class="btn btn-sm btn-outline-success px-3" 
-                                   target="_blank">
-                                    <i class="bi bi-file-earmark-text"></i> Voir
-                                </a>
+                                @if ($certificat->pivot->path_attestation)
+                                    <a href="{{ asset($certificat->pivot->path_attestation) }}"
+                                        class="btn btn-sm btn-outline-success px-3" target="_blank">
+                                        <i class="bi bi-file-earmark-text"></i> Voir
+                                    </a>
+                                @else
+                                    <span class="text-muted">Non disponible</span>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -53,17 +56,18 @@
     }
 
     .table tbody tr:hover {
-        background-color: #e8f5e9 !important; /* vert clair au survol */
+        background-color: #e8f5e9 !important;
+        /* vert clair au survol */
         transition: all 0.3s ease;
     }
 
     .btn-outline-success:hover {
-        background-color: #28a745;
+        background-color: var(--bs-success);
         color: white;
     }
 
     .section-title {
-        border-left: 5px solid #28a745;
+        border-left: 5px solid var(--bs-success);
         padding-left: 10px;
     }
 </style>

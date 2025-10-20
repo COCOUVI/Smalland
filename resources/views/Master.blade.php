@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Small-Land</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
     <style>
         :root {
             --primary-color: #558b2f;
@@ -18,9 +17,21 @@
             --dark-color: #263238;
         }
 
+        /* ✅ Flexbox pour coller le footer */
+        html, body {
+            height: 100%;
+        }
+
         body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
+        }
+
+        main.content {
+            flex: 1; /* ✅ pousse le footer vers le bas */
         }
 
         .navbar {
@@ -47,8 +58,6 @@
 
         .hero-section {
             background: url('/assets/img/2.jpg');
-            ;
-
             background-size: cover;
             background-position: center;
             color: white;
@@ -118,40 +127,6 @@
             margin-bottom: 30px;
         }
 
-        .card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            margin-bottom: 20px;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .footer {
-            background-color: var(--dark-color);
-            color: white;
-            padding: 40px 0;
-        }
-
-        .section-title {
-            position: relative;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background-color: var(--secondary-color);
-        }
-
         .progress-bar {
             background-color: var(--primary-color);
         }
@@ -210,18 +185,18 @@
 </head>
 
 <body>
-
     <!-- Navigation principale -->
     @include('partials.navbar')
+
     <main class="content">
         @yield('content')
     </main>
-    <!-- Footer -->
+
+    <!-- Footer collé en bas ✅ -->
     @include('partials.footer')
+
     @stack('scripts')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('app.js') }}"></script>
-
 </body>
-
 </html>

@@ -403,7 +403,8 @@
                         </div>
 
                         <!-- Liste des avis -->
-                        @foreach ($formation->avis as $avis)
+                        <!-- ✅ Affichage des 6 derniers avis -->
+                        @foreach ($avisRecents as $avis)
                             @php
                                 $initials = strtoupper(
                                     substr($avis->user->prenom, 0, 1) . substr($avis->user->nom, 0, 1),
@@ -411,13 +412,10 @@
                             @endphp
                             <div class="border-bottom pb-3 mb-4">
                                 <div class="d-flex align-items-center mb-2">
-                                    <!-- Avatar cercle -->
                                     <div class="rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-3"
                                         style="width: 50px; height: 50px; font-weight: 600; font-size: 1.2rem;">
                                         {{ $initials }}
                                     </div>
-
-                                    <!-- Nom + étoiles -->
                                     <div>
                                         <div class="fw-bold">{{ $avis->user->prenom }} {{ $avis->user->nom }}</div>
                                         <div class="rating small text-warning">
@@ -434,14 +432,12 @@
                                     </div>
                                 </div>
 
-                                <!-- Contenu de l'avis -->
                                 <p class="mb-1">{{ $avis->content_avis }}</p>
                                 <small class="text-muted">Publié {{ $avis->created_at->diffForHumans() }}</small>
                             </div>
                         @endforeach
 
-
-                        <a href="#" class="btn btn-outline-primary">Voir tous les avis</a>
+                        <a href="{{ route('formations.avis', $formation->id) }}" class="btn btn-outline-primary">Voir tous les avis</a>
                     </div>
                 </div>
             </div>

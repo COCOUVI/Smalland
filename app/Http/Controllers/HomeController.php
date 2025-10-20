@@ -23,7 +23,6 @@ class HomeController extends Controller
         $formations = Formation::paginate(9);
         return view('layouts.formation.formation-catalog', compact('formations'));
     }
-
     public function ShowOneFormation(Formation $formation)
     {
         $formation->load([
@@ -44,6 +43,31 @@ class HomeController extends Controller
                 ->exists();
         }
 
-        return view('layouts.formation.formation-detail', compact('formation', 'publicKey', 'user', 'isEnrolled'));
+        // ✅ Récupérer les 6 derniers avis avec les infos de l'utilisateur
+        $avisRecents = $formation->avis()
+            ->with('user')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('layouts.formation.formation-detail', compact(
+            'formation',
+            'publicKey',
+            'user',
+            'isEnrolled',
+            'avisRecents' // 👉 On envoie les avis récents à la vue
+        ));
+    }
+    public function AfficherTousLesAvis(Formation $formation)
+    {
+        $formation->load('avis.user');
+
+        // ✅ Pagination (10 avis par page)
+        $avis = $formation->avis()
+            ->with('user')
+            ->latest()
+            ->paginate(10);
+
+        return view('formationS.avis', compact('formation', 'avis'));
     }
 }
