@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Attestation de Formation</title>
+
+    {{-- Font Awesome pour les icônes --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
@@ -18,6 +22,16 @@
             margin: auto;
             background-color: white;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            height: 80px;
         }
 
         h1 {
@@ -59,26 +73,47 @@
             font-size: 16px;
         }
 
+        .signature-line-container {
+            display: inline-block;
+            text-align: center;
+            margin-left: auto;
+        }
+
         .line {
             width: 200px;
             border-top: 1px solid #333;
-            margin-right: 0;
-            float: right;
+            margin-bottom: 5px;
+        }
+
+        .signature-text {
+            display: block;
+            text-align: center;
         }
 
         .platform-name {
-            margin-top: 20px;
+            margin-top: 30px;
             font-size: 16px;
             font-weight: bold;
             color: #558B2F;
+        }
+
+        .platform-name i {
+            color: #558B2F;
+            margin-right: 6px;
         }
     </style>
 </head>
 <body>
     <div class="certificat">
+
+        {{-- Logo en haut --}}
+        <div class="logo-container">
+            <img src="{{ public_path('images/tree.png') }}" alt="Logo Small Land">
+        </div>
+
         <h1>Attestation de Formation</h1>
         <p>Ce certificat est décerné à :</p>
-        <h2>{{ $user->name }}</h2>
+        <h2>{{ $user->nom}} {{$user->prenom}}</h2>
 
         <div class="details">
             <p>Pour avoir complété avec succès la formation :</p>
@@ -87,12 +122,14 @@
         </div>
 
         <div class="signature">
-            <div class="line"></div>
-            Signature
+            <div class="signature-line-container">
+                <div class="line"></div>
+                <span class="signature-text">Signature</span>
+            </div>
         </div>
 
         <div class="platform-name">
-            Délivré par la plateforme <strong>Small Land</strong>
+            <i class="fas fa-certificate"></i> Small Land a voté
         </div>
 
         <div class="footer">

@@ -12,7 +12,7 @@ class User_Quizz extends Model
         'quizz_id',
         'score',
         'termine',
-       'updated_at'
+        'reponses',
     ];
 
     // Relation avec l'utilisateur (User)
