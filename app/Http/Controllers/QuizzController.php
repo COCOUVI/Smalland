@@ -7,7 +7,6 @@ use App\Models\Question;
 use App\Models\Quizz;
 use App\Models\user_formation;
 use App\Models\User_Quizz;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -368,108 +367,111 @@ class QuizzController extends Controller
 
     // Mes routes a moi
 
-    public function show($quizzId)
-    {
-        $quizz = Quizz::with('questions.reponses', 'module.formation')->findOrFail($quizzId);
+public function show($quizzId)
+{
+    $quizz = Quizz::with('questions.reponses', 'module.formation')->findOrFail($quizzId);
+    $userId = Auth::id();
 
-        $userQuizz = User_Quizz::where('user_id', Auth::id())
-            ->where('quizz_id', $quizzId)
-            ->first();
+    $userQuizz = User_Quizz::where('user_id', $userId)
+        ->where('quizz_id', $quizzId)
+        ->first();
 
-        $canResubmit = true;
+    $canResubmit = true;
+    $canViewAnswers = false;
 
-        if ($userQuizz && $userQuizz->updated_at) {
-            $hoursSinceLastAttempt = Carbon::now()->diffInHours($userQuizz->updated_at);
-
-            // Si score < 100 et moins de 24h, pas possible de resoumettre
-            if ($userQuizz->score < 100 && $hoursSinceLastAttempt < 24) {
+    if ($userQuizz && $userQuizz->updated_at) {
+        if ($userQuizz->score == 100) {
+            $canResubmit = false;
+            $canViewAnswers = true;
+        } else {
+            $hoursSinceLastAttempt = now()->diffInHours($userQuizz->updated_at);
+            if ($hoursSinceLastAttempt < 24) {
                 $canResubmit = false;
             }
-            // Si score == 100, peut toujours resoumettre (donc $canResubmit reste true)
         }
-
-        return view('quizz.show', compact('quizz', 'userQuizz', 'canResubmit'));
     }
 
-    public function submit(Request $request, $quizzId)
-    {
-        $userId = Auth::id();
+    return view('quizz.show', compact('quizz', 'userQuizz', 'canResubmit', 'canViewAnswers'));
+}
 
-        $quizz = Quizz::with('questions.reponses', 'module.formation')->findOrFail($quizzId);
 
-        $userQuizz = User_Quizz::where('user_id', $userId)
-            ->where('quizz_id', $quizzId)
-            ->first();
+   public function submit(Request $request, $quizzId)
+{
+    $userId = Auth::id();
+    $quizz = Quizz::with('questions.reponses', 'module.formation')->findOrFail($quizzId);
 
-        // Vérifie si utilisateur a moins de 24h depuis dernière tentative ET score < 100
-        if ($userQuizz && $userQuizz->updated_at) {
-            $hoursSinceLastAttempt = now()->diffInHours($userQuizz->updated_at);
-            if ($userQuizz->score < 100 && $hoursSinceLastAttempt < 24) {
-                return redirect()->back()->with('error', 'Vous devez attendre 24 heures avant de pouvoir refaire ce quiz.');
-            }
+    $userQuizz = User_Quizz::where('user_id', $userId)
+        ->where('quizz_id', $quizzId)
+        ->first();
+
+    if ($userQuizz && $userQuizz->updated_at) {
+        if ($userQuizz->score < 100 && now()->diffInHours($userQuizz->updated_at) < 24) {
+            return redirect()->back()->with('error', 'Vous devez attendre 24 heures avant de pouvoir refaire ce quiz.');
         }
-
-        $score = 0;
-        $totalQuestions = $quizz->questions->count();
-
-        foreach ($quizz->questions as $question) {
-            $userAnswer = $request->input('question_'.$question->id);
-            $correctAnswer = $question->reponses->where('is_correct', true)->first();
-
-            if ($correctAnswer && $userAnswer == $correctAnswer->id) {
-                $score++;
-            }
-        }
-
-        $finalScore = $totalQuestions > 0 ? ($score / $totalQuestions) * 100 : 0;
-
-        // Termine = 1 si score 100%, sinon 0
-        $termine = ($finalScore == 100) ? 1 : 0;
-
-        // Met à jour ou crée l'entrée dans user_quizz
-        User_Quizz::updateOrCreate(
-            [
-                'user_id' => $userId,
-                'quizz_id' => $quizzId,
-            ],
-            [
-                'score' => $finalScore,
-                'termine' => $termine,
-                'updated_at' => now(),
-            ]
-        );
-
-        // Mise à jour progression user_formation
-        $formationId = $quizz->module->formation->id;
-
-        $quizzIds = Quizz::whereHas('module', function ($query) use ($formationId) {
-            $query->where('formation_id', $formationId);
-        })->pluck('id');
-
-        $userQuizzScores = User_Quizz::where('user_id', $userId)
-            ->whereIn('quizz_id', $quizzIds)
-            ->pluck('score');
-
-        $allQuizzesPerfect = $userQuizzScores->count() === $quizzIds->count() && $userQuizzScores->every(fn ($score) => $score == 100);
-
-        $progression = $allQuizzesPerfect ? 100 : ($userQuizzScores->avg() ?? 0);
-        $status = $allQuizzesPerfect ? 'terminé' : 'en_attente';
-
-        user_formation::updateOrCreate(
-            [
-                'user_id' => $userId,
-                'formation_id' => $formationId,
-            ],
-            [
-                'progression' => $progression,
-                'status' => $status,
-                'updated_at' => now(),
-            ]
-        );
-
-        return redirect()->back()->with([
-            'success' => 'Quiz terminé ! Votre score : '.round($finalScore).'%',
-            'score' => round($finalScore),
-        ]);
     }
+
+    $score = 0;
+    $totalQuestions = $quizz->questions->count();
+    $userAnswers = [];
+
+    foreach ($quizz->questions as $question) {
+        $correctAnswers = $question->reponses->where('is_correct', true)->pluck('id')->sort()->values();
+        $userSelected = collect($request->input('question_'.$question->id, []))->map(fn($val) => (int) $val)->sort()->values();
+
+        $userAnswers[$question->id] = $userSelected;
+
+        if ($userSelected == $correctAnswers) {
+            $score++;
+        }
+    }
+
+    $finalScore = $totalQuestions > 0 ? ($score / $totalQuestions) * 100 : 0;
+    $termine = ($finalScore == 100) ? 1 : 0;
+
+    User_Quizz::updateOrCreate(
+        [
+            'user_id' => $userId,
+            'quizz_id' => $quizzId,
+        ],
+        [
+            'score' => $finalScore,
+            'termine' => $termine,
+            'reponses' => json_encode($userAnswers),
+            'updated_at' => now(),
+        ]
+    );
+
+    // Mise à jour de la progression
+    $formationId = $quizz->module->formation->id;
+
+    $quizzIds = Quizz::whereHas('module', function ($query) use ($formationId) {
+        $query->where('formation_id', $formationId);
+    })->pluck('id');
+
+    $userQuizzScores = User_Quizz::where('user_id', $userId)
+        ->whereIn('quizz_id', $quizzIds)
+        ->pluck('score');
+
+    $allPerfect = $userQuizzScores->count() === $quizzIds->count() && $userQuizzScores->every(fn($score) => $score == 100);
+    $progression = $allPerfect ? 100 : ($userQuizzScores->avg() ?? 0);
+    $status = $allPerfect ? 'terminé' : 'en_attente';
+
+    user_formation::updateOrCreate(
+        [
+            'user_id' => $userId,
+            'formation_id' => $formationId,
+        ],
+        [
+            'progression' => $progression,
+            'status' => $status,
+            'updated_at' => now(),
+        ]
+    );
+
+    return redirect()->back()->with([
+        'success' => 'Quiz terminé ! Votre score : '.round($finalScore).'%',
+        'score' => round($finalScore),
+    ]);
+}
+
 }
