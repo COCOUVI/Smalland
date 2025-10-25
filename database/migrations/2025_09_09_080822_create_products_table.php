@@ -17,7 +17,9 @@ return new class extends Migration
             $table->text('description');
             $table->integer('prix');
             $table->integer('qte')->default(0);
-            $table->enum('status_stock',['en_stock','rupture_de_stock']);
+             // ✅ Modifier cette ligne
+            $table->enum('status_stock', ['in_stock', 'low_stock', 'out_of_stock'])
+              ->default('in_stock');
             $table->string('path_img');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();

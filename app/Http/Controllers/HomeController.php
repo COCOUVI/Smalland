@@ -7,7 +7,6 @@ use App\Models\Publication;
 use App\Models\Product;
 use App\Models\Formation;
 use App\Models\user_formation;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -22,9 +21,9 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        $produitsPopulaires = Product::where('qte', '>', 0)
-            ->orderBy('created_at', 'desc')
-            ->take(4)
+            $produitsPopulaires = Product::where('qte', '>', 0)
+            ->orderBy('prix', 'desc')
+            ->limit(4)
             ->get();
         $formations =  Formation::latest()->take(3)->get();
 

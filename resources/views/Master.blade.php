@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-color: #558b2f;
+            --primary-color: #2e7d32;;
             --secondary-color: #7cb342;
             --accent-color: #ffd54f;
             --light-color: #f5f5f5;

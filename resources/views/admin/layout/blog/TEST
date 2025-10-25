@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Publications</title>
+    <meta name="description" content="Interface d'administration pour créer et modifier des publications">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6",
+                        secondary: "#1e40af",
+                        success: "#10b981",
+                        danger: "#ef4444",
+                        warning: "#f59e0b"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">Administration</h1>
+                </div>
+                <nav class="flex space-x-8">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Dashboard</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Publications</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Utilisateurs</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <!-- Success Message -->
+            <div id="successMessage" class="hidden mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                    <span id="successText" class="text-green-800"></span>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="hidden mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                    <div>
+                        <h4 class="text-red-800 font-medium">Erreurs détectées:</h4>
+                        <ul id="errorList" class="text-red-700 mt-1 text-sm"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Title -->
+            <div class="mb-8">
+                <h2 id="pageTitle" class="text-3xl font-bold text-gray-900">
+                    Créer une nouvelle publication
+                </h2>
+                <p class="text-gray-600 mt-2">Remplissez le formulaire ci-dessous pour créer ou modifier une publication</p>
+            </div>
+
+            <!-- Publication Form -->
+            <form id="publicationForm" class="space-y-6">
+                <!-- Titre Field -->
+                <div class="space-y-2">
+                    <label for="titre" class="block text-sm font-medium text-gray-700">
+                        Titre <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="titre" 
+                        id="titre" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Entrez le titre de la publication"
+                        required
+                    >
+                </div>
+
+                <!-- Content Field -->
+                <div class="space-y-2">
+                    <label for="content" class="block text-sm font-medium text-gray-700">
+                        Contenu <span class="text-red-500">*</span>
+                    </label>
+                    <textarea 
+                        name="content" 
+                        id="content" 
+                        rows="8"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Rédigez le contenu de votre publication..."
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Image Field -->
+                <div class="space-y-2">
+                    <label for="image" class="block text-sm font-medium text-gray-700">
+                        Image (optionnelle)
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                        <input 
+                            type="file" 
+                            name="image" 
+                            id="image" 
+                            class="hidden"
+                            accept="image/*"
+                        >
+                        <div class="flex flex-col items-center justify-center">
+                            <i class="fas fa-cloud-upload-alt text-gray-400 text-2xl mb-2"></i>
+                            <p class="text-gray-600 mb-2">Cliquez pour télécharger une image</p>
+                            <button type="button" onclick="document.getElementById('image').click()" 
+                                class="mt-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors">
+                                <i class="fas fa-plus mr-2"></i>
+                                Choisir un fichier
+                            </button>
+                        </div>
+                    </div>
+                    <div id="currentImage" class="hidden mt-4">
+                        <p class="text-sm text-gray-600 mb-2">Image actuelle:</p>
+                        <img id="imagePreview" class="w-40 h-40 object-cover rounded-lg shadow-md">
+                    </div>
+                </div>
+
+                <!-- Category Field -->
+                <div class="space-y-2">
+                    <label for="pub_category_id" class="block text-sm font-medium text-gray-700">
+                        Catégorie <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        name="pub_category_id" 
+                        id="pub_category_id"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        required
+                    >
+                        <option value="">-- Choisir une catégorie --</option>
+                    </select>
+                </div>
+
+                <!-- Author Field -->
+                <div class="space-y-2">
+                    <label for="author" class="block text-sm font-medium text-gray-700">
+                        Auteur <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="author" 
+                        id="author" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Nom de l'auteur"
+                        required
+                    >
+                </div>
+
+                <!-- Tags Field -->
+                <div class="space-y-2">
+                    <label for="tags" class="block text-sm font-medium text-gray-700">
+                        Tags (séparés par des virgules)
+                    </label>
+                    <input 
+                        type="text" 
+                        name="tags" 
+                        id="tags" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Exemple: technologie, design, développement"
+                    >
+                </div>
+
+                <!-- Status Field -->
+                <div class="space-y-2">
+                    <label for="status" class="block text-sm font-medium text-gray-700">
+                        Statut <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        name="status" 
+                        id="status"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        required
+                    >
+                        <option value="Draft">Brouillon</option>
+                        <option value="Publish">Publié</option>
+                        <option value="Pending">En attente</option>
+                    </select>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                    <a href="#" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Retour aux publications
+                        </a>
+                    <button 
+                        type="submit" 
+                        class="px-8 py-3 bg-success text-white rounded-lg hover:bg-green-600 transition-colors font-medium"
+                    >
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        <span id="submitButtonText">Publier</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Define data at the beginning
+        const categories = [
+            { "id": 1, "name": "Technologie" },
+            { "id": 2, "name": "Design" },
+            { "id": 3, "name": "Développement" },
+            { "id": 4, "name": "Marketing" },
+            { "id": 5, "name": "Actualités" }
+        ];
+
+        const publicationData = {
+            "titre": "",
+            "content": "",
+            "image_path": "",
+            "pub_category_id": "",
+            "author": "",
+            "tags": "",
+            "status": "Draft"
+        };
+
+        // DOM Elements
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorList = document.getElementById('errorList');
+        const pageTitle = document.getElementById('pageTitle');
+        const submitButtonText = document.getElementById('submitButtonText');
+        const currentImage = document.getElementById('currentImage');
+        const imagePreview = document.getElementById('imagePreview');
+
+        // Initialize form
+        function initializeForm() {
+            populateCategories();
+            setupEventListeners();
+            checkForEditMode();
+        }
+
+        // Populate categories dropdown
+        function populateCategories() {
+            const categorySelect = document.getElementById('pub_category_id');
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id;
+                option.textContent = cat.name;
+                categorySelect.appendChild(option);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            const form = document.getElementById('publicationForm');
+            const fileInput = document.getElementById('image');
+
+            form.addEventListener('submit', handleFormSubmit);
+            fileInput.addEventListener('change', handleImageUpload);
+        }
+
+        // Check if we're in edit mode
+        function checkForEditMode() {
+            // Simulate edit mode detection
+            const urlParams = new URLSearchParams(window.location.search);
+            const editMode = urlParams.get('edit');
+
+            if (editMode) {
+                pageTitle.textContent = "Modifier la publication";
+                submitButtonText.textContent = "Mettre à jour";
+                
+                // Simulate existing publication data
+                publicationData.titre = "Titre de la publication existante";
+                publicationData.content = "Contenu de la publication existante...";
+                publicationData.pub_category_id = "2";
+                publicationData.author = "Jean Dupont";
+                publicationData.tags = "technologie, design";
+                publicationData.status = "Publish";
+                publicationData.image_path = "https://picsum.photos/300/200?random=1";
+                
+                populateFormWithData();
+            }
+        }
+
+        // Populate form with existing data
+        function populateFormWithData() {
+            document.getElementById('titre').value = publicationData.titre;
+            document.getElementById('content').value = publicationData.content;
+            document.getElementById('pub_category_id').value = publicationData.pub_category_id;
+            document.getElementById('author').value = publicationData.author;
+            document.getElementById('tags').value = publicationData.tags;
+            document.getElementById('status').value = publicationData.status;
+
+            if (publicationData.image_path) {
+                imagePreview.src = publicationData.image_path;
+                imagePreview.alt = "Image actuelle de la publication";
+                currentImage.classList.remove('hidden');
+            }
+        }
+
+        // Handle form submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const errors = validateForm(formData);
+
+            if (errors.length > 0) {
+                showErrors(errors);
+            } else {
+                submitForm(formData);
+            }
+        }
+
+        // Validate form data
+        function validateForm(formData) {
+            const errors = [];
+
+            if (!formData.get('titre')?.trim()) {
+                errors.push("Le titre est requis");
+            }
+
+            if (!formData.get('content')?.trim()) {
+                errors.push("Le contenu est requis");
+            }
+
+            if (!formData.get('pub_category_id')) {
+                errors.push("La catégorie est requise");
+            }
+
+            if (!formData.get('author')?.trim()) {
+                errors.push("L'auteur est requis");
+            }
+
+            return errors;
+        }
+
+        // Handle image upload
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+                    currentImage.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Show error messages
+        function showErrors(errors) {
+            errorList.innerHTML = '';
+            errors.forEach(error => {
+                const li = document.createElement('li');
+                li.textContent = error;
+                errorList.appendChild(li);
+            });
+            errorMessage.classList.remove('hidden');
+            successMessage.classList.add('hidden');
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            successText.textContent = message;
+            successMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+        }
+
+        // Submit form (simulated)
+        function submitForm(formData) {
+            // Simulate API call
+            setTimeout(() => {
+                showSuccess("Publication créée avec succès!");
+                // Reset form if needed
+                // document.getElementById('publicationForm').reset();
+            }, 1000);
+        }
+
+        // Initialize the form when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeForm);
+
+        // Handle navigation for all anchor tags
+        document.addEventListener('DOMContentLoaded', function() {
+            const anchors = document.querySelectorAll('a');
+            anchors.forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Simulate navigation
+                    console.log("Navigation vers:", this.href);
+            });
+        });
+    </script>
+</body>
+</html>
+@extends('admin.master')
+
+@section('content')
+<div class="min-vh-100 py-4 px-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-9">
+                
+                {{-- En-tête avec animation --}}
+                <div class="text-center mb-4" style="animation: fadeInDown 0.6s ease-out;">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 70px; height: 70px; background: rgba(255,255,255,0.2); border-radius: 20px; backdrop-filter: blur(10px);">
+                        <svg width="35" height="35" fill="white" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-white fw-bold mb-2" style="font-size: 2rem;">
+                        {{ isset($publication) ? 'Modifier la publication' : 'Créer une nouvelle publication' }}
+                    </h1>
+                    <p class="text-white opacity-75 mb-0">Remplissez les informations ci-dessous</p>
+                </div>
+
+                {{-- Messages de notification --}}
+                @if(session('success'))
+                    <div class="alert alert-success border-0 shadow-sm mb-4" style="animation: slideInRight 0.5s ease-out; border-radius: 15px; background: #d4edda;">
+                        <div class="d-flex align-items-center">
+                            <svg width="24" height="24" fill="#155724" class="me-2" viewBox="0 0 24 24">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                            <span style="color: #155724;">{{ session('success') }}</span>
+                        </div>
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="alert alert-danger border-0 shadow-sm mb-4" style="animation: slideInRight 0.5s ease-out; border-radius: 15px; background: #f8d7da;">
+                        <div class="d-flex align-items-start">
+                            <svg width="24" height="24" fill="#721c24" class="me-2 flex-shrink-0" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                            <ul class="mb-0 ps-2" style="color: #721c24;">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Formulaire principal --}}
+                <div class="card border-0 shadow-lg" style="border-radius: 25px; backdrop-filter: blur(10px); background: rgba(255,255,255,0.98); animation: fadeInUp 0.7s ease-out;">
+                    <div class="card-body p-4 p-md-5">
+                        
+                        <form action="{{ isset($publication) ? route('publications.update', $publication->id) : route('publications.store') }}" 
+                              method="POST" enctype="multipart/form-data">
+                            
+                            @csrf
+                            @if(isset($publication))
+                                @method('PUT')
+                            @endif
+
+                            {{-- Section Informations principales --}}
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-4" style="color: #667eea; border-left: 4px solid #667eea; padding-left: 12px;">
+                                    📝 Informations principales
+                                </h5>
+
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <label for="titre" class="form-label fw-semibold" style="color: #2d3748;">
+                                            Titre de la publication
+                                        </label>
+                                        <input type="text" name="titre" id="titre" 
+                                               class="form-control form-control-lg border-0 shadow-sm" 
+                                               style="border-radius: 12px; background: #f7fafc; padding: 15px 20px; transition: all 0.3s;"
+                                               onmouseover="this.style.background='#edf2f7'" 
+                                               onmouseout="this.style.background='#f7fafc'"
+                                               value="{{ old('titre', $publication->titre ?? '') }}" 
+                                               placeholder="Ex: Les nouvelles tendances du web design" 
+                                               required>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="content" class="form-label fw-semibold" style="color: #2d3748;">
+                                            Contenu de l'article
+                                        </label>
+                                        <textarea name="content" id="content" rows="8" 
+                                                  class="form-control border-0 shadow-sm" 
+                                                  style="border-radius: 12px; background: #f7fafc; padding: 15px 20px; transition: all 0.3s; resize: vertical;"
+                                                  onmouseover="this.style.background='#edf2f7'" 
+                                                  onmouseout="this.style.background='#f7fafc'"
+                                                  placeholder="Rédigez votre contenu ici..." 
+                                                  required>{{ old('content', $publication->content ?? '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Section Média --}}
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-4" style="color: #667eea; border-left: 4px solid #667eea; padding-left: 12px;">
+                                    🖼️ Média
+                                </h5>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="image" class="form-label fw-semibold" style="color: #2d3748;">
+                                            Image de couverture (optionnelle)
+                                        </label>
+                                        
+                                        <div class="position-relative">
+                                            <input type="file" name="image" id="image" 
+                                                   class="form-control border-0 shadow-sm" 
+                                                   style="border-radius: 12px; background: #f7fafc; padding: 15px 20px;"
+                                                   accept="image/*">
+                                            
+                                            @if(isset($publication) && $publication->image_path)
+                                                <div class="mt-3 p-3 rounded-3 border" style="background: #f7fafc;">
+                                                    <p class="text-muted small mb-2">Image actuelle :</p>
+                                                    <img src="{{ asset('storage/' . $publication->image_path) }}" 
+                                                         alt="Image actuelle" 
+                                                         class="img-fluid rounded shadow-sm" 
+                                                         style="max-width: 250px; border: 3px solid white;">
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Section Métadonnées --}}
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-4" style="color: #667eea; border-left: 4px solid #667eea; padding-left: 12px;">
+                                    ⚙️ Métadonnées
+                                </h5>
+
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label for="pub_category_id" class="form-label fw-semibold" style="color: #2d3748;">
+                                            Catégorie
+                                        </label>
+                                        <select name="pub_category_id" id="pub_category_id" 
+                                                class="form-select border-0 shadow-sm" 
+                                                style="border-radius: 12px; background: #f7fafc; padding: 15px 20px;"
+                                                required>
+                                            <option value="">-- Choisir une catégorie --</option>
+                                            @foreach($categories as $cat)
+                                                <option value="{{ $cat->id }}" 
+                                                    {{ old('pub_category_id', $publication->pub_category_id ?? '') == $cat->id ? 'selected' : '' }}>
+                                                    {{ $cat->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="author" class="form-label fw-semibold" style="color: #2d3748;">
+                                            Auteur
+                                        </label>
+                                        <input type="text" name="author" id="author" 
+                                               class="form-control border-0 shadow-sm" 
+                                               style="border-radius: 12px; background: #f7fafc; padding: 15px 20px;"
+                                               value="{{ old('author', $publication->author ?? '') }}" 
+                                               placeholder="Nom de l'auteur"
+                                               required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="tags" class="form-label fw-semibold" style="color: #2d3748;">
+                                            Tags (séparés par des virgules)
+                                        </label>
+                                        <input type="text" name="tags" id="tags" 
+                                               class="form-control border-0 shadow-sm" 
+                                               style="border-radius: 12px; background: #f7fafc; padding: 15px 20px;"
+                                               value="{{ old('tags', $publication->tags ?? '') }}" 
+                                               placeholder="web, design, développement">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="status" class="form-label fw-semibold" style="color: #2d3748;">
+                                            Statut de publication
+                                        </label>
+                                        <select name="status" id="status" 
+                                                class="form-select border-0 shadow-sm" 
+                                                style="border-radius: 12px; background: #f7fafc; padding: 15px 20px;"
+                                                required>
+                                            <option value="Draft" {{ old('status', $publication->status ?? '') == 'Draft' ? 'selected' : '' }}>
+                                                📄 Brouillon
+                                            </option>
+                                            <option value="Publish" {{ old('status', $publication->status ?? '') == 'Publish' ? 'selected' : '' }}>
+                                                ✅ Publié
+                                            </option>
+                                            <option value="Pending" {{ old('status', $publication->status ?? '') == 'Pending' ? 'selected' : '' }}>
+                                                ⏳ En attente
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Boutons d'action --}}
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-between pt-4 border-top">
+                                <a href="{{ route('publications.index') }}" 
+                                   class="btn btn-lg px-4 shadow-sm" 
+                                   style="border-radius: 12px; background: #e2e8f0; color: #2d3748; border: none; transition: all 0.3s; font-weight: 500;"
+                                   onmouseover="this.style.background='#cbd5e0'; this.style.transform='translateY(-2px)'" 
+                                   onmouseout="this.style.background='#e2e8f0'; this.style.transform='translateY(0)'">
+                                    ← Annuler
+                                </a>
+                                
+                                <button type="submit" 
+                                        class="btn btn-lg px-5 shadow-sm" 
+                                        style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; transition: all 0.3s; font-weight: 600;"
+                                        onmouseover="this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(102, 126, 234, 0.4)'" 
+                                        onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow=''">
+                                    {{ isset($publication) ? '✨ Mettre à jour' : '🚀 Publier' }}
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+                {{-- Footer info --}}
+                <div class="text-center mt-4">
+                    <p class="text-white opacity-75 small mb-0">
+                        💡 Astuce : Sauvegardez régulièrement votre travail en tant que brouillon
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    border-color: #667eea !important;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    h1 {
+        font-size: 1.5rem !important;
+    }
+}
+</style>
+@endsection

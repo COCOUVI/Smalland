@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use App\Http\View\Composers\MasterComposer; //
 use Illuminate\Pagination\Paginator;
-
+    
+use App\Models\Cart;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -29,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
         //
          Paginator::useBootstrapFive(); // 
          View::composer('space-etudiant.master', MasterComposer::class);
+
+        // Partager le compteur du panier avec toutes les vues
+        View::composer('*', \App\Http\View\Composers\CartComposer::class);
+
+        
     }
 
 

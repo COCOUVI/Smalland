@@ -90,9 +90,9 @@
                 <i data-feather="file-text"></i><span>Articles</span>
             </a>
             <ul class="dropdown-menu">
-                <li><a class="nav-link" href="">Liste des Articles</a></li>
-                <li><a class="nav-link" href="">Créer Article</a></li>
-                <li><a class="nav-link" href="">Catégories</a></li>
+                <li><a class="nav-link" href="{{ route('publications.index') }}">Liste des Articles</a></li>
+                <li><a class="nav-link" href="{{ route('publications.create') }}">Créer Article</a></li>
+                <li><a class="nav-link" href="{{ route('admin.listCategories') }}">Catégories</a></li>
             </ul>
         </li>
 

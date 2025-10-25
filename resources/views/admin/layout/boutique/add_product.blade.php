@@ -57,8 +57,9 @@
         <div class="col-md-6">
             <label class="form-label">Statut du stock</label>
             <select name="statut_stock" class="form-select" required>
-                <option value="en_stock">Disponible</option>
-                <option value="rupture_de_stock">Rupture</option>
+                <option value="in_stock">Disponible</option>
+                <option value="low_stock">Quantité Faible</option>
+                <option value="out_of_stock">Rupture</option>
             </select>
         </div>
 

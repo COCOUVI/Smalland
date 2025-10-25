@@ -30,6 +30,7 @@
             <tbody>
                 @foreach($produits as $produit)
                 <tr>
+                    
                         <td><img src="{{ asset('storage/'.$produit->path_img) }}" width="60" class="rounded"></td>
                         <td>{{ $produit->nom }}</td>
                         <td>{{ number_format($produit->prix, 0, ',', ' ') }} FCFA</td>
@@ -104,9 +105,10 @@
                             <div class="mb-3">
                                 <label class="form-label">Statut</label>
                                 <select name="statut_stock" class="form-select">
-                                <option value="disponible" {{ $produit->statut_stock == 'en_stock' ? 'selected' : '' }}>Disponible</option>
-                                <option value="indisponible" {{ $produit->statut_stock == 'rupture_de_stock' ? 'selected' : '' }}>Indisponible</option>
-                                </select>
+                                <option value="in_stock" {{ $produit->statut_stock == 'in_stock' ? 'selected' : '' }}>Disponible</option>
+                                <option value="low_stock" {{ $produit->statut_stock == 'low_stock' ? 'selected' : '' }}>Quantité faible</option>
+                                <option value="out_of_stock" {{ $produit->statut_stock == 'out_of_stock' ? 'selected' : '' }}>Rupture de stock</option>
+                                 
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Image</label>

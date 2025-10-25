@@ -7,8 +7,6 @@
                 alt="Logo smalland">
             </a>
 
-            <i class="bi bi-tree-fill me-2"></i>Small Land
-        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -26,8 +24,6 @@
                 {{-- Blog Agronomie --}}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ request()->is('blog*') ? 'active' : '' }}" href="#" id="blogDropdown" role="button" data-bs-toggle="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="blogDropdown" role="button"
-                        data-bs-toggle="dropdown">
                         Blog Agronomie
                     </a>
                     <ul class="dropdown-menu">
@@ -42,17 +38,9 @@
                         Formations
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item {{ request()->is('formations-catalog') ? 'active' : '' }}" href="{{ route('formations.catalog') }}">Catalogue</a></li>
+                        <li><a class="dropdown-item {{ request()->is('') ? 'active' : '' }}" href="">Catalogue</a></li>
                         @auth
-                            <li><a class="dropdown-item {{ request()->is('student-dashboard') ? 'active' : '' }}" href="{{ route('student.dashboard') }}">Espace étudiant</a></li>
-                    <a class="nav-link dropdown-toggle" href="#" id="formationsDropdown" role="button"
-                        data-bs-toggle="dropdown">
-                        Formations
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="formations-catalog.html">Catalogue</a></li>
-                        @auth
-                            <li><a class="dropdown-item" href="{{route('espace.etudiant')}}">Espace étudiant</a></li>
+                            <li><a class="dropdown-item {{ request()->is('student-dashboard') ? 'active' : '' }}" href="{{ route('espace.etudiant') }}">Espace étudiant</a></li>
                         @endauth
                     </ul>
                 </li>
@@ -60,8 +48,6 @@
                 {{-- Boutique --}}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ request()->is('boutique*') ? 'active' : '' }}" href="#" id="shopDropdown" role="button" data-bs-toggle="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="shopDropdown" role="button"
-                        data-bs-toggle="dropdown">
                         Boutique
                     </a>
                     <ul class="dropdown-menu">
@@ -75,13 +61,17 @@
 
             <div class="d-flex align-items-center">
                 <!-- Panier -->
+                <!-- Panier -->
                 <a href="{{ route('cart.index') }}" class="btn btn-outline-light position-relative me-3">
                     <i class="bi bi-cart"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        3
-                        <span class="visually-hidden">articles dans le panier</span>
-                    </span>
+                    @if($cartCount > 0)
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ $cartCount }}
+                            <span class="visually-hidden">articles dans le panier</span>
+                        </span>
+                    @endif
                 </a>
+
 
                 <!-- Utilisateur connecté -->
                 @auth
@@ -90,7 +80,7 @@
                         <i class="bi bi-person-circle me-2"></i> {{ auth()->user()->nom }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ route('student.dashboard') }}">Mon espace</a></li>
+                        <li><a class="dropdown-item" href="{{ route('espace.etudiant') }}">Mon espace</a></li>
                         <li><a class="dropdown-item" href="#">Mon profil</a></li>
                         <li><a class="dropdown-item" href="#">Paramètres</a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -105,44 +95,11 @@
                         </li>
                     </ul>
                 </div>
-                    <div class="dropdown">
-                        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button"
-                            data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-2"></i> {{ auth()->user()->nom }}
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-
-                            @if (auth()->user()->role === 'client')
-                                <li><a class="dropdown-item" href="{{route('espace.etudiant')}}">Mon espace étudiant</a></li>
-                                <li><a class="dropdown-item" href="">Mon espace client</a></li>
-                                <li><a class="dropdown-item" href="#">Mon profil</a></li>
-                                <li><a class="dropdown-item" href="#">Paramètres</a></li>
-
-                            @else
-                                 <li><a class="dropdown-item" href="{{route('dashboard')}}">Mon espace Administrateur</a></li>
-                            @endif
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    Déconnexion
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
                 @endauth
 
                 @guest
                 <a href="{{ route('login') }}" class="btn btn-outline-light ms-2">Connexion</a>
                 <a href="{{ route('register') }}" class="btn btn-light ms-2">Inscription</a>
-                    <!-- Connexion / Inscription -->
-                    <a href="{{ route('login') }}" class="btn btn-outline-light ms-2">Connexion</a>
-                    <a href="{{ route('register') }}" class="btn btn-light ms-2">Inscription</a>
                 @endguest
             </div>
         </div>

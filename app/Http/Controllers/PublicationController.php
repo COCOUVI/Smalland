@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class PublicationController extends Controller
 {
      // Afficher la liste des publications et catégories
-    public function index(Request $request)
+    public function index1(Request $request)
     {
         // Récupération de toutes les catégories avec le nombre de publications
         $categories = PubCategory::withCount('publications')->get();
@@ -55,12 +55,12 @@ class PublicationController extends Controller
     }
 
     // Afficher un article en particulier
-/*
+
     public function index()
     {
         $publications = Publication::with('category')->latest()->paginate(10);
         return view('admin.layout.blog.blog', compact('publications'));
-    }*/
+    }
 
     public function create()
     {
