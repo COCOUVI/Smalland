@@ -2,344 +2,258 @@
 
 @section('content')
 
-    <!-- En-tête de page -->
-    <div class="page-header">
-        <div class="container text-center">
-            <h1 class="display-4 fw-bold">Boutique Small Land</h1>
-            <p class="lead">Découvrez notre sélection de produits pour l'agriculture et le jardinage</p>
-        </div>
-    </div>
+<style>
+    :root {
+        --primary-color: #2e7d32;
+        --secondary-color: #7cb342;
+    }
 
-    <!-- Contenu principal -->
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        padding: 60px 0;
+        margin-bottom: 40px;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card-img-top {
+        height: 250px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .category-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 10;
+        font-size: 0.75rem;
+    }
+
+    .stock-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        font-size: 0.75rem;
+    }
+
+    .product-price {
+        color: var(--primary-color);
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+
+    .btn-add-cart {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-add-cart:hover {
+        background-color: #1b5e20;
+        border-color: #1b5e20;
+        color: white;
+    }
+
+    .empty-products {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        color: #dee2e6;
+    }
+</style>
+
+<div class="page-header text-center">
     <div class="container">
-        <!-- Filtres -->
-        <div class="filter-section">
-            <div class="row">
-                <div class="col-md-6 col-lg-3 mb-3">
-                    <label class="form-label">Catégorie</label>
-                    <select class="form-select">
-                        <option selected>Toutes les catégories</option>
-                        <option>Outils de jardinage</option>
-                        <option>Semences et plants</option>
-                        <option>Équipements d'irrigation</option>
-                        <option>Produits naturels</option>
-                        <option>Serres et abris</option>
-                    </select>
-                </div>
-                <div class="col-md-6 col-lg-3 mb-3">
-                    <label class="form-label">Marque</label>
-                    <select class="form-select">
-                        <option selected>Toutes les marques</option>
-                        <option>BioGarden</option>
-                        <option>EcoTools</option>
-                        <option>NaturePlus</option>
-                        <option>GreenLife</option>
-                    </select>
-                </div>
-                <div class="col-md-6 col-lg-3 mb-3">
-                    <label class="form-label">Tri</label>
-                    <select class="form-select">
-                        <option selected>Pertinence</option>
-                        <option>Prix croissant</option>
-                        <option>Prix décroissant</option>
-                        <option>Meilleures notes</option>
-                        <option>Nouveautés</option>
-                    </select>
-                </div>
-                <div class="col-md-6 col-lg-3 mb-3">
-                    <label class="form-label">Prix</label>
-                    <div id="price-slider" class="price-slider mt-2"></div>
-                    <div class="d-flex justify-content-between">
-                        <small>0€</small>
-                        <small>200€</small>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <div>
-                    <span class="text-muted">24 produits trouvés</span>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="stockOnly">
-                    <label class="form-check-label" for="stockOnly">
-                        Afficher seulement les produits en stock
-                    </label>
-                </div>
-            </div>
-        </div>
+        <h1 class="display-4 fw-bold">Boutique Small Land</h1>
+        <p class="lead">Découvrez notre sélection de produits pour l'agriculture et le jardinage</p>
+    </div>
+</div>
 
-        <!-- Liste des produits -->
-        <div class="row">
-            <!-- Produit 1 -->
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <span class="category-badge badge bg-primary">Outils</span>
-                    <span class="stock-badge badge bg-success">En stock</span>
-                    <img src="https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Kit jardinage">
-                    <div class="card-body">
-                        <h5 class="card-title">Kit de jardinage débutant</h5>
-                        <p class="card-text">Tout le nécessaire pour commencer votre potager.</p>
-                        <div class="rating mb-2">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-half"></i>
-                            <span class="ms-1">(35)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 product-price">39,90€</span>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Produit 2 -->
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <span class="category-badge badge bg-info">Serres</span>
-                    <span class="stock-badge badge bg-success">En stock</span>
-                    <img src="https://images.unsplash.com/photo-1589923188937-cb64779f4abe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Serre">
-                    <div class="card-body">
-                        <h5 class="card-title">Serre de balcon</h5>
-                        <p class="card-text">Idéale pour cultiver en ville toute l'année.</p>
-                        <div class="rating mb-2">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star"></i>
-                            <span class="ms-1">(22)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 product-price">79,90€</span>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Produit 3 -->
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <span class="category-badge badge bg-success">Semences</span>
-                    <span class="stock-badge badge bg-success">En stock</span>
-                    <img src="https://images.unsplash.com/photo-1471194402529-8e0f5a675de6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Graines bio">
-                    <div class="card-body">
-                        <h5 class="card-title">Coffret graines bio</h5>
-                        <p class="card-text">15 variétés de légumes et herbes aromatiques biologiques.</p>
-                        <div class="rating mb-2">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <span class="ms-1">(47)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 product-price">24,90€</span>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Produit 4 -->
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <span class="category-badge badge bg-warning text-dark">Arrosage</span>
-                    <span class="stock-badge badge bg-success">En stock</span>
-                    <img src="https://images.unsplash.com/photo-1596461404969-9b70b3e2a60d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Arrosoir">
-                    <div class="card-body">
-                        <h5 class="card-title">Arrosoir écologique</h5>
-                        <p class="card-text">Fabriqué à partir de matériaux recyclés, capacité 10L.</p>
-                        <div class="rating mb-2">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-half"></i>
-                            <i class="bi bi-star"></i>
-                            <span class="ms-1">(18)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 product-price">32,50€</span>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Produit 5 -->
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <span class="category-badge badge bg-primary">Outils</span>
-                    <span class="stock-badge badge bg-warning text-dark">Faible stock</span>
-                    <img src="https://images.unsplash.com/photo-1593476550610-6bb97b1b38b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Plantoir">
-                    <div class="card-body">
-                        <h5 class="card-title">Plantoir à bulbes professionnel</h5>
-                        <p class="card-text">Outil précis pour planter vos bulbes à la bonne profondeur.</p>
-                        <div class="rating mb-2">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <span class="ms-1">(29)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 product-price">18,90€</span>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Produit 6 -->
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <span class="category-badge badge bg-info text-dark">Irrigation</span>
-                    <span class="stock-badge badge bg-success">En stock</span>
-                    <img src="https://images.unsplash.com/photo-1590172205845-2441aae4bad4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Système irrigation">
-                    <div class="card-body">
-                        <h5 class="card-title">Kit d'irrigation goutte-à-goutte</h5>
-                        <p class="card-text">Système économique pour arroser précisément vos plantes.</p>
-                        <div class="rating mb-2">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star"></i>
-                            <span class="ms-1">(31)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 product-price">45,00€</span>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Produit 7 -->
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <span class="category-badge badge bg-success">Semences</span>
-                    <span class="stock-badge badge bg-success">En stock</span>
-                    <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Graines potagères">
-                    <div class="card-body">
-                        <h5 class="card-title">Collection de graines potagères</h5>
-                        <p class="card-text">10 variétés de légumes faciles à cultiver pour débutants.</p>
-                        <div class="rating mb-2">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-half"></i>
-                            <span class="ms-1">(42)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 product-price">19,90€</span>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Produit 8 -->
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <span class="category-badge badge bg-warning text-dark">Protection</span>
-                    <span class="stock-badge badge bg-danger">Rupture</span>
-                    <img src="https://images.unsplash.com/photo-1589923188937-cb64779f4abe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="card-img-top" alt="Filet protection">
-                    <div class="card-body">
-                        <h5 class="card-title">Filet de protection anti-oiseaux</h5>
-                        <p class="card-text">Protégez vos fruits et légumes des oiseaux et insectes.</p>
-                        <div class="rating mb-2">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star"></i>
-                            <span class="ms-1">(15)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 product-price">27,50€</span>
-                            <button class="btn btn-sm btn-outline-secondary" disabled>
-                                <i class="bi bi-cart-x"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="container py-4">
+    <!-- Messages de session -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
+    @endif
 
-        <!-- Pagination -->
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">Précédent</a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Suivant</a>
-                </li>
-            </ul>
-        </nav>
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ route('shop') }}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-funnel me-1"></i>Catégorie
+                        </label>
+                        <select name="category_id" class="form-select" onchange="this.form.submit()">
+                            <option value="">Toutes les catégories</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->nom }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-sort-down me-1"></i>Trier par
+                        </label>
+                        <select name="sort" class="form-select" onchange="this.form.submit()">
+                            <option value="">Pertinence</option>
+                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>
+                                Prix croissant
+                            </option>
+                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
+                                Prix décroissant
+                            </option>
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>
+                                Nouveautés
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        @if(request('category_id') || request('sort'))
+                            <a href="{{ route('shop') }}" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-x-circle me-1"></i>Réinitialiser
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Section avant-footer -->
-    <div class="bg-light py-5 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-4 mb-lg-0 text-center">
-                    <i class="bi bi-truck display-6 text-primary mb-3"></i>
-                    <h5>Livraison rapide</h5>
-                    <p class="text-muted">Expédition sous 24h pour les commandes avant 16h</p>
-                </div>
-                <div class="col-lg-4 mb-4 mb-lg-0 text-center">
-                    <i class="bi bi-arrow-repeat display-6 text-primary mb-3"></i>
-                    <h5>Retours faciles</h5>
-                    <p class="text-muted">30 jours pour changer d'avis</p>
-                </div>
-                <div class="col-lg-4 text-center">
-                    <i class="bi bi-shield-check display-6 text-primary mb-3"></i>
-                    <h5>Paiement sécurisé</h5>
-                    <p class="text-muted">Vos données bancaires sont cryptées</p>
+    <!-- Nombre de résultats -->
+    <div class="mb-3">
+        <p class="text-muted">
+            <strong>{{ $produits->total() }}</strong> produit(s) trouvé(s)
+        </p>
+    </div>
+
+    <!-- Liste des produits -->
+    <div class="row">
+        @forelse($produits as $produit)
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card">
+                    <div class="position-relative">
+                        <!-- Badge catégorie -->
+                        <span class="category-badge badge bg-primary">
+                            {{ $produit->category->nom ?? 'Sans catégorie' }}
+                        </span>
+                        
+                        <!-- Badge stock -->
+                        @if($produit->qte > 10)
+                            <span class="stock-badge badge bg-success">En stock</span>
+                        @elseif($produit->qte > 0)
+                            <span class="stock-badge badge bg-warning text-dark">Stock limité</span>
+                        @else
+                            <span class="stock-badge badge bg-danger">Rupture</span>
+                        @endif
+
+                        <!-- Image -->
+                        @if($produit->path_img)
+                            <img src="{{ asset('storage/' . $produit->path_img) }}" 
+                                class="card-img-top" 
+                                alt="{{ $produit->nom }}">
+                        @else
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ Str::limit($produit->nom, 40) }}</h5>
+                        <p class="card-text text-muted small">
+                            {{ Str::limit($produit->description, 60) }}
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="product-price">
+                                {{ number_format($produit->prix, 0, ',', ' ') }} FCFA
+                            </span>
+                            <small class="text-muted">
+                                <i class="bi bi-box-seam me-1"></i>{{ $produit->qte }} dispo
+                            </small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a href="{{ route('admin.produits.voir', $produit->id) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye me-1"></i>Voir détails
+                            </a>
+
+                            @auth
+                                @if($produit->qte > 0)
+                                    <form action="{{ route('cart.add', $produit->id) }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="qte" value="1">
+                                        <button type="submit" class="btn btn-add-cart btn-sm w-100">
+                                            <i class="bi bi-cart-plus me-1"></i>Ajouter au panier
+                                        </button>
+                                    </form>
+                                @else
+                                    <button class="btn btn-secondary btn-sm w-100" disabled>
+                                        <i class="bi bi-x-circle me-1"></i>Rupture de stock
+                                    </button>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-add-cart btn-sm">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Connectez-vous
+                                </a>
+                            @endauth
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        @empty
+            <div class="col-12">
+                <div class="empty-products">
+                    <i class="bi bi-inbox empty-icon"></i>
+                    <h4 class="mt-3">Aucun produit trouvé</h4>
+                    <p class="text-muted">Essayez de modifier vos filtres ou revenez plus tard.</p>
+                    @if(request('category_id') || request('sort'))
+                        <a href="{{ route('shop') }}" class="btn btn-primary mt-3">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Réinitialiser les filtres
+                        </a>
+                    @endif
+                </div>
+            </div>
+        @endforelse
     </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.js"></script>
-    <script>
-        // Initialisation du slider de prix
-        document.addEventListener('DOMContentLoaded', function() {
-            var priceSlider = document.getElementById('price-slider');
-            noUiSlider.create(priceSlider, {
-                start: [0, 200],
-                connect: true,
-                range: {
-                    'min': 0,
-                    'max': 200
-                },
-                step: 10
-            });
-        });
-    </script>
+
+    <!-- Pagination -->
+    @if($produits->hasPages())
+        <div class="d-flex justify-content-center mt-4">
+            {{ $produits->appends(request()->query())->links() }}
+        </div>
+    @endif
+</div>
+
 @endsection

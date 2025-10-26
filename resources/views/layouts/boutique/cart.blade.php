@@ -1,388 +1,370 @@
 @extends('master')
 
 @section('content')
- <style>
-        :root {
-            --primary-color: #2e7d32;
-            --secondary-color: #7cb342;
-            --accent-color: #ffd54f;
-            --light-color: #f5f5f5;
-            --dark-color: #263238;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-        }
-        
-        .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .bg-primary {
-            background-color: var(--primary-color) !important;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #1b5e20;
-            border-color: #1b5e20;
-        }
-        
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
-        
-        .page-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 40px 0;
-            margin-bottom: 40px;
-        }
-        
-        .card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            margin-bottom: 20px;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-        
-        .footer {
-            background-color: var(--dark-color);
-            color: white;
-            padding: 40px 0;
-        }
-        
-        .cart-item {
-            padding: 20px 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-        
-        .quantity-selector {
-            width: 120px;
-        }
-        
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .total {
-            font-weight: bold;
-            font-size: 1.2rem;
-            border-top: 2px solid #eee;
-            padding-top: 10px;
-            margin-top: 10px;
-        }
-        
-        .promo-code {
-            background-color: #f8f9fa;
-            border-left: 4px solid var(--primary-color);
-            padding: 15px;
-        }
-        
-        .empty-cart {
-            text-align: center;
-            padding: 60px 0;
-        }
-        
-        .empty-cart-icon {
-            font-size: 5rem;
-            color: #dee2e6;
-            margin-bottom: 20px;
-        }
-        
-        .product-price {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-    </style>
-<!-- En-tête de page -->
-    <div class="page-header">
-        <div class="container text-center">
-            <h1 class="display-5 fw-bold">Votre panier</h1>
-            <p class="lead">Revoyez vos articles et procédez au paiement</p>
-        </div>
-    </div>
 
-    <!-- Contenu principal -->
+<style>
+    :root {
+        --primary-color: #2e7d32;
+        --secondary-color: #7cb342;
+        --accent-color: #ffd54f;
+        --light-color: #f5f5f5;
+        --dark-color: #263238;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .bg-primary { background-color: var(--primary-color) !important; }
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    .btn-primary:hover {
+        background-color: #1b5e20;
+        border-color: #1b5e20;
+    }
+
+    .page-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 40px;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .cart-item {
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+
+    .quantity-selector {
+        max-width: 150px;
+    }
+
+    .quantity-input {
+        border-left: none !important;
+        border-right: none !important;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .total {
+        font-weight: bold;
+        font-size: 1.2rem;
+        border-top: 2px solid #eee;
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 60px 0;
+    }
+
+    .empty-cart-icon {
+        font-size: 5rem;
+        color: #dee2e6;
+        margin-bottom: 20px;
+    }
+
+    .product-price {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .stock-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .stock-low {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .stock-ok {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+</style>
+
+<div class="page-header text-center">
     <div class="container">
-        <!-- Panier avec articles -->
-        <div class="row">
-            <!-- Articles du panier -->
-            <div class="col-lg-8">
+        <h1 class="display-5 fw-bold">Votre panier</h1>
+        <p class="lead">Revoyez vos articles et procédez au paiement</p>
+    </div>
+</div>
+
+<div class="container">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    <div class="row">
+        <!-- Articles du panier -->
+        <div class="col-lg-8">
+            @if(isset($cartItems) && $cartItems->count() > 0)
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title mb-4">3 articles dans votre panier</h3>
-                        
-                        <!-- Article 1 -->
-                        <div class="cart-item">
-                            <div class="row">
-                                <div class="col-3 col-md-2">
-                                    <img src="https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="img-fluid rounded" alt="Kit jardinage">
-                                </div>
-                                <div class="col-9 col-md-6">
-                                    <h5 class="mb-1">Kit de jardinage débutant</h5>
-                                    <p class="text-muted mb-2">Tout le nécessaire pour commencer votre potager.</p>
-                                    <div class="rating small mb-2">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-half"></i>
-                                        <span class="ms-1">(35)</span>
+                        <h3 class="card-title mb-4">
+                            <i class="bi bi-cart3 me-2"></i>
+                            {{ $cartItems->count() }} article(s) dans votre panier
+                        </h3>
+
+                        @foreach($cartItems as $item)
+                            <div class="cart-item">
+                                <div class="row align-items-center">
+                                    <!-- Image du produit -->
+                                    <div class="col-3 col-md-2">
+                                        @if($item->product->path_img)
+                                            <img src="{{ asset('storage/' . $item->product->path_img) }}" 
+                                                class="img-fluid rounded" 
+                                                alt="{{ $item->product->nom }}"
+                                                style="max-height: 100px; object-fit: cover;">
+                                        @else
+                                            <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                                style="height: 100px;">
+                                                <i class="bi bi-image text-muted" style="font-size: 2rem;"></i>
+                                            </div>
+                                        @endif
                                     </div>
-                                    <div class="d-flex">
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i> Supprimer
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-secondary ms-2">
-                                            <i class="bi bi-heart"></i> Ajouter aux favoris
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-4 mt-3 mt-md-0">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="product-price">39,90€</span>
-                                        <div class="input-group quantity-selector">
-                                            <button class="btn btn-outline-secondary" type="button">-</button>
-                                            <input type="number" class="form-control text-center" value="1" min="1">
-                                            <button class="btn btn-outline-secondary" type="button">+</button>
+
+                                    <!-- Informations du produit -->
+                                    <div class="col-9 col-md-6">
+                                        <h5 class="mb-1">{{ $item->product->nom }}</h5>
+                                        <p class="text-muted mb-2 small">
+                                            {{ Str::limit($item->product->description, 80) }}
+                                        </p>
+                                        
+                                        <!-- Statut du stock -->
+                                        @if($item->product->qte > 10)
+                                            <span class="stock-badge stock-ok">
+                                                <i class="bi bi-check-circle me-1"></i>En stock ({{ $item->product->qte }} disponibles)
+                                            </span>
+                                        @elseif($item->product->qte > 0)
+                                            <span class="stock-badge stock-low">
+                                                <i class="bi bi-exclamation-triangle me-1"></i>Stock limité ({{ $item->product->qte }} restants)
+                                            </span>
+                                        @else
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle me-1"></i>Rupture de stock
+                                            </span>
+                                        @endif
+
+                                        <!-- Bouton supprimer -->
+                                        <div class="mt-2">
+                                            <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i> Supprimer
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="text-end">
-                                        <strong>Sous-total: 39,90€</strong>
+
+                                    <!-- Prix et quantité -->
+                                    <div class="col-12 col-md-4 mt-3 mt-md-0">
+                                        <div class="mb-2">
+                                            <span class="product-price">
+                                                {{ number_format($item->product->prix, 0, ',', ' ') }} FCFA
+                                            </span>
+                                            <span class="text-muted small">/unité</span>
+                                        </div>
+                                        
+                                        <!-- Formulaire de mise à jour de quantité -->
+                                        <form action="{{ route('cart.update', $item->id) }}" method="POST" class="update-cart-form">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <label class="form-label mb-0 small">Quantité :</label>
+                                                <div class="input-group quantity-selector">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(this, -1, {{ $item->product->qte }})">
+                                                        <i class="bi bi-dash"></i>
+                                                    </button>
+                                                    <input type="number" 
+                                                        name="qte" 
+                                                        class="form-control form-control-sm text-center quantity-input" 
+                                                        value="{{ $item->qte }}" 
+                                                        min="1" 
+                                                        max="{{ $item->product->qte }}"
+                                                        style="width: 60px;">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(this, 1, {{ $item->product->qte }})">
+                                                        <i class="bi bi-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-sm btn-primary w-100">
+                                                <i class="bi bi-arrow-clockwise me-1"></i>Mettre à jour
+                                            </button>
+                                        </form>
+
+                                        <!-- Sous-total -->
+                                        <div class="text-end mt-2">
+                                            <strong class="text-primary">
+                                                Sous-total : {{ number_format($item->product->prix * $item->qte, 0, ',', ' ') }} FCFA
+                                            </strong>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Article 2 -->
-                        <div class="cart-item">
-                            <div class="row">
-                                <div class="col-3 col-md-2">
-                                    <img src="https://images.unsplash.com/photo-1471194402529-8e0f5a675de6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="img-fluid rounded" alt="Graines bio">
-                                </div>
-                                <div class="col-9 col-md-6">
-                                    <h5 class="mb-1">Coffret graines bio</h5>
-                                    <p class="text-muted mb-2">15 variétés de légumes et herbes aromatiques biologiques.</p>
-                                    <div class="rating small mb-2">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="ms-1">(47)</span>
-                                    </div>
-                                    <div class="d-flex">
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i> Supprimer
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-secondary ms-2">
-                                            <i class="bi bi-heart"></i> Ajouter aux favoris
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-4 mt-3 mt-md-0">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="product-price">24,90€</span>
-                                        <div class="input-group quantity-selector">
-                                            <button class="btn btn-outline-secondary" type="button">-</button>
-                                            <input type="number" class="form-control text-center" value="2" min="1">
-                                            <button class="btn btn-outline-secondary" type="button">+</button>
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <strong>Sous-total: 49,80€</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Article 3 -->
-                        <div class="cart-item">
-                            <div class="row">
-                                <div class="col-3 col-md-2">
-                                    <img src="https://images.unsplash.com/photo-1596461404969-9b70b3e2a60d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="img-fluid rounded" alt="Arrosoir">
-                                </div>
-                                <div class="col-9 col-md-6">
-                                    <h5 class="mb-1">Arrosoir écologique</h5>
-                                    <p class="text-muted mb-2">Fabriqué à partir de matériaux recyclés, capacité 10L.</p>
-                                    <div class="rating small mb-2">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-half"></i>
-                                        <i class="bi bi-star"></i>
-                                        <span class="ms-1">(18)</span>
-                                    </div>
-                                    <div class="d-flex">
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i> Supprimer
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-secondary ms-2">
-                                            <i class="bi bi-heart"></i> Ajouter aux favoris
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-4 mt-3 mt-md-0">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="product-price">32,50€</span>
-                                        <div class="input-group quantity-selector">
-                                            <button class="btn btn-outline-secondary" type="button">-</button>
-                                            <input type="number" class="form-control text-center" value="1" min="1">
-                                            <button class="btn btn-outline-secondary" type="button">+</button>
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <strong>Sous-total: 32,50€</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
-                
-                <!-- Code promo -->
-                <div class="card mt-4">
-                    <div class="card-body promo-code">
-                        <h5 class="card-title">Code promo</h5>
-                        <p class="text-muted">Entrez votre code promo si vous en avez un.</p>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Votre code promo">
-                            <button class="btn btn-primary">Appliquer</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Poursuite des achats -->
-                <div class="d-flex justify-content-between mt-4">
-                    <a href="products-catalog.html" class="btn btn-outline-primary">
+
+                <!-- Boutons d'action -->
+                <div class="d-flex justify-content-between mt-4 flex-wrap gap-2">
+                    <a href="{{ route('shop') }}" class="btn btn-outline-primary">
                         <i class="bi bi-arrow-left me-2"></i>Continuer mes achats
                     </a>
-                    <button class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-clockwise me-2"></i>Actualiser le panier
-                    </button>
+                    <form action="{{ route('cart.clear') }}" method="POST" class="d-inline" 
+                        onsubmit="return confirm('Êtes-vous sûr de vouloir vider complètement le panier ?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-2"></i>Vider le panier
+                        </button>
+                    </form>
                 </div>
-            </div>
-            
-            <!-- Récapitulatif -->
+            @else
+                <!-- Panier vide -->
+                <div class="empty-cart">
+                    <i class="bi bi-cart-x empty-cart-icon"></i>
+                    <h4>Votre panier est vide</h4>
+                    <p class="text-muted">Ajoutez des produits pour commencer vos achats.</p>
+                    <a href="{{ route('shop') }}" class="btn btn-primary mt-3">
+                        <i class="bi bi-shop me-2"></i>Découvrir nos produits
+                    </a>
+                </div>
+            @endif
+        </div>
+
+        <!-- Récapitulatif de la commande -->
+        @if(isset($cartItems) && $cartItems->count() > 0)
             <div class="col-lg-4">
-                <div class="card">
+                <div class="card sticky-top" style="top: 20px;">
                     <div class="card-body">
                         <h4 class="card-title mb-4">Récapitulatif de la commande</h4>
-                        
+
                         <div class="summary-item">
-                            <span>Sous-total (3 articles)</span>
-                            <span>122,20€</span>
+                            <span>Sous-total ({{ $cartItems->count() }} articles)</span>
+                            <span><strong>{{ number_format($total, 0, ',', ' ') }} FCFA</strong></span>
                         </div>
-                        
+
                         <div class="summary-item">
-                            <span>Frais d'expédition</span>
-                            <span>4,90€</span>
+                            <span>Frais de livraison</span>
+                            <span class="text-muted">Calculés au checkout</span>
                         </div>
-                        
-                        <div class="summary-item">
-                            <span>Remise</span>
-                            <span class="text-success">-0,00€</span>
-                        </div>
-                        
+
+                        <hr>
+
                         <div class="summary-item total">
-                            <span>Total TTC</span>
-                            <span>127,10€</span>
+                            <span>Total estimé</span>
+                            <span class="text-primary">{{ number_format($total, 0, ',', ' ') }} FCFA</span>
                         </div>
-                        
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="terms" required>
-                            <label class="form-check-label" for="terms">
-                                J'accepte les <a href="#">conditions générales de vente</a>
-                            </label>
+
+                        <!-- Bouton de paiement -->
+                        <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-lg w-100 mt-3">
+                            <i class="bi bi-credit-card me-2"></i>Procéder au paiement
+                        </a>
+
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">
+                                <i class="bi bi-shield-check me-1"></i>
+                                Paiement 100% sécurisé
+                            </small>
                         </div>
-                        
-                        <a href="../formations/payment.html" class="btn btn-primary btn-lg w-100 mb-3">Procéder au paiement</a>
-                        
-                        <div class="text-center">
-                            <small class="text-muted">En passant commande, vous acceptez les conditions générales de vente de Small Land</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sécurité -->
-                <div class="card mt-4">
-                    <div class="card-body text-center">
-                        <i class="bi bi-shield-check display-6 text-primary mb-3"></i>
-                        <h5>Paiement sécurisé</h5>
-                        <p class="text-muted">Vos données bancaires sont cryptées et sécurisées.</p>
-                        <div class="d-flex justify-content-center">
-                            <img src="https://via.placeholder.com/40" class="me-2" alt="Carte">
-                            <img src="https://via.placeholder.com/40" class="me-2" alt="Carte">
-                            <img src="https://via.placeholder.com/40" class="me-2" alt="Carte">
-                            <img src="https://via.placeholder.com/40" alt="Carte">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Assistance -->
-                <div class="card mt-4">
-                    <div class="card-body text-center">
-                        <i class="bi bi-headset display-6 text-primary mb-3"></i>
-                        <h5>Besoin d'aide ?</h5>
-                        <p class="text-muted">Notre équipe est là pour vous aider</p>
-                        <a href="#" class="btn btn-outline-primary">Contactez-nous</a>
+
+                        <!-- Info livraison gratuite -->
+                        @if($total < 50000)
+                            @php
+                                $remaining = 50000 - $total;
+                            @endphp
+                            <div class="alert alert-info mt-3 py-2">
+                                <small>
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Plus que <strong>{{ number_format($remaining, 0, ',', ' ') }} FCFA</strong> 
+                                    pour la livraison gratuite !
+                                </small>
+                            </div>
+                        @else
+                            <div class="alert alert-success mt-3 py-2">
+                                <small>
+                                    <i class="bi bi-gift me-1"></i>
+                                    <strong>Félicitations !</strong> Vous bénéficiez de la livraison gratuite.
+                                </small>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Fonctionnalités interactives pour le panier
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gestion des quantités
-            const quantityButtons = document.querySelectorAll('.quantity-selector .btn');
-            quantityButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const input = this.parentNode.querySelector('input');
-                    let value = parseInt(input.value);
-                    
-                    if (this.textContent === '+') {
-                        input.value = value + 1;
-                    } else if (this.textContent === '-' && value > 1) {
-                        input.value = value - 1;
-                    }
-                    
-                    // Ici, on pourrait recalculer le sous-total et le total
-                    updateCartTotals();
-                });
-            });
-            
-            // Gestion de la suppression d'articles
-            const deleteButtons = document.querySelectorAll('.btn-outline-danger');
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const cartItem = this.closest('.cart-item');
-                    cartItem.style.opacity = '0';
-                    setTimeout(() => {
-                        cartItem.remove();
-                        updateCartTotals();
-                    }, 300);
-                });
-            });
-            
-            // Simulation de la mise à jour des totaux
-            function updateCartTotals() {
-                // Dans une implémentation réelle, on calculerait les totaux
-                console.log('Mise à jour des totaux du panier');
+</div>
+
+<script>
+/**
+ * Gérer l'incrémentation/décrémentation de la quantité
+ */
+function changeQuantity(btn, change, maxStock) {
+    const input = btn.parentElement.querySelector('.quantity-input');
+    const currentValue = parseInt(input.value);
+    const newValue = currentValue + change;
+    
+    if (newValue >= 1 && newValue <= maxStock) {
+        input.value = newValue;
+    } else if (newValue > maxStock) {
+        alert('Stock insuffisant. Maximum disponible : ' + maxStock);
+    } else if (newValue < 1) {
+        alert('La quantité minimale est 1');
+    }
+}
+
+/**
+ * Animation de suppression
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteForms = document.querySelectorAll('form[action*="cart/remove"]');
+    
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const cartItem = this.closest('.cart-item');
+            if (cartItem) {
+                cartItem.style.transition = 'opacity 0.3s, transform 0.3s';
+                cartItem.style.opacity = '0';
+                cartItem.style.transform = 'translateX(20px)';
             }
         });
-    </script>
+    });
+});
+</script>
+
 @endsection

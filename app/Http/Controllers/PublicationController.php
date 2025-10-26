@@ -9,6 +9,53 @@ use Illuminate\Http\Request;
 
 class PublicationController extends Controller
 {
+     // Afficher la liste des publications et catégories
+    public function index1(Request $request)
+    {
+        // Récupération de toutes les catégories avec le nombre de publications
+        $categories = PubCategory::withCount('publications')->get();
+
+        // Récupération des publications, triées par date décroissante
+        $publications = Publication::with('category')
+            ->where('status', 'publish') // optionnel : si tu as un statut
+            ->orderBy('created_at', 'desc')
+            ->paginate(6); // pagination 6 articles par page
+
+        // Si filtrage par catégorie (optionnel)
+       /* if ($request->has('category')) {
+            $publication = Publication::with('category')
+                ->whereHas('category', function ($query) use ($request) {
+                    $query->where('id', $request->category);
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(6);
+        }*/
+
+        return view('layouts.blog.blog-list', compact('publications', 'categories'));
+    }
+    public function show($id)
+    {
+        $article = Publication::with('category')->findOrFail($id);
+        return view('layouts.blog.blog-article', compact('article'));
+    }
+
+     // Afficher la liste des catégories
+    public function categories()
+    {
+        $categories = PubCategory::withCount('publications')->get();
+        return view('layouts.blog.blog-category', compact('categories'));
+    }
+
+    // Afficher les articles d'une catégorie
+    public function articles($id)
+    {
+        $category = PubCategory::findOrFail($id);
+        $articles = Publication::where('pub_category_id', $id)->where('status', 'publish')->latest()->get();
+        return view('layouts.blog.blog-articles', compact('category', 'articles'));
+    }
+
+    // Afficher un article en particulier
+
     public function index()
     {
         $publications = Publication::with('category')->latest()->paginate(10);

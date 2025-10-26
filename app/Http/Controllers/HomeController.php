@@ -2,21 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use App\Models\Publication;
+use App\Models\Product;
 use App\Models\Formation;
 use App\Models\user_formation;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    //
+   
+
     public function index()
     {
+        $latestPublications = Publication::with('category')
+            ->where('status', 'publish')
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
 
+            $produitsPopulaires = Product::where('qte', '>', 0)
+            ->orderBy('prix', 'desc')
+            ->limit(4)
+            ->get();
         $formations =  Formation::latest()->take(3)->get();
-        return view('layouts.index', compact('formations'));
-    }
 
+        return view('layouts.index', compact('latestPublications', 'produitsPopulaires','formations'));
+    }
+  
     public function showFormations()
     {
 
@@ -70,4 +83,9 @@ class HomeController extends Controller
 
         return view('formationS.avis', compact('formation', 'avis'));
     }
+  
 }
+
+
+
+
