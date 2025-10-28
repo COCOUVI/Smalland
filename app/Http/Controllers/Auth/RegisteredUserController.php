@@ -39,8 +39,10 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+
+        // Ne pas connecter l'utilisateur immédiatement
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('verification.notice')->with('message', 'Un email de confirmation a été envoyé. Veuillez vérifier votre boîte mail.');
     }
 }

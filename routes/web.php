@@ -19,12 +19,17 @@ use App\Http\Controllers\AttestationController;
 use App\Http\Middleware\EnsureUserIsClient;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\ProductController;
+use PhpParser\Node\Expr\FuncCall;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 // === ROUTES PUBLIQUES ===
 Route::get('/', [HomeController::class, 'index'])->name('accueil');
-Route::get('/espace-etudiant', fn() => view('layouts.space-etudiant.dashboard'))->name('student.dashboard');
-Route::get('/formation-detail', fn() => view('layouts.formation.formation-detail'))->name('formation-detail');
-Route::get('/formation-list', fn() => view('layouts.formation.formation-catalog'))->name('formations.catalog');
+// Route::get('/espace-etudiant', fn() => view('layouts.space-etudiant.dashboard'))->name('student.dashboard');
+// Route::get('/formation-detail', fn() => view('layouts.formation.formation-detail'))->name('formation-detail');
+// Route::get('/formation-list', fn() => view('layouts.formation.formation-catalog'))->name('formations.catalog');
+
 
 Route::get('/order', fn() => view('layouts.boutique.order-tracking'))->name('order.tracking');
 Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
@@ -57,7 +62,7 @@ Route::get('/formations/{formation}/avis', [HomeController::class, 'AfficherTous
     ->name('formations.avis');
 
 //Route pour l'espace etudiant
-Route::prefix('espace-etudiant')->middleware(['auth',EnsureUserIsClient::class])->group(function () {
+Route::prefix('espace-etudiant')->middleware(['auth','verified',EnsureUserIsClient::class])->group(function () {
     Route::get('/', [StudentController::class, "index"])->name('espace.etudiant');
     Route::get('/mes-formations', [StudentController::class, "ShowTranings"])->name('trainings.paid');
     Route::get('/mes-certificats', [StudentController::class, 'Showcertfication'])->name('certificats.index');
@@ -95,7 +100,7 @@ Route::prefix('paiement')->group(function () {
 Route::any('/api/webhook', [PaymentController::class, 'webhook'])->name('paiement.webhook')->withoutMiddleware(VerifyCsrfToken::class);
 
 // Dashboard utilisateur
-Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 // Zone admin
 Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
@@ -159,7 +164,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::delete('/categoriesA/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
 
     // Paiements (duplicat évité ici)
-    Route::get('/paiements', [PaiementController::class, 'index'])->name('admin.paiements.index');
+    Route::get('/paiements', [PaiementController::class, 'index'])->name('admin.paiements');
 });
 
 // === ROUTES POUR LES UTILISATEURS AUTHENTIFIÉS ===
@@ -190,12 +195,9 @@ Route::middleware(['auth'])->group(function () {
 
 // Commande 
 
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\OrderController;
 
 // Routes nécessitant l'authentification
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth,verified'])->group(function () {
     
     // CART ROUTES
     Route::prefix('cart')->name('cart.')->group(function () {
