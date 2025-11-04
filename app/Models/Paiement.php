@@ -13,7 +13,8 @@ class Paiement extends Model
         'montant_payé',
         'moyen_de_paiment',
         'status',
-        'transaction_id'
+        'transaction_id',
+        'order_id'
     ];
 
     public function formation()

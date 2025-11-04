@@ -117,8 +117,7 @@
                                     class="card-img-top"
                                     alt="{{ $publication->title }}">
                             @else
-                                <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Image par défaut">
-                            @endif
+                                <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Image par défaut">                            @endif
 
                             <div class="card-body">
                                 <h5 class="card-title">{{ $publication->title }}</h5>

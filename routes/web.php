@@ -197,7 +197,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 // Routes nécessitant l'authentification
-Route::middleware(['auth,verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     
     // CART ROUTES
     Route::prefix('cart')->name('cart.')->group(function () {
