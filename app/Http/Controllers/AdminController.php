@@ -500,6 +500,15 @@ class AdminController extends Controller
 
         return view('admin.layout.formations.list_paiements', compact("paiements"));
     }
+        public function ShowPaiementsBoutique()
+    {
+        $paiements = Paiement::with(['user', 'commande'])
+            ->whereNotNull('order_id')
+            ->paginate(10);
+
+        return view('admin.layout.boutique.list_paiements', compact('paiements'));
+    }
+
 
     public function ShowCertifications()
     {

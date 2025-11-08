@@ -57,7 +57,7 @@
         }
 
         .hero-section {
-            background: url('/assets/img/2.jpg');
+            background: url('/assets/img/9.jpg');
             background-size: cover;
             background-position: center;
             color: white;

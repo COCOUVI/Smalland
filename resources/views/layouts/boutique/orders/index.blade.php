@@ -143,7 +143,7 @@
             <i class="bi bi-cart-x empty-icon"></i>
             <h4 class="mt-3">Aucune commande pour le moment</h4>
             <p class="text-muted">Vous n'avez pas encore passé de commande.</p>
-            <a href="{{ route('products.index') }}" class="btn btn-primary mt-3">
+            <a href="{{ route('shop') }}" class="btn btn-primary mt-3">
                 <i class="bi bi-shop me-2"></i>Découvrir nos produits
             </a>
         </div>

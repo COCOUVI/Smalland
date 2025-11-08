@@ -126,20 +126,18 @@
                     <div>
                         <span class="me-2">Filtrer par :</span>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-outline-primary active">Tous</button>
-                            <button type="button" class="btn btn-outline-primary">Permaculture</button>
-                            <button type="button" class="btn btn-outline-primary">Agriculture Bio</button>
-                            <button type="button" class="btn btn-outline-primary">Techniques</button>
+                            <button type="button" class="btn btn-outline-primary active"><a href="{{ route('blog.list') }}" class="text-decoration-none text-white ">
+                                        Tous
+                                    </a></button>
+                         @foreach($categories as $cat)
+                            
+                            <button type="button" class="btn btn-outline-primary"><a href="{{ route('blog.list', ['category' => $cat->id]) }}" class="text-decoration-none ">
+                                        {{ $cat->name }}
+                                    </a></button>
+                         @endforeach 
                         </div>
                     </div>
-                    <div>
-                        <span class="me-2">Trier par :</span>
-                        <select class="form-select form-select-sm d-inline-block w-auto">
-                            <option>Plus récents</option>
-                            <option>Plus populaires</option>
-                            <option>Plus commentés</option>
-                        </select>
-                    </div>
+                    
                 </div>
                
 
@@ -195,18 +193,10 @@
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <!-- Recherche -->
-                <div class="sidebar-widget">
-                    <h5 class="mb-3">Rechercher</h5>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Mot-clé...">
-                        <button class="btn btn-primary" type="button"><i class="bi bi-search"></i></button>
-                    </div>
-                </div>
-
                 <!-- Catégories -->
                 <div class="sidebar-widget">
                     <h5 class="mb-3">Catégories</h5>
-                   <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush">
                         @foreach($categories as $cat)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <a href="{{ route('blog.list', ['category' => $cat->id]) }}" class="text-decoration-none text-dark">
@@ -217,9 +207,7 @@
                         @endforeach
                     </ul>
 
-                </div>
-
-               
+                </div>  
             </div>
         </div>
     </div>

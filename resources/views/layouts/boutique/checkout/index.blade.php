@@ -241,10 +241,12 @@
 
         // Activer la première option au chargement
         document.querySelector('.delivery-option').classList.add('active');
-
+    </script>
+     @auth
+    <script>
         //
         document.addEventListener('DOMContentLoaded', () => {
-            @auth
+           
             const widget = FedaPay.init({
                 public_key: '{{ config('services.fedapay.public_key') }}',
                 transaction: {
@@ -303,7 +305,8 @@
             document.getElementById('btn-pay').addEventListener('click', () => {
                 widget.open();
             });
-        @endauth
+       
         });
     </script>
+     @endauth
 @endsection

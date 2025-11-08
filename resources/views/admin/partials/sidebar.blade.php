@@ -1,7 +1,7 @@
 <aside id="sidebar-wrapper">
     <div class="sidebar-brand">
         <a class="navbar-brand text-success" href="index.html">
-            <span class="logo-name"><img src="storage/logo/small_land.png" 
+            <span class="logo-name"><img src="{{ asset('storage/logo/small_land.png') }}" 
                         class="img-fluid" 
                         style="height: 80px;
                         width:120px" 
@@ -27,7 +27,9 @@
                 <li><a class="nav-link" href="{{ route('products.index') }}">Liste des Produits</a></li>
                 <li><a class="nav-link" href="{{ route('products.create') }}">Ajouter Produit</a></li>
                 <li><a class="nav-link" href="{{ route('admin.categories.index') }}">Catégories</a></li>
-                <li><a class="nav-link" href="commandes.html">Commandes</a></li>
+                <li><a class="nav-link" href="{{ route('admin.order.index') }}">Commandes</a></li>
+                <li><a class="nav-link" href="{{ route('admin.paiements.boutique.index') }}">Paiements</a></li>
+                <li><a class="nav-link" href="{{ route('admin.clients.index') }}">Liste des Clients</a></li>
                 <li><a class="nav-link" href="paiements.html">Paiements</a></li>
             </ul>
         </li>
@@ -90,9 +92,9 @@
                 <i data-feather="file-text"></i><span>Articles</span>
             </a>
             <ul class="dropdown-menu">
-                <li><a class="nav-link" href="">Liste des Articles</a></li>
-                <li><a class="nav-link" href="">Créer Article</a></li>
-                <li><a class="nav-link" href="">Catégories</a></li>
+                <li><a class="nav-link" href="{{ route('publications.index') }}">Liste des Articles</a></li>
+                <li><a class="nav-link" href="{{ route('publications.create') }}">Créer Article</a></li>
+                <li><a class="nav-link" href="{{ route('admin.listCategories') }}">Catégories</a></li>
             </ul>
         </li>
 

@@ -39,9 +39,9 @@
         </style>
 <div>
 <!-- Hero Section -->
-    <section class="hero-section text-center">
-        <div class="container">
-            <h1 class="display-4 fw-bold mb-5">Bienvenue à Smalland </h1>
+    <section class="hero-section text-center ">
+        <div class="container py-3">
+            <h1 class="display-4 fw-bold mb-5">Bienvenue à Small Land </h1>
             <p class="lead mb-4">La première plateforme béninoise dédiée à l’innovation, à la formation et à la fourniture d’équipements et intrants dans les domaines de l’élevage et de l’agriculture.</p>
             <a href="#about" class="btn btn-primary btn-lg me-2">Notre Histoire </a>
             <a href="#featureS" class="btn btn-light btn-lg">Nos activités</a>
@@ -53,14 +53,23 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 mb-4">
-                    <img src="/assets/img/3.jpg" class="img-fluid rounded shadow" alt="Ferme familiale">
+                    <img src="/assets/img/5.jpg" class="img-fluid rounded shadow" alt="Ferme familiale">
                 </div>
                 <div class="col-md-6">
                     <h2 class="section-title">Notre histoire</h2>
-                    <p>Small Land est une petite ferme familiale créée en 2010 par la famille Dupont. Installés en pleine campagne, nous avons développé avec passion une ferme pédagogique où nous élevons des lapins et des poules en liberté.</p>
-                    <p>Toute la famille participe aux activités : les enfants adorent nourrir les lapins et ramasser les œufs frais chaque matin. Nous avons également développé un incubateur artisanal pour faire naître nos poussins.</p>
-                    <p>Notre philosophie : une agriculture respectueuse des animaux et de l'environnement, dans la joie et la simplicité.</p>
-                    <a href="#" class="btn btn-primary mt-3">En savoir plus sur nous</a>
+                    <p>
+                    Small Land est une plateforme béninoise spécialisée dans les domaines de l'agriculture et de l'elevage.
+                </p>
+                <p>
+                    Fondée avec la passion de l'agriculture, de l'elevage et le désir d'accompagner les agriculteurs et des eleveurs.
+                    Nous sommes une initiative portée par l'<span class="text-primary"><strong>Établissement Sakoul Entreprises</strong></span>, spécialisée dans la fabrication d’incubateurs automatiques performants et adaptés aux besoins des éleveurs, la commercialisation d’œufs fertiles de volailles pour une reproduction de qualité, la fourniture d’équipements pour la fabrication de couveuses et autres matériels d’élevage et la mise à disposition d’équipements agricoles pour accompagner les producteurs dans la modernisation et la rentabilité de leurs activités.
+
+                </p>
+                <p>
+                    Notre mission est de rendre l'agriculture et l'elevage accessible et productive pour tous, en offrant 
+                    des équipements fiables à des prix compétitifs, tout en assurant un service client de qualité.
+                </p>
+                <a href="{{ route('about') }}" class="btn btn-primary mt-3">En savoir plus sur nous</a>
                 </div>
             </div>
         </div>
@@ -78,7 +87,7 @@
                     </div>
                     <h3>Blog Agronomie</h3>
                     <p>Des articles experts sur les techniques agricoles modernes, l'écologie et le développement durable.</p>
-                    <a href="blog-list.html" class="btn btn-outline-primary">Voir les articles</a>
+                    <a href="{{ route('blog.list') }}" class="btn btn-outline-primary">Voir les articles</a>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="module-icon">
@@ -94,7 +103,7 @@
                     </div>
                     <h3>Boutique</h3>
                     <p>Des outils, équipements et produits sélectionnés pour vos projets agricoles et votre jardin.</p>
-                    <a href="products-catalog.html" class="btn btn-outline-primary">Visiter la boutique</a>
+                    <a href="{{ route('shop') }}" class="btn btn-outline-primary">Visiter la boutique</a>
                 </div>
             </div>
         </div>
@@ -117,7 +126,8 @@
                                     class="card-img-top"
                                     alt="{{ $publication->title }}">
                             @else
-                                <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Image par défaut">                            @endif
+                                <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Image par défaut">
+                            @endif
 
                             <div class="card-body">
                                 <h5 class="card-title">{{ $publication->title }}</h5>
@@ -205,7 +215,7 @@
                                         <span class="h5 mb-0 text-primary">
                                             {{ $formation->price ?? 'Gratuit' }} FCFA
                                         </span>
-                                        <a href="{{ route('formation-detail', $formation->id) }}" class="btn btn-primary">
+                                        <a href="{{ route('formations.show', $formation->id) }}" class="btn btn-primary">
                                             Voir détails
                                         </a>
                                     </div>
@@ -323,26 +333,63 @@
        
 
      <!-- Farm Gallery Section -->
-    <section class="py-5">
-        <div class="container">
-            <h2 class="section-title text-center">Notre Portfolio</h2>
-            <div class="row g-3 mt-4">
-                <div class="col-md-4">
-                    <img src="http://static.photos/agriculture/320x240/1" class="img-fluid rounded shadow" alt="Enfants nourrissant les lapins">
+    <!-- Section Portfolio Accueil -->
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="display-6 fw-bold" style="color: #2e7d32;">Découvrez Notre Ferme</h2>
+        <p class="text-muted">Un aperçu de notre quotidien, entre élevage respectueux et cultures naturelles.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Image 1 : Poulailler -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <img src="{{ asset('images/farm/poulailler1.jpg') }}" 
+                     class="card-img-top" 
+                     alt="Poulailler"
+                     style="height: 220px; object-fit: cover;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #2e7d32;">Nos Poules Heureuses</h5>
+                    <p class="card-text small text-muted">Élevage en plein air, œufs de qualité.</p>
                 </div>
-                <div class="col-md-4">
-                    <img src="http://static.photos/agriculture/320x240/2" class="img-fluid rounded shadow" alt="Poulailler">
-                </div>
-                <div class="col-md-4">
-                    <img src="http://static.photos/agriculture/320x240/3" class="img-fluid rounded shadow" alt="Incubateur artisanal">
-                </div>
-            </div>
-            <div class="text-center mt-4">
-                <a href="#" class="btn btn-primary">Voir plus de photos</a>
             </div>
         </div>
-    </section>
 
+        <!-- Image 2 : Lapins -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <img src="{{ asset('images/farm/lapin3.jpg') }}" 
+                     class="card-img-top" 
+                     alt="Élevage de lapins"
+                     style="height: 220px; object-fit: cover;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #2e7d32;">Élevage de Lapins</h5>
+                    <p class="card-text small text-muted">Bien-être animal et alimentation naturelle.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image 3 : Papayers -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <img src="{{ asset('images/farm/papayer1.jpg') }}" 
+                     class="card-img-top" 
+                     alt="Champ de papayers"
+                     style="height: 220px; object-fit: cover;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" style="color: #2e7d32;">Verger de Papayers</h5>
+                    <p class="card-text small text-muted">Fruits mûrs, cueillis à la main, sans pesticides.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ route('portfolio') }}" class="btn btn-outline-success px-4 py-2">
+            Voir toute la galerie <i class="bi bi-images ms-2"></i>
+        </a>
+    </div>
+</div>
     <!-- Newsletter -->
     <section class="py-5 bg-primary text-white">
         <div class="container">

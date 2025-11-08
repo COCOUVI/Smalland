@@ -30,7 +30,7 @@ Route::get('/', [HomeController::class, 'index'])->name('accueil');
 // Route::get('/formation-detail', fn() => view('layouts.formation.formation-detail'))->name('formation-detail');
 // Route::get('/formation-list', fn() => view('layouts.formation.formation-catalog'))->name('formations.catalog');
 
-
+Route::get('/portfolio', fn() => view('layouts.portfolio'))->name('portfolio');
 Route::get('/order', fn() => view('layouts.boutique.order-tracking'))->name('order.tracking');
 Route::get('/cart', fn() => view('layouts.boutique.cart'))->name('cart');
 Route::get('/test', fn() => view("admin.layout.index"));
@@ -135,7 +135,7 @@ Route::prefix('dashboard')->middleware(['auth', 'admin'])->group(function () {
     Route::delete('/questions/{questionId}', [QuizzController::class, 'deleteQuestion'])->name('questions.delete');
     Route::put('/quizz/{quizz}/update-title', [QuizzController::class, 'updateTitle'])->name('quizz.updateTitle');
     Route::delete('/quizz/{quizz}', [QuizzController::class, 'destroy'])->name('quizz.destroy');
-
+    Route::get('/listes-paiments-boutique', [AdminController::class, "Showpaiementsboutique"])->name('admin.paiements.boutique.index');
     Route::get('/listes-paiments', [AdminController::class, "Showpaiements"])->name('admin.paiements.index');
     Route::get('/certification-list', [AdminController::class, "ShowCertifications"])->name("certif-list");
 });
@@ -227,3 +227,45 @@ Route::middleware(['auth'])->group(function () {
 });
 // Callback de paiement (unifié pour formations ET commandes)
 Route::get('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+
+
+// Route publique pour le suivi de commande
+Route::get('order/track', [OrderController::class, 'track'])->name('order.track');
+// Route a propos de nous 
+Route::get('/a-propos', function () {
+    return view('layouts.about');
+})->name('about');
+
+
+use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\AdminPaymentController;
+use App\Http\Controllers\AdminClientController;
+
+// Routes Admin (avec middleware admin)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Gestion des commandes
+    Route::get('order', [AdminOrderController::class, 'index'])->name('order.index');
+    Route::get('order/{id}', [AdminOrderController::class, 'show'])->name('order.show');
+    Route::put('order/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('order.update-status');
+    Route::post('order/{id}/validate-payment', [AdminOrderController::class, 'validatePayment'])->name('orders.validate-payment');
+    Route::get('order/export', [AdminOrderController::class, 'export'])->name('order.export');
+    
+    // Gestion des paiements
+    //Route::get('payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+    //Route::get('payments/{id}', [AdminPaymentController::class, 'show'])->name('payments.show');
+    //Route::get('payments/statistics', [AdminPaymentController::class, 'statistics'])->name('payments.statistics');
+    //Route::get('payments/export', [AdminPaymentController::class, 'export'])->name('payments.export');
+    
+    // Gestion des clients
+    Route::get('clients', [AdminClientController::class, 'index'])->name('clients.index');
+    Route::get('clients/{id}', [AdminClientController::class, 'show'])->name('clients.show');
+    Route::get('clients/export', [AdminClientController::class, 'export'])->name('clients.export');
+});
+
+// Route publique pour le suivi de commande
+Route::get('order/track', [OrderController::class, 'track'])->name('order.track');
+// Route a propos de nous 
+Route::get('/a-propos', function () {
+    return view('layouts.about');
+})->name('about');

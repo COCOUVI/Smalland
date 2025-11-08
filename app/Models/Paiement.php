@@ -26,4 +26,8 @@ class Paiement extends Model
     {
         return $this->belongsTo(\App\Models\User::class);
     }
+    public function order()
+{
+    return $this->belongsTo(Order::class);
+}
 }

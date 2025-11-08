@@ -42,7 +42,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item {{ request()->is('') ? 'active' : '' }}"
-                                href="">Catalogue</a></li>
+                                href="{{ route('formation-list') }}">Catalogue</a></li>
                         @auth
                             <li><a class="dropdown-item {{ request()->is('student-dashboard') ? 'active' : '' }}"
                                     href="{{ route('espace.etudiant') }}">Espace étudiant</a></li>
@@ -61,8 +61,9 @@
                                 href="{{ route('shop') }}">Catalogue produits</a></li>
                         <li><a class="dropdown-item {{ request()->is('cart') ? 'active' : '' }}"
                                 href="{{ route('cart.index') }}">Panier</a></li>
-                        <li><a class="dropdown-item {{ request()->is('order-tracking') ? 'active' : '' }}"
-                                href="{{ route('order.tracking') }}">Suivi de commande</a></li>
+                        <li><a class="dropdown-item {{ request()->is('order-track') ? 'active' : '' }}"
+                                href="{{ route('order.track') }}">Suivi de commande</a></li>
+
                     </ul>
                 </li>
 

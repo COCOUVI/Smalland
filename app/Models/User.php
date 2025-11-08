@@ -3,15 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use App\Notifications\CustomResetPassword;
-use App\Notifications\CustomVerifyEmail;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable  implements MustVerifyEmail
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -62,18 +58,7 @@ class User extends Authenticatable  implements MustVerifyEmail
             ->withPivot(['progression', 'path_attestation'])
             ->withTimestamps();
     }
-    public function sendPasswordResetNotification($token)
-    {
-        $this->notify(new CustomResetPassword($token));
-    }
 
-    /**
-     * Override la notification d'email de vérification par défaut
-     */
-    public function sendEmailVerificationNotification()
-    {
-        $this->notify(new CustomVerifyEmail());
-    }
 
     public function avis()
     {
@@ -104,4 +89,14 @@ class User extends Authenticatable  implements MustVerifyEmail
     {
         return $this->hasMany(Paiement::class);
     }
+
+        /**
+     * Relation : un utilisateur peut avoir plusieurs commandes
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    
 }
