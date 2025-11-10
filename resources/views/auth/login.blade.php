@@ -1,4 +1,4 @@
-@extends('Master')
+@extends('master')
 
 @section('content')
 <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 80vh; background-color: #f0f8ff;">
