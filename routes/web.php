@@ -62,7 +62,7 @@ Route::get('/formations/{formation}/avis', [HomeController::class, 'AfficherTous
     ->name('formations.avis');
 
 //Route pour l'espace etudiant
-Route::prefix('espace-etudiant')->middleware(['auth','verified'])->group(function () {
+Route::prefix('espace-etudiant')->middleware(['auth','verified',EnsureUserIsClient::class])->group(function () {
     Route::get('/', [StudentController::class, "index"])->name('espace.etudiant');
     Route::get('/mes-formations', [StudentController::class, "ShowTranings"])->name('trainings.paid');
     Route::get('/mes-certificats', [StudentController::class, 'Showcertfication'])->name('certificats.index');
@@ -197,7 +197,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 // Routes nécessitant l'authentification
-Route::middleware(['auth','verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     
     // CART ROUTES
     Route::prefix('cart')->name('cart.')->group(function () {
