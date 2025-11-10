@@ -10,6 +10,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-bcmath": "*",
+        "ext-gd": "*",
+        "ext-pdo_mysql": "*",
         "barryvdh/laravel-dompdf": "^3.1",
         "fedapay/fedapay-php": "^0.4.7",
         "laravel/framework": "^12.0",
