@@ -1,4 +1,4 @@
-@extends('Master')
+@extends('master')
 @section('content')
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
         <div class="card shadow-lg" style="width: 400px;">
