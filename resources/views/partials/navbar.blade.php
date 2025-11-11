@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ route('accueil') }}">
-            <img src="{{ asset('storage/logo/small_land_b.png') }}" class="img-fluid" style="height: 100px; width:150px"
+            <img src="{{ asset('assets/img/logo/small_land_b.png') }}" class="img-fluid" style="height: 100px; width:150px"
                 alt="Logo smalland">
         </a>
 
