@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Otika - Admin Dashboard Template</title>
+    <title>Small Land - Admin</title>
     <!-- General CSS Files -->
     <link rel="stylesheet" href="/assets/css/app.min.css">
     <!-- Template CSS -->
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/components.css">
     <!-- Custom style CSS -->
     <link rel="stylesheet" href="/assets/css/custom.css">
-    <link rel='shortcut icon' type='image/x-icon' href='/assets/img/favicon.ico' />
+    <link rel='shortcut icon' type='image/x-icon' href='/assets/img/logo/small_land.png' />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.tailwindcss.com"></script>

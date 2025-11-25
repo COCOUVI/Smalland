@@ -349,10 +349,10 @@
                                     class="instructor-img">
                             </div>
                             <div class="col-md-9">
-                                <h4>Jean Martin</h4>
-                                <p class="text-muted">Expert en agriculture biologique</p>
-                                <p>Agriculteur bio depuis 15 ans, Jean Martin a transformé sa ferme familiale en modèle de
-                                    maraîchage bio intensif.</p>
+                                <h4>Ing Ulrich SAKA</h4>
+                                <p class="text-muted">Ingénieur Agronome</p>
+                                <p class="text-muted">Expert en Elevage </p>
+                                <p>Expert en elevage  depuis près de 10 ans</p>
                             </div>
                         </div>
                     </div>

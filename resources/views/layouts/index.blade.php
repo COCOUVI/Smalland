@@ -95,7 +95,7 @@
                     </div>
                     <h3>Formations</h3>
                     <p>Des cours en ligne complets avec vidéos, ressources et certifications pour développer vos compétences.</p>
-                    <a href="formations-catalog.html" class="btn btn-outline-primary">Découvrir les formations</a>
+                    <a href="{{ route('formation-list') }}" class="btn btn-outline-primary">Découvrir les formations</a>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="module-icon">
@@ -236,7 +236,7 @@
         <section class="py-5 bg-light">
             <div class="container">
                 <h2 class="section-title text-center mb-5">
-                    <i class="bi bi-star-fill text-warning me-2"></i>Produits populaires
+                    <i class=" text-warning me-2"></i>Produits populaires
                 </h2>
                 
                 <div class="row">

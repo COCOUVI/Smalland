@@ -53,19 +53,4 @@
     </div>
 
     <!-- Statistiques -->
-    <div class="card mt-4">
-        <div class="card-body stats-card">
-            <i class="bi bi-play-btn display-6 text-primary mb-3"></i>
-            <div class="stats-number">12h</div>
-            <p>de formation suivies</p>
-        </div>
-    </div>
-
-    <div class="card mt-4">
-        <div class="card-body stats-card">
-            <i class="bi bi-award display-6 text-primary mb-3"></i>
-            <div class="stats-number">2</div>
-            <p>certificats obtenus</p>
-        </div>
-    </div>
 </div>

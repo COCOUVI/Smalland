@@ -24,11 +24,7 @@
             <h2 class="mb-1"><i class="bi bi-cart-check me-2"></i>Gestion des commandes</h2>
             <p class="text-muted">Gérez et suivez toutes les commandes</p>
         </div>
-        <div>
-            <a href="{{ route('admin.order.export') }}" class="btn btn-success">
-                <i class="bi bi-download me-2"></i>Exporter CSV
-            </a>
-        </div>
+        
     </div>
 
     @if(session('success'))
@@ -94,11 +90,6 @@
     <div class="card filter-card mb-4">
         <form method="GET" action="{{ route('admin.order.index') }}">
             <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Recherche</label>
-                    <input type="text" name="search" class="form-control" 
-                        placeholder="Code, nom ou email" value="{{ request('search') }}">
-                </div>
                 <div class="col-md-2">
                     <label class="form-label fw-bold">Statut</label>
                     <select name="status" class="form-select">

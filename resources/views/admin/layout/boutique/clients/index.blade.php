@@ -9,11 +9,6 @@
             <h2 class="mb-1"><i class="bi bi-people me-2"></i>Gestion des clients</h2>
             <p class="text-muted">Liste de tous les clients inscrits</p>
         </div>
-        <div>
-            <a href="{{ route('admin.clients.export') }}" class="btn btn-success">
-                <i class="bi bi-download me-2"></i>Exporter CSV
-            </a>
-        </div>
     </div>
 
     <!-- Statistiques -->
@@ -57,11 +52,6 @@
         <div class="card-body">
             <form method="GET" action="{{ route('admin.clients.index') }}">
                 <div class="row g-3">
-                    <div class="col-md-5">
-                        <label class="form-label fw-bold">Recherche</label>
-                        <input type="text" name="search" class="form-control" 
-                            placeholder="Nom, email, téléphone..." value="{{ request('search') }}">
-                    </div>
                     <div class="col-md-3">
                         <label class="form-label fw-bold">Filtre</label>
                         <select name="filter" class="form-select">

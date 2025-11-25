@@ -58,74 +58,7 @@
         </div>
     </div>
 
-    <!-- Derniers Paiements -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header">
-                    <h4>Derniers Paiements</h4>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Utilisateur</th>
-                                    <th>Date</th>
-                                    <th>Méthode</th>
-                                    <th>Montant</th>
-                                    <th>Statut</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Jean Dupont</td>
-                                    <td>10/09/2025</td>
-                                    <td>Moov Money</td>
-                                    <td>25 000 CFA</td>
-                                    <td><span class="badge badge-success">Réussi</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Sarah Johnson</td>
-                                    <td>08/09/2025</td>
-                                    <td>PayPal</td>
-                                    <td>18 500 CFA</td>
-                                    <td><span class="badge badge-warning">En attente</span></td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Aliou Sow</td>
-                                    <td>05/09/2025</td>
-                                    <td>Carte Bancaire</td>
-                                    <td>50 000 CFA</td>
-                                    <td><span class="badge badge-success">Réussi</span></td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Aminata Traoré</td>
-                                    <td>03/09/2025</td>
-                                    <td>Cash</td>
-                                    <td>12 000 CFA</td>
-                                    <td><span class="badge badge-danger">Échoué</span></td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>David Martin</td>
-                                    <td>01/09/2025</td>
-                                    <td>MTN Mobile Money</td>
-                                    <td>30 000 CFA</td>
-                                    <td><span class="badge badge-success">Réussi</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 @endsection
 
 @push('scripts')

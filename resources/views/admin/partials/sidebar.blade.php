@@ -1,6 +1,6 @@
 <aside id="sidebar-wrapper">
     <div class="sidebar-brand">
-        <a class="navbar-brand text-success" href="index.html">
+        <a class="navbar-brand text-success" href="">
             <span class="logo-name"><img src="{{ asset('storage/logo/small_land.png') }}" 
                         class="img-fluid" 
                         style="height: 80px;
@@ -30,7 +30,6 @@
                 <li><a class="nav-link" href="{{ route('admin.order.index') }}">Commandes</a></li>
                 <li><a class="nav-link" href="{{ route('admin.paiements.boutique.index') }}">Paiements</a></li>
                 <li><a class="nav-link" href="{{ route('admin.clients.index') }}">Liste des Clients</a></li>
-                <li><a class="nav-link" href="paiements.html">Paiements</a></li>
             </ul>
         </li>
 
@@ -71,20 +70,6 @@
             </ul>
         </li>
 
-
-        <!-- Gestion Quiz -->
-        <li class="menu-header">Quiz</li>
-        <li class="dropdown">
-            <a href="#" class="menu-toggle nav-link has-dropdown">
-                <i data-feather="help-circle"></i><span>Quiz</span>
-            </a>
-            <ul class="dropdown-menu">
-                {{-- <li><a class="nav-link" href="{{ route('quizz.manage', $module->id) }}">Quizz</a></li> --}}
-                <li><a class="nav-link" href="quiz-create.html">Créer Quiz</a></li>
-                <li><a class="nav-link" href="questions.html">Questions</a></li>
-            </ul>
-        </li>
-
         <!-- Gestion Blog -->
         <li class="menu-header">Blog</li>
         <li class="dropdown">
@@ -98,22 +83,5 @@
             </ul>
         </li>
 
-        <!-- Gestion Utilisateurs -->
-        <li class="menu-header">Utilisateurs</li>
-        <li class="dropdown">
-            <a href="#" class="menu-toggle nav-link has-dropdown">
-                <i data-feather="users"></i><span>Utilisateurs</span>
-            </a>
-            <ul class="dropdown-menu">
-                <li><a class="nav-link" href="users-index.html">Liste des Utilisateurs</a></li>
-                <li><a class="nav-link" href="roles.html">Rôles & Permissions</a></li>
-            </ul>
-        </li>
-
-        <!-- Pages annexes -->
-        <li class="menu-header">Autres</li>
-        <li><a class="nav-link" href="a-propos.html"><i data-feather="info"></i><span>À propos</span></a></li>
-        <li><a class="nav-link" href="contact.html"><i data-feather="phone"></i><span>Contact</span></a></li>
-        <li><a class="nav-link" href="cgu.html"><i data-feather="file"></i><span>CGU / Politique</span></a></li>
     </ul>
 </aside>

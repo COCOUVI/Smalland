@@ -237,7 +237,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <img src="{{ asset('storage/logo/about-image.jpg') }}" 
+                <img src="/assets/img/11.jpg" 
                     class="img-fluid about-image" 
                     alt="Small Land"
                     onerror="this.src='https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600'">
@@ -282,7 +282,7 @@
                     <div class="stats-icon">
                         <i class="bi bi-people"></i>
                     </div>
-                    <div class="stats-number">500+</div>
+                    <div class="stats-number">50+</div>
                     <p class="text-muted mb-0">Clients satisfaits</p>
                 </div>
             </div>
@@ -291,7 +291,7 @@
                     <div class="stats-icon">
                         <i class="bi bi-box-seam"></i>
                     </div>
-                    <div class="stats-number">200+</div>
+                    <div class="stats-number">  50+</div>
                     <p class="text-muted mb-0">Produits disponibles</p>
                 </div>
             </div>
@@ -300,7 +300,7 @@
                     <div class="stats-icon">
                         <i class="bi bi-truck"></i>
                     </div>
-                    <div class="stats-number">1000+</div>
+                    <div class="stats-number">100+</div>
                     <p class="text-muted mb-0">Livraisons effectuées</p>
                 </div>
             </div>
@@ -375,57 +375,6 @@
     </div>
 </section>
 
-<!-- Notre histoire -->
-<section class="section" style="background-color: var(--light-color);">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">Notre histoire</h2>
-            <p class="lead text-muted">Le chemin parcouru depuis nos débuts</p>
-        </div>
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <h4>2020 - La création</h4>
-                    <p class="text-muted">
-                        Lancement de Small Land avec une vision claire : démocratiser l'accès 
-                        aux équipements agricoles de qualité au Bénin.
-                    </p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <h4>2021 - Premier succès</h4>
-                    <p class="text-muted">
-                        Atteinte des 100 premiers clients et élargissement de notre catalogue 
-                        avec de nouvelles gammes de produits.
-                    </p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <h4>2023 - Expansion</h4>
-                    <p class="text-muted">
-                        Ouverture de notre boutique en ligne et extension de nos services 
-                        de livraison à tout le pays.
-                    </p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <h4>2025 - Aujourd'hui</h4>
-                    <p class="text-muted">
-                        Plus de 500 clients satisfaits, une boutique en ligne complète et 
-                        des formations pour accompagner nos clients.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 <!-- Call to Action -->
 <div class="container">
     <div class="cta-section">

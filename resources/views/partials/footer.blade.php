@@ -37,9 +37,9 @@
                 <div class="col-md-3 mb-4">
                     <h5>Contact</h5>
                     <ul class="list-unstyled">
-                        <li><i class="bi bi-geo-alt me-2"></i> Quartier Tranza Parakou, Benin </li>
-                        <li><i class="bi bi-telephone me-2"></i> +33 1 23 45 67 89</li>
-                        <li><i class="bi bi-envelope me-2"></i> contact@smallland.bj</li>
+                        <li><i class="bi bi-geo-alt me-2"></i> Quartier Nabissou, Parakou, Bénin </li>
+                        <li><i class="bi bi-telephone me-2"></i> +229 0195474828 </li>
+                        <li><i class="bi bi-envelope me-2"></i> contact@small-land.net</li>
                     </ul>
                 </div>
             </div>
